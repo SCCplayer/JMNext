@@ -21,9 +21,6 @@ import java.io.ObjectOutputStream;
 import java.util.Stack;
 import java.util.Vector;
 
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.MediaPlayer;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -36,9 +33,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import lib.Browse;
 import data.SbpChange;
 import data.SoundButtonProperties;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.MediaPlayer;
+import lib.Browse;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -71,7 +70,8 @@ public class MainView extends JFrame {
 	private JMenuItem itemAddLayer = new JMenuItem("Neuen Layer hinzufügen");
 	private JMenuItem itemRemoveLayer = new JMenuItem(
 			"Aktuellen Layer entfernen");
-	private JMenuItem itemSaveLayer = new JMenuItem("Aktuellen Layer speichern");
+	private JMenuItem itemSaveLayer = new JMenuItem(
+			"Aktuellen Layer speichern");
 	private JMenuItem itemLoadLayer = new JMenuItem("Layer laden");
 	private JMenuItem itemSaveSoundboard = new JMenuItem(
 			"Soundboard speichern unter");
@@ -192,13 +192,20 @@ public class MainView extends JFrame {
 	}
 
 	private void openAutoSave() {
-		System.out.println(getClass().getClassLoader().getResource("resources")
-				.toString().split(":")[0]);
 		if (getClass().getClassLoader().getResource("resources").toString()
 				.split(":")[0].compareTo("file") == 0) {
-			fileAutoSave = new File(
-					getClass().getClassLoader().getResource("resources")
-							.toString().split(":")[1].concat("/autosave.ser"));
+			if (getClass().getClassLoader().getResource("resources").toString()
+					.split(":").length == 2) {
+				fileAutoSave = new File(getClass().getClassLoader()
+						.getResource("resources").toString().split(":")[1]
+								.concat("/autosave.ser"));
+				System.out.println(fileAutoSave.getAbsolutePath());
+			} else if (getClass().getClassLoader().getResource("resources")
+					.toString().split(":").length == 3) {
+				fileAutoSave = new File(getClass().getClassLoader()
+						.getResource("resources").toString().split(":")[2]
+								.concat("/autosave.ser"));
+			}
 			System.out.println(fileAutoSave.getAbsolutePath());
 		} else {
 			fileAutoSave = new File("autosave.ser");
@@ -228,8 +235,8 @@ public class MainView extends JFrame {
 				os.writeBoolean(sbSave.pbVisible);
 				for (int z = 0; z < sbSave.getZeilen(); z++) {
 					for (int sp = 0; sp < sbSave.getSpalten(); sp++) {
-						os.writeObject(sbSave.getSbArray()[z][sp]
-								.getProperties());
+						os.writeObject(
+								sbSave.getSbArray()[z][sp].getProperties());
 						System.out.println("Zeile: " + z + " Spalte: " + sp
 								+ " gespeichert");
 					}
@@ -238,8 +245,8 @@ public class MainView extends JFrame {
 			}
 			os.close();
 		} catch (Exception ex) {
-			System.out
-					.println("Objekte konnten nicht vollständig gespeichert werden");
+			System.out.println(
+					"Objekte konnten nicht vollständig gespeichert werden");
 			System.out.println(ex.getMessage());
 		}
 	}
@@ -420,8 +427,9 @@ public class MainView extends JFrame {
 				soundBoardActive.removeZeile();
 			} else if (e.getSource() == itemSideView) {
 				System.out.println("Sideview ertellen");
-				sv = new SideView(hf, soundBoardActive, tp.getTitleAt(tp
-						.getSelectedIndex()), tp.getSelectedIndex());
+				sv = new SideView(hf, soundBoardActive,
+						tp.getTitleAt(tp.getSelectedIndex()),
+						tp.getSelectedIndex());
 			} else if (e.getSource() == itemSaveSoundboard) {
 				saveSoundBoardAs();
 			} else if (e.getSource() == itemLoadSoundboard) {
@@ -433,6 +441,8 @@ public class MainView extends JFrame {
 				tp.add("Layer " + String.valueOf(sbVector.size()),
 						(SoundBoard) sbVector.get(sbVector.size() - 1));
 				tp.setSelectedIndex(sbVector.size() - 1);
+				soundBoardActive = (SoundBoard) sbVector
+						.get(sbVector.size() - 1);
 			} else if (e.getSource() == itemAutosave) {
 				saveMainView(fileAutoSave);
 			} else if (e.getSource() == itemRemoveLayer) {
@@ -448,8 +458,8 @@ public class MainView extends JFrame {
 		}
 	}
 
-	private class ListenerMouseKlick implements MouseListener,
-			MouseMotionListener {
+	private class ListenerMouseKlick
+			implements MouseListener, MouseMotionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -465,8 +475,8 @@ public class MainView extends JFrame {
 			if (soundBoardActive.getMousePosition() != null) {
 				if (soundBoardActive.getComponentAt(soundBoardActive
 						.getMousePosition()) instanceof SoundButton) {
-					soundButton = (SoundButton) soundBoardActive
-							.getComponentAt(soundBoardActive.getMousePosition());
+					soundButton = (SoundButton) soundBoardActive.getComponentAt(
+							soundBoardActive.getMousePosition());
 					if (soundButton.getProperties().getButtonArt() == 99
 							&& anzeigePfad != null) {
 						System.out.println("Buttonart = 99");
@@ -527,19 +537,19 @@ public class MainView extends JFrame {
 		public void stateChanged(ChangeEvent e) {
 			if (e.getSource() == tp && tp.getComponentCount() > 1) {
 				try {
-					System.out.println("Selected Index: "
-							+ tp.getSelectedIndex());
-					soundBoardActive = (SoundBoard) sbVector.get(tp
-							.getSelectedIndex());
-					System.out.println("soundBoardActive: "
-							+ tp.getSelectedIndex() + " "
-							+ sbVector.indexOf(soundBoardActive));
+					System.out.println(
+							"Selected Index: " + tp.getSelectedIndex());
+					soundBoardActive = (SoundBoard) sbVector
+							.get(tp.getSelectedIndex());
+					System.out.println(
+							"soundBoardActive: " + tp.getSelectedIndex() + " "
+									+ sbVector.indexOf(soundBoardActive));
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
 					System.out.println("sbVectorSize: " + sbVector.size()
 							+ " tpgetselectedIndex: " + tp.getSelectedIndex());
-					System.out
-							.println("Fehler in Methode: MainView.ListenerChange");
+					System.out.println(
+							"Fehler in Methode: MainView.ListenerChange");
 				}
 			}
 		}
