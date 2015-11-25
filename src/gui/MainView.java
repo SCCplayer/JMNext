@@ -38,6 +38,7 @@ import data.SoundButtonProperties;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
+import lib.myFonts;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -61,6 +62,9 @@ public class MainView extends JFrame {
 			"Vortschrittsanzeige im Layer ein-/ausblenden");
 	private JMenuItem itemSpaltenBrowser = new JMenuItem(
 			"Spaltenbrowser anzeigen");
+	private JMenuItem itemFontSmall = new JMenuItem("Schriftgröße: Klein");
+	private JMenuItem itemFontMedium = new JMenuItem("Schriftgröße: Mittel");
+	private JMenuItem itemFontLarge = new JMenuItem("Schriftgröße: Groß");
 	private JMenuItem itemAddSpalte = new JMenuItem("Spalte hinzufügen");
 	private JMenuItem itemRemoveSpalte = new JMenuItem("Spalte entfernen");
 	private JMenuItem itemAddZeile = new JMenuItem("Zeile hinzufügen");
@@ -126,7 +130,6 @@ public class MainView extends JFrame {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
 	}
 
 	private void sbVectorToTappedPane() {
@@ -185,9 +188,15 @@ public class MainView extends JFrame {
 		itemPbAusblenden.addActionListener(lmb);
 		itemSpaltenBrowser.addActionListener(lmb);
 		itemSideView.addActionListener(lmb);
+		itemFontSmall.addActionListener(lmb);
+		itemFontMedium.addActionListener(lmb);
+		itemFontLarge.addActionListener(lmb);
 		menuAnsicht.add(itemPbAusblenden);
 		// menuAnsicht.add(itemSpaltenBrowser);
 		menuAnsicht.add(itemSideView);
+		menuAnsicht.add(itemFontSmall);
+		menuAnsicht.add(itemFontMedium);
+		menuAnsicht.add(itemFontLarge);
 		mb.add(menuAnsicht);
 	}
 
@@ -397,6 +406,32 @@ public class MainView extends JFrame {
 		}
 	}
 
+	public void setSizeOfMainViewElements(int size) {
+		if (size == SoundButton.SMALL) {
+			lblTitel.setFont(myFonts.small);
+			tp.setFont(myFonts.small);
+			mb.setFont(myFonts.small);
+			menuDatei.setFont(myFonts.small);
+		} else if (size == SoundButton.MEDIUM) {
+			lblTitel.setFont(myFonts.medium);
+			tp.setFont(myFonts.medium);
+			mb.setFont(myFonts.medium);
+			menuDatei.setFont(myFonts.medium);
+		} else if (size == SoundButton.LARGE) {
+			lblTitel.setFont(myFonts.large);
+			tp.setFont(myFonts.large);
+			mb.setFont(myFonts.large);
+			menuDatei.setFont(myFonts.large);
+		}
+		SoundBoard temp;
+		for (int i = 0; i < sbVector.size(); i++) {
+			temp = (SoundBoard) sbVector.get(i);
+			temp.setSizeOfButtonelements(size);
+		}
+		validate();
+		repaint();
+	}
+
 	public class ListenerMenuBar implements ActionListener {
 
 		MainView hf;
@@ -432,6 +467,12 @@ public class MainView extends JFrame {
 						tp.getSelectedIndex());
 			} else if (e.getSource() == itemSaveSoundboard) {
 				saveSoundBoardAs();
+			} else if (e.getSource() == itemFontSmall) {
+				setSizeOfMainViewElements(SoundBoard.SMALL);
+			} else if (e.getSource() == itemFontMedium) {
+				setSizeOfMainViewElements(SoundBoard.MEDIUM);
+			} else if (e.getSource() == itemFontLarge) {
+				setSizeOfMainViewElements(SoundBoard.LARGE);
 			} else if (e.getSource() == itemLoadSoundboard) {
 				loadSoundBoardFile();
 				sbVectorToTappedPane();

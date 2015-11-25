@@ -10,9 +10,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Random;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -21,9 +18,12 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import data.SoundButtonProperties;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.Info;
-import data.SoundButtonProperties;
+import lib.myFonts;
 
 public class SoundButton extends JPanel {
 
@@ -33,14 +33,18 @@ public class SoundButton extends JPanel {
 
 	private GridBagConstraints c = new GridBagConstraints();
 
-	public ImageIcon iconShuffle = new ImageIcon(getClass().getClassLoader()
-			.getResource("resources/shuffle.png"));
-	public ImageIcon iconLoop = new ImageIcon(getClass().getClassLoader()
-			.getResource("resources/loop.png"));
-	public ImageIcon iconRepeat = new ImageIcon(getClass().getClassLoader()
-			.getResource("resources/repeat.png"));
+	public ImageIcon iconShuffle = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/shuffle.png"));
+	public ImageIcon iconLoop = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/loop.png"));
+	public ImageIcon iconRepeat = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/repeat.png"));
 
 	private File[] musicFileArray;
+
+	public static final int SMALL = 0;
+	public static final int MEDIUM = 1;
+	public static final int LARGE = 2;
 
 	public static final int oneSong = 0;
 	public static final int shuffle = 1;
@@ -52,6 +56,7 @@ public class SoundButton extends JPanel {
 
 	private Font fontLblCounterLblDuration = new Font("Monospaced", Font.BOLD,
 			14);
+
 	private boolean istBtnColorStandard = true;
 	private int counterCicle = 0;
 
@@ -79,8 +84,8 @@ public class SoundButton extends JPanel {
 	private ProgressbarListener pbl = new ProgressbarListener();
 	private Timer pbUpdateTimer = new Timer(100, pbl);
 
-	private JProgressBar pbDuration = new JProgressBar(JProgressBar.VERTICAL,
-			0, 1000);
+	private JProgressBar pbDuration = new JProgressBar(JProgressBar.VERTICAL, 0,
+			1000);
 
 	public SoundButton(SoundBoard parentSoundboard, String name) {
 		sb = parentSoundboard;
@@ -104,6 +109,22 @@ public class SoundButton extends JPanel {
 		lblLoop.setVisible(false);
 	}
 
+	public void setSizeOfElements(int size) {
+		if (size == SMALL) {
+			lblCounterCicle.setFont(myFonts.small);
+			lblDuration.setFont(myFonts.small);
+			lblName.setFont(myFonts.small);
+		} else if (size == MEDIUM) {
+			lblCounterCicle.setFont(myFonts.medium);
+			lblDuration.setFont(myFonts.medium);
+			lblName.setFont(myFonts.medium);
+		} else if (size == LARGE) {
+			lblCounterCicle.setFont(myFonts.large);
+			lblDuration.setFont(myFonts.large);
+			lblName.setFont(myFonts.large);
+		}
+	}
+
 	public void createBtnPanel() {
 		setLayout(new GridBagLayout());
 		// lblCounterCicle (Oben links)
@@ -113,8 +134,8 @@ public class SoundButton extends JPanel {
 		c.ipady = 3;
 		c.weightx = 0;
 		c.weighty = 0;
-		lblCounterCicle.setBorder(javax.swing.BorderFactory.createEmptyBorder(
-				2, 3, 0, 0));
+		lblCounterCicle.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(2, 3, 0, 0));
 		add(lblCounterCicle, c);
 
 		c.ipady = 0;
@@ -123,8 +144,8 @@ public class SoundButton extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0;
 		c.weighty = 0;
-		lblShuffle.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0,
-				0, 0));
+		lblShuffle.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		add(lblShuffle, c);
 		add(lblLoop, c);
 
@@ -133,16 +154,16 @@ public class SoundButton extends JPanel {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3,
-				0, 0));
+		lblDuration.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 0));
 		add(lblDuration, c);
 
 		c.ipadx = 0;
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3,
-				0, 0));
+		lblDuration.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 0));
 		add(lblRepeat, c);
 
 		// lblName (Mitte)
@@ -215,8 +236,8 @@ public class SoundButton extends JPanel {
 		properties.setMusicPath(musicPath);
 		if (musicPath != null) {
 			if (properties.getMusicPath().listFiles() != null) {
-				setMusicFileArray(Browse.getMusicFileArray(properties
-						.getMusicPath()));
+				setMusicFileArray(
+						Browse.getMusicFileArray(properties.getMusicPath()));
 				setLblDuration(String.valueOf(Browse
 						.getMusicFileArray(properties.getMusicPath()).length));
 			}
@@ -237,8 +258,8 @@ public class SoundButton extends JPanel {
 
 		} else {
 			if (properties.getMusicPath().listFiles() != null) {
-				setMusicFileArray(Browse.getMusicFileArray(properties
-						.getMusicPath()));
+				setMusicFileArray(
+						Browse.getMusicFileArray(properties.getMusicPath()));
 				setLblDuration(String.valueOf(Browse
 						.getMusicFileArray(properties.getMusicPath()).length));
 			}

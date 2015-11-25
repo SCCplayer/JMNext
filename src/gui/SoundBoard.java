@@ -8,13 +8,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 
-import javafx.scene.media.MediaPlayer;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import data.SbpChange;
 import data.SoundButtonProperties;
+import javafx.scene.media.MediaPlayer;
 
 public class SoundBoard extends JPanel {
 	private MainView hf;
@@ -22,6 +21,10 @@ public class SoundBoard extends JPanel {
 	private SoundButton[][] sbArrayChange;
 	private SoundButton sbTarget;
 	private ListenerMouseKlick lmk = new ListenerMouseKlick();
+
+	public static final int SMALL = 0;
+	public static final int MEDIUM = 1;
+	public static final int LARGE = 2;
 
 	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
 	private Cursor cursorMove = new Cursor(Cursor.MOVE_CURSOR);
@@ -39,8 +42,8 @@ public class SoundBoard extends JPanel {
 		sbArray = new SoundButton[zeilen][spalten];
 		for (int z = 0; z < zeilen; z++) {
 			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp] = new SoundButton(this, String.valueOf(spalten
-						* z + sp));
+				sbArray[z][sp] = new SoundButton(this,
+						String.valueOf(spalten * z + sp));
 				sbArray[z][sp].addMouseListener(lmk);
 				sbArray[z][sp].addMouseMotionListener(lmk);
 				add(sbArray[z][sp]);
@@ -58,8 +61,8 @@ public class SoundBoard extends JPanel {
 		sbArray = new SoundButton[zeilen][spalten];
 		for (int z = 0; z < zeilen; z++) {
 			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp] = new SoundButton(this, String.valueOf(spalten
-						* z + sp));
+				sbArray[z][sp] = new SoundButton(this,
+						String.valueOf(spalten * z + sp));
 				sbArray[z][sp].addMouseListener(lmk);
 				sbArray[z][sp].addMouseMotionListener(lmk);
 				add(sbArray[z][sp]);
@@ -174,8 +177,8 @@ public class SoundBoard extends JPanel {
 			SbpChange sbpChange = hf.getSbpChangeStack().pop();
 			System.out.println(sbpChange.getSbpLastUpdate().getName()
 					+ " wird wieder hergestellt");
-			sbpChange.getSbLastUpdate().setProperties(
-					sbpChange.getSbpLastUpdate());
+			sbpChange.getSbLastUpdate()
+					.setProperties(sbpChange.getSbpLastUpdate());
 			System.out.println("Undo changes");
 		}
 	}
@@ -203,8 +206,8 @@ public class SoundBoard extends JPanel {
 		}
 	}
 
-	private class ListenerMouseKlick implements MouseListener,
-			MouseMotionListener {
+	private class ListenerMouseKlick
+			implements MouseListener, MouseMotionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -213,18 +216,21 @@ public class SoundBoard extends JPanel {
 					for (int sp = 0; sp < sbArray[z].length; sp++) {
 						if (e.getSource() == sbArray[z][sp]) {
 							if (hf.getTapeA() != null) {
-								if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+								if (hf.getSbActive()
+										.istFadeOutTimerAktiv() == true) {
 									hf.getSbActive().sbStop();
 									sbArray[z][sp].sbPlay();
 								} else {
-									if ((hf.getSbActive() == sbArray[z][sp] && hf
-											.getSbActive().istPausiert != true)
-											|| (sbArray[z][sp].getButtonArt() == 99 && hf
-													.getSbActive().istPausiert != true)) {
+									if ((hf.getSbActive() == sbArray[z][sp]
+											&& hf.getSbActive().istPausiert != true)
+											|| (sbArray[z][sp]
+													.getButtonArt() == 99
+													&& hf.getSbActive().istPausiert != true)) {
 										hf.setSbNext(null);
 										hf.getSbActive().sbFadeOut();
 									} else {
-										if (sbArray[z][sp].getButtonArt() != 99) {
+										if (sbArray[z][sp]
+												.getButtonArt() != 99) {
 											hf.setSbNext(sbArray[z][sp]);
 											hf.getSbNext().changeColor();
 											hf.getSbNext().sbStartBlink();
@@ -262,7 +268,8 @@ public class SoundBoard extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e) && hf.wasDragged == true
-					&& hf.getSbpSource() != null && getMousePosition() != null) {
+					&& hf.getSbpSource() != null
+					&& getMousePosition() != null) {
 				if (getComponentAt(getMousePosition()) instanceof SoundButton) {
 					sbTarget = (SoundButton) getComponentAt(getMousePosition());
 
@@ -273,9 +280,8 @@ public class SoundBoard extends JPanel {
 					sbTarget.setProperties(hf.getSbpSource());
 					System.out.println("Soundbuttonquelle: "
 							+ hf.getSbpSource().getName()
-							+ "Soundbuttontarget: "
-							+ hf.getSbpChangeStack().peek().getSbpLastUpdate()
-									.getName());
+							+ "Soundbuttontarget: " + hf.getSbpChangeStack()
+									.peek().getSbpLastUpdate().getName());
 					hf.wasDragged = false;
 					hf.setSbpSource(null);
 				}
@@ -299,16 +305,17 @@ public class SoundBoard extends JPanel {
 		public void mouseDragged(MouseEvent e) {
 			System.out.println(getMousePosition());
 			if (getMousePosition() != null) {
-				if (hf.getSoundBoardActive().getComponentAt(getMousePosition()) instanceof SoundButton) {
+				if (hf.getSoundBoardActive().getComponentAt(
+						getMousePosition()) instanceof SoundButton) {
 					if (hf.wasDragged == false) {
 						System.out.println("Soundbutton");
 						for (int z = 0; z < sbArray.length; z++) {
 							for (int sp = 0; sp < sbArray[z].length; sp++) {
 								if (e.getSource() == sbArray[z][sp]) {
-									hf.setSbpSource(sbArray[z][sp]
-											.getProperties());
-									System.out
-											.println("Buttoneigenschaften wurden gespeichert."
+									hf.setSbpSource(
+											sbArray[z][sp].getProperties());
+									System.out.println(
+											"Buttoneigenschaften wurden gespeichert."
 													+ sbArray[z][sp].getName());
 									hf.wasDragged = true;
 								}
@@ -351,6 +358,14 @@ public class SoundBoard extends JPanel {
 			}
 		}
 		pbVisible = true;
+	}
+
+	public void setSizeOfButtonelements(int size) {
+		for (int z = 0; z < zeilen; z++) {
+			for (int sp = 0; sp < spalten; sp++) {
+				sbArray[z][sp].setSizeOfElements(size);
+			}
+		}
 	}
 
 	public MediaPlayer getTapeA() {
