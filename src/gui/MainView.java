@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.dnd.DragSource;
@@ -407,21 +408,44 @@ public class MainView extends JFrame {
 	}
 
 	public void setSizeOfMainViewElements(int size) {
+		JMenu tempMenu;
 		if (size == SoundButton.SMALL) {
 			lblTitel.setFont(myFonts.small);
 			tp.setFont(myFonts.small);
 			mb.setFont(myFonts.small);
 			menuDatei.setFont(myFonts.small);
+			for (Component menu : mb.getComponents()) {
+				menu.setFont(myFonts.small);
+				tempMenu = (JMenu) menu;
+				for (Component item : tempMenu.getMenuComponents()) {
+					item.setFont(myFonts.small);
+				}
+			}
 		} else if (size == SoundButton.MEDIUM) {
 			lblTitel.setFont(myFonts.medium);
 			tp.setFont(myFonts.medium);
 			mb.setFont(myFonts.medium);
 			menuDatei.setFont(myFonts.medium);
+			for (Component menu : mb.getComponents()) {
+				menu.setFont(myFonts.medium);
+				tempMenu = (JMenu) menu;
+				for (Component item : tempMenu.getMenuComponents()) {
+					item.setFont(myFonts.medium);
+				}
+			}
 		} else if (size == SoundButton.LARGE) {
 			lblTitel.setFont(myFonts.large);
 			tp.setFont(myFonts.large);
 			mb.setFont(myFonts.large);
 			menuDatei.setFont(myFonts.large);
+			System.out.println(mb.getComponentCount());
+			for (Component menu : mb.getComponents()) {
+				menu.setFont(myFonts.large);
+				tempMenu = (JMenu) menu;
+				for (Component item : tempMenu.getMenuComponents()) {
+					item.setFont(myFonts.large);
+				}
+			}
 		}
 		SoundBoard temp;
 		for (int i = 0; i < sbVector.size(); i++) {
