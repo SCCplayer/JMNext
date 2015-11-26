@@ -3,7 +3,9 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +24,11 @@ import java.io.ObjectOutputStream;
 import java.util.Stack;
 import java.util.Vector;
 
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.MediaPlayer;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -34,12 +41,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import data.SbpChange;
-import data.SoundButtonProperties;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.myFonts;
+import data.SbpChange;
+import data.SoundButtonProperties;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -48,6 +53,20 @@ public class MainView extends JFrame {
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
 	private ListenerChange lc = new ListenerChange();
 	private Vector sbVector = new Vector();
+
+	private JButton btnAddZeile;
+	private JButton btnRemoveZeile;
+	private JButton btnAddSpalte;
+	private JButton btnRemoveSpalte;
+
+	private ImageIcon iconAddZeile;
+	private ImageIcon iconAddZeileScale;
+	private ImageIcon iconRemoveZeile;
+	private ImageIcon iconRemoveZeileScale;
+	private ImageIcon iconAddSpalte;
+	private ImageIcon iconAddSpalteScale;
+	private ImageIcon iconRemoveSpalte;
+	private ImageIcon iconRemoveSpalteScale;
 
 	private SoundBoard soundBoardActive;
 	private int zeilen = 0;
@@ -61,8 +80,8 @@ public class MainView extends JFrame {
 	private JMenu menuAnsicht = new JMenu("Ansicht");
 	private JMenuItem itemPbAusblenden = new JMenuItem(
 			"Vortschrittsanzeige im Layer ein-/ausblenden");
-	private JMenuItem itemSpaltenBrowser = new JMenuItem(
-			"Spaltenbrowser anzeigen");
+	private JMenuItem itemIconBar = new JMenuItem(
+			"Symbolleiste ein-/ausblenden");
 	private JMenuItem itemFontSmall = new JMenuItem("Schriftgröße: Klein");
 	private JMenuItem itemFontMedium = new JMenuItem("Schriftgröße: Mittel");
 	private JMenuItem itemFontLarge = new JMenuItem("Schriftgröße: Groß");
@@ -75,8 +94,7 @@ public class MainView extends JFrame {
 	private JMenuItem itemAddLayer = new JMenuItem("Neuen Layer hinzufügen");
 	private JMenuItem itemRemoveLayer = new JMenuItem(
 			"Aktuellen Layer entfernen");
-	private JMenuItem itemSaveLayer = new JMenuItem(
-			"Aktuellen Layer speichern");
+	private JMenuItem itemSaveLayer = new JMenuItem("Aktuellen Layer speichern");
 	private JMenuItem itemLoadLayer = new JMenuItem("Layer laden");
 	private JMenuItem itemSaveSoundboard = new JMenuItem(
 			"Soundboard speichern unter");
@@ -85,6 +103,7 @@ public class MainView extends JFrame {
 
 	private FlowLayout fla = new FlowLayout();
 	private JPanel pnlAnzeige = new JPanel(fla);
+	private JPanel iconBar;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
 
@@ -123,6 +142,10 @@ public class MainView extends JFrame {
 			pnlAnzeige.addMouseListener(lmk);
 			pnlAnzeige.addMouseMotionListener(lmk);
 			add(pnlAnzeige, BorderLayout.SOUTH);
+			loadImageIcons();
+			createIconBar();
+			add(iconBar, BorderLayout.EAST);
+			iconBar.setVisible(false);
 
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setSize(1000, 500);
@@ -187,13 +210,13 @@ public class MainView extends JFrame {
 
 	private void createMenuAnsicht() {
 		itemPbAusblenden.addActionListener(lmb);
-		itemSpaltenBrowser.addActionListener(lmb);
+		itemIconBar.addActionListener(lmb);
 		itemSideView.addActionListener(lmb);
 		itemFontSmall.addActionListener(lmb);
 		itemFontMedium.addActionListener(lmb);
 		itemFontLarge.addActionListener(lmb);
 		menuAnsicht.add(itemPbAusblenden);
-		// menuAnsicht.add(itemSpaltenBrowser);
+		menuAnsicht.add(itemIconBar);
 		menuAnsicht.add(itemSideView);
 		menuAnsicht.add(itemFontSmall);
 		menuAnsicht.add(itemFontMedium);
@@ -206,14 +229,16 @@ public class MainView extends JFrame {
 				.split(":")[0].compareTo("file") == 0) {
 			if (getClass().getClassLoader().getResource("resources").toString()
 					.split(":").length == 2) {
-				fileAutoSave = new File(getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[1]
+				fileAutoSave = new File(
+						getClass().getClassLoader().getResource("resources")
+								.toString().split(":")[1]
 								.concat("/autosave.ser"));
 				System.out.println(fileAutoSave.getAbsolutePath());
 			} else if (getClass().getClassLoader().getResource("resources")
 					.toString().split(":").length == 3) {
-				fileAutoSave = new File(getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[2]
+				fileAutoSave = new File(
+						getClass().getClassLoader().getResource("resources")
+								.toString().split(":")[2]
 								.concat("/autosave.ser"));
 			}
 			System.out.println(fileAutoSave.getAbsolutePath());
@@ -245,8 +270,8 @@ public class MainView extends JFrame {
 				os.writeBoolean(sbSave.pbVisible);
 				for (int z = 0; z < sbSave.getZeilen(); z++) {
 					for (int sp = 0; sp < sbSave.getSpalten(); sp++) {
-						os.writeObject(
-								sbSave.getSbArray()[z][sp].getProperties());
+						os.writeObject(sbSave.getSbArray()[z][sp]
+								.getProperties());
 						System.out.println("Zeile: " + z + " Spalte: " + sp
 								+ " gespeichert");
 					}
@@ -255,8 +280,8 @@ public class MainView extends JFrame {
 			}
 			os.close();
 		} catch (Exception ex) {
-			System.out.println(
-					"Objekte konnten nicht vollständig gespeichert werden");
+			System.out
+					.println("Objekte konnten nicht vollständig gespeichert werden");
 			System.out.println(ex.getMessage());
 		}
 	}
@@ -472,23 +497,32 @@ public class MainView extends JFrame {
 				} else {
 					soundBoardActive.pbEinblenden();
 				}
-			} else if (e.getSource() == itemAddSpalte) {
+			} else if (e.getSource() == itemIconBar) {
+				if (iconBar.isVisible() == true) {
+					iconBar.setVisible(false);
+				} else {
+					iconBar.setVisible(true);
+				}
+			} else if (e.getSource() == itemAddSpalte
+					|| e.getSource() == btnAddSpalte) {
 				System.out.println("Spalte hinzufügen");
 				soundBoardActive.addSpalte();
-			} else if (e.getSource() == itemRemoveSpalte) {
+			} else if (e.getSource() == itemRemoveSpalte
+					|| e.getSource() == btnRemoveSpalte) {
 				System.out.println("Spalte entfernen");
 				soundBoardActive.removeSpalte();
-			} else if (e.getSource() == itemAddZeile) {
+			} else if (e.getSource() == itemAddZeile
+					|| e.getSource() == btnAddZeile) {
 				System.out.println("Zeile hinzufügen");
 				soundBoardActive.addZeile();
-			} else if (e.getSource() == itemRemoveZeile) {
+			} else if (e.getSource() == itemRemoveZeile
+					|| e.getSource() == btnRemoveZeile) {
 				System.out.println("Spalte entfernen");
 				soundBoardActive.removeZeile();
 			} else if (e.getSource() == itemSideView) {
 				System.out.println("Sideview ertellen");
-				sv = new SideView(hf, soundBoardActive,
-						tp.getTitleAt(tp.getSelectedIndex()),
-						tp.getSelectedIndex());
+				sv = new SideView(hf, soundBoardActive, tp.getTitleAt(tp
+						.getSelectedIndex()), tp.getSelectedIndex());
 			} else if (e.getSource() == itemSaveSoundboard) {
 				saveSoundBoardAs();
 			} else if (e.getSource() == itemFontSmall) {
@@ -523,8 +557,8 @@ public class MainView extends JFrame {
 		}
 	}
 
-	private class ListenerMouseKlick
-			implements MouseListener, MouseMotionListener {
+	private class ListenerMouseKlick implements MouseListener,
+			MouseMotionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -540,8 +574,8 @@ public class MainView extends JFrame {
 			if (soundBoardActive.getMousePosition() != null) {
 				if (soundBoardActive.getComponentAt(soundBoardActive
 						.getMousePosition()) instanceof SoundButton) {
-					soundButton = (SoundButton) soundBoardActive.getComponentAt(
-							soundBoardActive.getMousePosition());
+					soundButton = (SoundButton) soundBoardActive
+							.getComponentAt(soundBoardActive.getMousePosition());
 					if (soundButton.getProperties().getButtonArt() == 99
 							&& anzeigePfad != null) {
 						System.out.println("Buttonart = 99");
@@ -602,22 +636,73 @@ public class MainView extends JFrame {
 		public void stateChanged(ChangeEvent e) {
 			if (e.getSource() == tp && tp.getComponentCount() > 1) {
 				try {
-					System.out.println(
-							"Selected Index: " + tp.getSelectedIndex());
-					soundBoardActive = (SoundBoard) sbVector
-							.get(tp.getSelectedIndex());
-					System.out.println(
-							"soundBoardActive: " + tp.getSelectedIndex() + " "
-									+ sbVector.indexOf(soundBoardActive));
+					System.out.println("Selected Index: "
+							+ tp.getSelectedIndex());
+					soundBoardActive = (SoundBoard) sbVector.get(tp
+							.getSelectedIndex());
+					System.out.println("soundBoardActive: "
+							+ tp.getSelectedIndex() + " "
+							+ sbVector.indexOf(soundBoardActive));
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
 					System.out.println("sbVectorSize: " + sbVector.size()
 							+ " tpgetselectedIndex: " + tp.getSelectedIndex());
-					System.out.println(
-							"Fehler in Methode: MainView.ListenerChange");
+					System.out
+							.println("Fehler in Methode: MainView.ListenerChange");
 				}
 			}
 		}
+	}
+
+	public void loadImageIcons() {
+		iconAddZeile = new ImageIcon(getClass().getClassLoader().getResource(
+				"resources/addRow.png"));
+		iconRemoveZeile = new ImageIcon(getClass().getClassLoader()
+				.getResource("resources/removeRow.png"));
+		iconAddSpalte = new ImageIcon(getClass().getClassLoader().getResource(
+				"resources/addColumn.png"));
+		iconRemoveSpalte = new ImageIcon(getClass().getClassLoader()
+				.getResource("resources/removeColumn.png"));
+	}
+
+	public JPanel createIconBar() {
+		int x32 = 64;
+		iconBar = new JPanel();
+		iconBar.setLayout(new FlowLayout());
+		iconAddZeileScale = new ImageIcon(iconAddZeile.getImage()
+				.getScaledInstance(x32, x32, Image.SCALE_DEFAULT));
+		btnAddZeile = new JButton(iconAddZeileScale);
+		btnAddZeile.setPreferredSize(new Dimension(x32, x32));
+		btnAddZeile.setToolTipText("Zeile hinzufügen");
+		btnAddZeile.addActionListener(lmb);
+		iconBar.add(btnAddZeile);
+
+		iconRemoveZeileScale = new ImageIcon(iconRemoveZeile.getImage()
+				.getScaledInstance(x32, x32, Image.SCALE_DEFAULT));
+		btnRemoveZeile = new JButton(iconRemoveZeileScale);
+		btnRemoveZeile.setPreferredSize(new Dimension(x32, x32));
+		btnRemoveZeile.setToolTipText("Zeile entfernen");
+		btnRemoveZeile.addActionListener(lmb);
+		iconBar.add(btnRemoveZeile);
+
+		iconAddSpalteScale = new ImageIcon(iconAddSpalte.getImage()
+				.getScaledInstance(x32, x32, Image.SCALE_DEFAULT));
+		btnAddSpalte = new JButton(iconAddSpalteScale);
+		btnAddSpalte.setPreferredSize(new Dimension(x32, x32));
+		btnAddSpalte.setToolTipText("Spalte hinzufügen");
+		btnAddSpalte.addActionListener(lmb);
+		iconBar.add(btnAddSpalte);
+
+		iconRemoveSpalteScale = new ImageIcon(iconRemoveSpalte.getImage()
+				.getScaledInstance(x32, x32, Image.SCALE_DEFAULT));
+		btnRemoveSpalte = new JButton(iconRemoveSpalteScale);
+		btnRemoveSpalte.setPreferredSize(new Dimension(x32, x32));
+		btnRemoveSpalte.setToolTipText("Spalte entfernen");
+		btnRemoveSpalte.addActionListener(lmb);
+		iconBar.add(btnRemoveSpalte);
+
+		return iconBar;
+
 	}
 
 	public MediaPlayer getTapeA() {
