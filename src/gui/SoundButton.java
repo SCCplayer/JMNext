@@ -23,7 +23,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.Info;
-import lib.myFonts;
 
 public class SoundButton extends JPanel {
 
@@ -41,10 +40,6 @@ public class SoundButton extends JPanel {
 			getClass().getClassLoader().getResource("resources/repeat.png"));
 
 	private File[] musicFileArray;
-
-	public static final int SMALL = 0;
-	public static final int MEDIUM = 1;
-	public static final int LARGE = 2;
 
 	public static final int oneSong = 0;
 	public static final int shuffle = 1;
@@ -107,22 +102,6 @@ public class SoundButton extends JPanel {
 		lblShuffle.setVisible(false);
 		lblRepeat.setVisible(false);
 		lblLoop.setVisible(false);
-	}
-
-	public void setSizeOfElements(int size) {
-		if (size == SMALL) {
-			lblCounterCicle.setFont(myFonts.small);
-			lblDuration.setFont(myFonts.small);
-			lblName.setFont(myFonts.small);
-		} else if (size == MEDIUM) {
-			lblCounterCicle.setFont(myFonts.medium);
-			lblDuration.setFont(myFonts.medium);
-			lblName.setFont(myFonts.medium);
-		} else if (size == LARGE) {
-			lblCounterCicle.setFont(myFonts.large);
-			lblDuration.setFont(myFonts.large);
-			lblName.setFont(myFonts.large);
-		}
 	}
 
 	public void createBtnPanel() {

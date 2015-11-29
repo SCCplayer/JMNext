@@ -5,7 +5,9 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,9 +26,6 @@ import java.io.ObjectOutputStream;
 import java.util.Stack;
 import java.util.Vector;
 
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.MediaPlayer;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -41,10 +40,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import lib.Browse;
-import lib.myFonts;
 import data.SbpChange;
 import data.SoundButtonProperties;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.MediaPlayer;
+import lib.Browse;
+import lib.MyFonts;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -94,7 +95,8 @@ public class MainView extends JFrame {
 	private JMenuItem itemAddLayer = new JMenuItem("Neuen Layer hinzufügen");
 	private JMenuItem itemRemoveLayer = new JMenuItem(
 			"Aktuellen Layer entfernen");
-	private JMenuItem itemSaveLayer = new JMenuItem("Aktuellen Layer speichern");
+	private JMenuItem itemSaveLayer = new JMenuItem(
+			"Aktuellen Layer speichern");
 	private JMenuItem itemLoadLayer = new JMenuItem("Layer laden");
 	private JMenuItem itemSaveSoundboard = new JMenuItem(
 			"Soundboard speichern unter");
@@ -148,9 +150,13 @@ public class MainView extends JFrame {
 			iconBar.setVisible(false);
 
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setSize(1000, 500);
+			setSize(2000, 1000);
 			System.out.println(sbVector.size());
+			setSizeOfMainViewElements(MyFonts.large);
 			setVisible(true);
+			System.out.println(Toolkit.getDefaultToolkit().getScreenSize());
+			System.out
+					.println(Toolkit.getDefaultToolkit().getScreenResolution());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -229,16 +235,14 @@ public class MainView extends JFrame {
 				.split(":")[0].compareTo("file") == 0) {
 			if (getClass().getClassLoader().getResource("resources").toString()
 					.split(":").length == 2) {
-				fileAutoSave = new File(
-						getClass().getClassLoader().getResource("resources")
-								.toString().split(":")[1]
+				fileAutoSave = new File(getClass().getClassLoader()
+						.getResource("resources").toString().split(":")[1]
 								.concat("/autosave.ser"));
 				System.out.println(fileAutoSave.getAbsolutePath());
 			} else if (getClass().getClassLoader().getResource("resources")
 					.toString().split(":").length == 3) {
-				fileAutoSave = new File(
-						getClass().getClassLoader().getResource("resources")
-								.toString().split(":")[2]
+				fileAutoSave = new File(getClass().getClassLoader()
+						.getResource("resources").toString().split(":")[2]
 								.concat("/autosave.ser"));
 			}
 			System.out.println(fileAutoSave.getAbsolutePath());
@@ -270,8 +274,8 @@ public class MainView extends JFrame {
 				os.writeBoolean(sbSave.pbVisible);
 				for (int z = 0; z < sbSave.getZeilen(); z++) {
 					for (int sp = 0; sp < sbSave.getSpalten(); sp++) {
-						os.writeObject(sbSave.getSbArray()[z][sp]
-								.getProperties());
+						os.writeObject(
+								sbSave.getSbArray()[z][sp].getProperties());
 						System.out.println("Zeile: " + z + " Spalte: " + sp
 								+ " gespeichert");
 					}
@@ -280,8 +284,8 @@ public class MainView extends JFrame {
 			}
 			os.close();
 		} catch (Exception ex) {
-			System.out
-					.println("Objekte konnten nicht vollständig gespeichert werden");
+			System.out.println(
+					"Objekte konnten nicht vollständig gespeichert werden");
 			System.out.println(ex.getMessage());
 		}
 	}
@@ -432,50 +436,23 @@ public class MainView extends JFrame {
 		}
 	}
 
-	public void setSizeOfMainViewElements(int size) {
+	public void setSizeOfMainViewElements(Font myFont) {
 		JMenu tempMenu;
-		if (size == SoundButton.SMALL) {
-			lblTitel.setFont(myFonts.small);
-			tp.setFont(myFonts.small);
-			mb.setFont(myFonts.small);
-			menuDatei.setFont(myFonts.small);
-			for (Component menu : mb.getComponents()) {
-				menu.setFont(myFonts.small);
-				tempMenu = (JMenu) menu;
-				for (Component item : tempMenu.getMenuComponents()) {
-					item.setFont(myFonts.small);
-				}
-			}
-		} else if (size == SoundButton.MEDIUM) {
-			lblTitel.setFont(myFonts.medium);
-			tp.setFont(myFonts.medium);
-			mb.setFont(myFonts.medium);
-			menuDatei.setFont(myFonts.medium);
-			for (Component menu : mb.getComponents()) {
-				menu.setFont(myFonts.medium);
-				tempMenu = (JMenu) menu;
-				for (Component item : tempMenu.getMenuComponents()) {
-					item.setFont(myFonts.medium);
-				}
-			}
-		} else if (size == SoundButton.LARGE) {
-			lblTitel.setFont(myFonts.large);
-			tp.setFont(myFonts.large);
-			mb.setFont(myFonts.large);
-			menuDatei.setFont(myFonts.large);
-			System.out.println(mb.getComponentCount());
-			for (Component menu : mb.getComponents()) {
-				menu.setFont(myFonts.large);
-				tempMenu = (JMenu) menu;
-				for (Component item : tempMenu.getMenuComponents()) {
-					item.setFont(myFonts.large);
-				}
+		lblTitel.setFont(myFont);
+		tp.setFont(myFont);
+		mb.setFont(myFont);
+		menuDatei.setFont(myFont);
+		for (Component menu : mb.getComponents()) {
+			menu.setFont(myFont);
+			tempMenu = (JMenu) menu;
+			for (Component item : tempMenu.getMenuComponents()) {
+				item.setFont(myFont);
 			}
 		}
 		SoundBoard temp;
 		for (int i = 0; i < sbVector.size(); i++) {
 			temp = (SoundBoard) sbVector.get(i);
-			temp.setSizeOfButtonelements(size);
+			temp.setSizeOfButtonelements(myFont);
 		}
 		validate();
 		repaint();
@@ -521,16 +498,18 @@ public class MainView extends JFrame {
 				soundBoardActive.removeZeile();
 			} else if (e.getSource() == itemSideView) {
 				System.out.println("Sideview ertellen");
-				sv = new SideView(hf, soundBoardActive, tp.getTitleAt(tp
-						.getSelectedIndex()), tp.getSelectedIndex());
+				sv = new SideView(hf, soundBoardActive,
+						tp.getTitleAt(tp.getSelectedIndex()),
+						tp.getSelectedIndex());
 			} else if (e.getSource() == itemSaveSoundboard) {
 				saveSoundBoardAs();
 			} else if (e.getSource() == itemFontSmall) {
-				setSizeOfMainViewElements(SoundBoard.SMALL);
+				setSizeOfMainViewElements(MyFonts.small);
 			} else if (e.getSource() == itemFontMedium) {
-				setSizeOfMainViewElements(SoundBoard.MEDIUM);
+				setSizeOfMainViewElements(MyFonts.medium);
 			} else if (e.getSource() == itemFontLarge) {
-				setSizeOfMainViewElements(SoundBoard.LARGE);
+				setSizeOfMainViewElements(MyFonts.large);
+				// Browse.getMusicFileFX();
 			} else if (e.getSource() == itemLoadSoundboard) {
 				loadSoundBoardFile();
 				sbVectorToTappedPane();
@@ -557,8 +536,8 @@ public class MainView extends JFrame {
 		}
 	}
 
-	private class ListenerMouseKlick implements MouseListener,
-			MouseMotionListener {
+	private class ListenerMouseKlick
+			implements MouseListener, MouseMotionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -574,8 +553,8 @@ public class MainView extends JFrame {
 			if (soundBoardActive.getMousePosition() != null) {
 				if (soundBoardActive.getComponentAt(soundBoardActive
 						.getMousePosition()) instanceof SoundButton) {
-					soundButton = (SoundButton) soundBoardActive
-							.getComponentAt(soundBoardActive.getMousePosition());
+					soundButton = (SoundButton) soundBoardActive.getComponentAt(
+							soundBoardActive.getMousePosition());
 					if (soundButton.getProperties().getButtonArt() == 99
 							&& anzeigePfad != null) {
 						System.out.println("Buttonart = 99");
@@ -636,31 +615,32 @@ public class MainView extends JFrame {
 		public void stateChanged(ChangeEvent e) {
 			if (e.getSource() == tp && tp.getComponentCount() > 1) {
 				try {
-					System.out.println("Selected Index: "
-							+ tp.getSelectedIndex());
-					soundBoardActive = (SoundBoard) sbVector.get(tp
-							.getSelectedIndex());
-					System.out.println("soundBoardActive: "
-							+ tp.getSelectedIndex() + " "
-							+ sbVector.indexOf(soundBoardActive));
+					System.out.println(
+							"Selected Index: " + tp.getSelectedIndex());
+					soundBoardActive = (SoundBoard) sbVector
+							.get(tp.getSelectedIndex());
+					System.out.println(
+							"soundBoardActive: " + tp.getSelectedIndex() + " "
+									+ sbVector.indexOf(soundBoardActive));
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
 					System.out.println("sbVectorSize: " + sbVector.size()
 							+ " tpgetselectedIndex: " + tp.getSelectedIndex());
-					System.out
-							.println("Fehler in Methode: MainView.ListenerChange");
+					System.out.println(
+							"Fehler in Methode: MainView.ListenerChange");
 				}
 			}
 		}
+
 	}
 
 	public void loadImageIcons() {
-		iconAddZeile = new ImageIcon(getClass().getClassLoader().getResource(
-				"resources/addRow.png"));
+		iconAddZeile = new ImageIcon(getClass().getClassLoader()
+				.getResource("resources/addRow.png"));
 		iconRemoveZeile = new ImageIcon(getClass().getClassLoader()
 				.getResource("resources/removeRow.png"));
-		iconAddSpalte = new ImageIcon(getClass().getClassLoader().getResource(
-				"resources/addColumn.png"));
+		iconAddSpalte = new ImageIcon(getClass().getClassLoader()
+				.getResource("resources/addColumn.png"));
 		iconRemoveSpalte = new ImageIcon(getClass().getClassLoader()
 				.getResource("resources/removeColumn.png"));
 	}

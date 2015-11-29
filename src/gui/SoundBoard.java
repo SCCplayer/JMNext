@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
@@ -14,6 +15,7 @@ import javax.swing.SwingUtilities;
 import data.SbpChange;
 import data.SoundButtonProperties;
 import javafx.scene.media.MediaPlayer;
+import lib.MyFonts;
 
 public class SoundBoard extends JPanel {
 	private MainView hf;
@@ -360,12 +362,8 @@ public class SoundBoard extends JPanel {
 		pbVisible = true;
 	}
 
-	public void setSizeOfButtonelements(int size) {
-		for (int z = 0; z < zeilen; z++) {
-			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp].setSizeOfElements(size);
-			}
-		}
+	public void setSizeOfButtonelements(Font myFont) {
+		MyFonts.guiResizeFont(getComponents(), myFont);
 	}
 
 	public MediaPlayer getTapeA() {
