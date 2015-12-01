@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -61,14 +62,26 @@ public class DialogSoundButton extends JDialog {
 
 	public DialogSoundButton(SoundButton sb) {
 		this.soundButton = sb;
+		initialComponents();
+		setVisible(true);
+	}
+
+	public DialogSoundButton(SoundButton sb, Font myFont) {
+		this.soundButton = sb;
+		initialComponents();
+		MyFonts.guiResizeFont(getComponents(), myFont);
+		setVisible(true);
+	}
+
+	private void initialComponents() {
 		System.out.println(soundButton.getButtonArt());
 		iconLoop = new JLabel(soundButton.iconLoop);
 		iconShuffle = new JLabel(soundButton.iconShuffle);
 		iconRepeat = new JLabel(soundButton.iconRepeat);
-		musicPath = sb.getMusicPath();
-		if (sb.getButtonArt() == 0) {
+		musicPath = soundButton.getMusicPath();
+		if (soundButton.getButtonArt() == 0) {
 			System.out.println("Soundbutton");
-		} else if (sb.getButtonArt() == 1) {
+		} else if (soundButton.getButtonArt() == 1) {
 			System.out.println("Shufflebutton");
 		}
 		pnlDialog.setLayout(gbl);
@@ -79,7 +92,7 @@ public class DialogSoundButton extends JDialog {
 		// ========= Eingabe Name ===============================
 		pnlDialog.add(lbName, l);
 
-		tfName = new JTextField(sb.getName());
+		tfName = new JTextField(soundButton.getName());
 		tfName.addActionListener(bl);
 		pnlDialog.add(tfName, r);
 
@@ -87,26 +100,26 @@ public class DialogSoundButton extends JDialog {
 		nextRow(5, 5);
 		pnlDialog.add(lbFarbe, l);
 		btnButtonFarbe.addActionListener(bl);
-		btnButtonFarbe.setBackground(sb.getBackground());
-		btnButtonFarbe.setForeground(sb.getForegroundColorStandard());
+		btnButtonFarbe.setBackground(soundButton.getBackground());
+		btnButtonFarbe.setForeground(soundButton.getForegroundColorStandard());
 		pnlDialog.add(btnButtonFarbe, r);
 
 		// ========== Farbenauswahl Text =============================
 		nextRow();
 		pnlDialog.add(new JLabel("Textfarbe: "), l);
 		btnTextFarbe.addActionListener(bl);
-		btnTextFarbe.setBackground(sb.getBackground());
-		btnTextFarbe.setForeground(sb.getForegroundColorStandard());
+		btnTextFarbe.setBackground(soundButton.getBackground());
+		btnTextFarbe.setForeground(soundButton.getForegroundColorStandard());
 		pnlDialog.add(btnTextFarbe, r);
 
 		// ========== Pfadauswahl =============================
 		nextRow();
 		pnlDialog.add(new JLabel("Pfad: "), l);
 
-		if (sb.getMusicPath() == null) {
+		if (soundButton.getMusicPath() == null) {
 			tfPath = new JTextField();
 		} else {
-			tfPath = new JTextField(sb.getMusicPathString());
+			tfPath = new JTextField(soundButton.getMusicPathString());
 		}
 
 		createPanelAuswahl();
@@ -141,8 +154,7 @@ public class DialogSoundButton extends JDialog {
 		setLayout(new BorderLayout());
 		add(pnlDialog, BorderLayout.CENTER);
 		add(pnlSouth, BorderLayout.SOUTH);
-		MyFonts.guiResizeFont(getComponents(), MyFonts.large);
-		setVisible(true);
+
 	}
 
 	public class btnListener implements ActionListener {

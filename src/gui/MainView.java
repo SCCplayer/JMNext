@@ -108,6 +108,7 @@ public class MainView extends JFrame {
 	private JPanel iconBar;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
+	private Font actualFontSize;
 
 	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
 	private Cursor cursorMove = new Cursor(Cursor.MOVE_CURSOR);
@@ -153,6 +154,7 @@ public class MainView extends JFrame {
 			setSize(2000, 1000);
 			System.out.println(sbVector.size());
 			setSizeOfMainViewElements(MyFonts.large);
+			actualFontSize = MyFonts.large;
 			setVisible(true);
 			System.out.println(Toolkit.getDefaultToolkit().getScreenSize());
 			System.out
@@ -747,6 +749,10 @@ public class MainView extends JFrame {
 
 	public void setSoundBoardActive(SoundBoard soundBoardActive) {
 		this.soundBoardActive = soundBoardActive;
+	}
+
+	public Font getActualFontSize() {
+		return actualFontSize;
 	}
 
 }

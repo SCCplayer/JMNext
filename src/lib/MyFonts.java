@@ -14,7 +14,7 @@ public abstract class MyFonts {
 			if (comp[x] instanceof Container)
 				guiResizeFont(((Container) comp[x]).getComponents(), myFont);
 			try {
-				comp[x].setFont(MyFonts.large);
+				comp[x].setFont(myFont);
 			} catch (Exception e) {
 			} // do nothing
 		}
