@@ -5,6 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -82,6 +89,8 @@ public class SoundButton extends JPanel {
 	private JProgressBar pbDuration = new JProgressBar(JProgressBar.VERTICAL, 0,
 			1000);
 
+	private myDropTargetListener dtl = new myDropTargetListener();
+
 	public SoundButton(SoundBoard parentSoundboard, String name) {
 		sb = parentSoundboard;
 		setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -102,6 +111,8 @@ public class SoundButton extends JPanel {
 		lblShuffle.setVisible(false);
 		lblRepeat.setVisible(false);
 		lblLoop.setVisible(false);
+		DropTarget dt = new DropTarget(this, dtl);
+		setDropTarget(dt);
 	}
 
 	public void createBtnPanel() {
@@ -171,6 +182,8 @@ public class SoundButton extends JPanel {
 			changeColor();
 			sb.setTapeA(new MediaPlayer(new Media(getMusicPathASCII())));
 			sb.getTapeA().play();
+			// Runnable t1 = sb.getTapeA().getOnEndOfMedia();
+			// t1.run();
 			sb.getTapeA().setVolume(getVolume());
 			lblCounterUp();
 			if (blinkTimer.isRunning() == false) {
@@ -529,5 +542,76 @@ public class SoundButton extends JPanel {
 				sb.setSbActive(null);
 			}
 		}
+	}
+
+	private class myDropTargetListener implements DropTargetListener {
+
+		@Override
+		public void dragEnter(DropTargetDragEvent dtde) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void dragExit(DropTargetEvent dte) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void dragOver(DropTargetDragEvent dtde) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void drop(DropTargetDropEvent dtde) {
+			// TODO Auto-generated method stub
+			System.out.println("Drop");
+			try {
+				Transferable tr = dtde.getTransferable();
+				DataFlavor[] flavors = tr.getTransferDataFlavors();
+				for (int i = 0; i < flavors.length; i++) {
+					if (flavors[i].isFlavorJavaFileListType()) {
+						// Accept dropped file
+						dtde.acceptDrop(dtde.getDropAction());
+						// Write the path from the first file into the
+						// JTextField tfTest
+						setMusicPath(
+								new File(tr.getTransferData(flavors[i])
+										.toString().substring(1,
+												tr.getTransferData(flavors[i])
+														.toString().length()
+														- 1)));
+						setName(tr.getTransferData(flavors[i]).toString()
+								.substring(1, tr.getTransferData(flavors[i])
+										.toString().length() - 1));
+						setButtonArt(oneSong);
+						System.out
+								.println(tr.getTransferData(flavors[i])
+										.toString().substring(1,
+												tr.getTransferData(flavors[i])
+														.toString().length()
+														- 1));
+						dtde.dropComplete(true);
+						return;
+					}
+				}
+			}
+
+			catch (Throwable t) {
+				t.printStackTrace();
+			}
+			// If an error occurred
+			dtde.rejectDrop();
+			System.out.println("DragAndDrop Fehlgeschlagen");
+		}
+
+		@Override
+		public void dropActionChanged(DropTargetDragEvent dtde) {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 }
