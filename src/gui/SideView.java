@@ -42,6 +42,7 @@ public class SideView extends JFrame {
 			System.out.println(position);
 			hf.getTp().add(sb, position);
 			hf.getTp().setTitleAt(position, name);
+			hf.setSideViewNull();
 		}
 
 		@Override

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
@@ -36,6 +37,7 @@ public class SoundButton extends JPanel {
 	private SoundBoard sb;
 
 	public boolean istPausiert = false;
+	private int statusSoundButton = 0;
 
 	private GridBagConstraints c = new GridBagConstraints();
 
@@ -43,16 +45,36 @@ public class SoundButton extends JPanel {
 			getClass().getClassLoader().getResource("resources/shuffle.png"));
 	public ImageIcon iconLoop = new ImageIcon(
 			getClass().getClassLoader().getResource("resources/loop.png"));
-	public ImageIcon iconRepeat = new ImageIcon(
+	public ImageIcon iconMultiSong = new ImageIcon(
 			getClass().getClassLoader().getResource("resources/repeat.png"));
+	public ImageIcon iconPlay = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/play.png"));
+	public ImageIcon iconPause = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/pause.png"));
+	public ImageIcon iconStop = new ImageIcon(
+			getClass().getClassLoader().getResource("resources/stop.png"));
+
+	public ImageIcon iconStopScale = new ImageIcon(
+			iconStop.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+	public ImageIcon iconPlayScale = new ImageIcon(
+			iconPlay.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+	public ImageIcon iconPauseScale = new ImageIcon(iconPause.getImage()
+			.getScaledInstance(24, 24, Image.SCALE_DEFAULT));
 
 	private File[] musicFileArray;
 
 	public static final int oneSong = 0;
 	public static final int shuffle = 1;
-	public static final int shuffleRepeat = 2;
+	public static final int multiSong = 2;
 	public static final int loop = 3;
 	public static final int oneSongOwnPlayer = 4;
+
+	public static final int statusStop = 0;
+	public static final int statusPlay = 1;
+	public static final int statusPause = 2;
+
+	private Color helleGegenFarbe = new Color(90, 90, 90);
+	private Color standardTextfarbe = new Color(51, 51, 51);
 
 	private SoundButtonProperties properties = new SoundButtonProperties();
 
@@ -61,20 +83,26 @@ public class SoundButton extends JPanel {
 
 	private boolean istBtnColorStandard = true;
 	private int counterCicle = 0;
+	private int counterMultiSong = 0;
+	private int titelNummer = 0;
 
 	private JLabel lblName = new JLabel();
 	private JLabel lblShuffle = new JLabel(iconShuffle);
 	private JLabel lblLoop = new JLabel(iconLoop);
-	private JLabel lblRepeat = new JLabel(iconRepeat);
+	private JLabel lblMultiSong = new JLabel(iconMultiSong);
 	private JLabel lblCounterCicle = new JLabel("0");
 	private JLabel lblDuration = new JLabel("0:00");
+	private JLabel lblButtonStop = new JLabel(iconStopScale);
+	private JLabel lblButtonPlay = new JLabel(iconPlayScale);
+	private JLabel lblButtonPause = new JLabel(iconPauseScale);
+	private JLabel lblUnicodePause = new JLabel("\u23F8");
 
 	private BlinkListener bl = new BlinkListener();
 	private Timer blinkTimer = new Timer(500, bl);
 
 	private double volumeBlende = 0;
 	private double volumePerStep = 0;
-	private int blendenCounterStartwert = 200;
+	private int blendenCounterStartwert = 100;
 	private int blendenCounter = blendenCounterStartwert;
 
 	private FadeOutListener fadeOutListener = new FadeOutListener();
@@ -104,12 +132,15 @@ public class SoundButton extends JPanel {
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblShuffle.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblLoop.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblRepeat.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblMultiSong.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblButtonStop.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblButtonPlay.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblButtonPause.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDuration.setFont(fontLblCounterLblDuration);
 		lblCounterCicle.setFont(fontLblCounterLblDuration);
 		createBtnPanel();
 		lblShuffle.setVisible(false);
-		lblRepeat.setVisible(false);
+		lblMultiSong.setVisible(false);
 		lblLoop.setVisible(false);
 		DropTarget dt = new DropTarget(this, dtl);
 		setDropTarget(dt);
@@ -135,9 +166,17 @@ public class SoundButton extends JPanel {
 		c.weightx = 0;
 		c.weighty = 0;
 		lblShuffle.setBorder(
-				javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		add(lblShuffle, c);
 		add(lblLoop, c);
+
+		c.ipadx = 0;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = 1;
+		lblMultiSong.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
+		add(lblMultiSong, c);
 
 		// lblDuration (Unten links)
 		c.ipadx = 0;
@@ -148,13 +187,23 @@ public class SoundButton extends JPanel {
 				javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 0));
 		add(lblDuration, c);
 
+		// Anzeige Play/Pause/Stop (unten Rechts)
 		c.ipadx = 0;
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblDuration.setBorder(
-				javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 0));
-		add(lblRepeat, c);
+		lblButtonStop.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
+		lblButtonPlay.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
+		lblButtonPause.setBorder(
+				javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
+		add(lblButtonStop, c);
+		lblButtonPlay.setVisible(false);
+		lblButtonPause.setVisible(false);
+		lblButtonStop.setVisible(false);
+		add(lblButtonPlay, c);
+		add(lblButtonPause, c);
 
 		// lblName (Mitte)
 		c.fill = GridBagConstraints.BOTH;
@@ -179,6 +228,8 @@ public class SoundButton extends JPanel {
 
 	public void sbPlay() {
 		if (getButtonArt() != 99 && getMusicPathASCII() != null) {
+			blendenCounterStartwert = sb.getZeitBlende();
+			blendenCounter = blendenCounterStartwert;
 			changeColor();
 			sb.setTapeA(new MediaPlayer(new Media(getMusicPathASCII())));
 			sb.getTapeA().play();
@@ -186,6 +237,7 @@ public class SoundButton extends JPanel {
 			// t1.run();
 			sb.getTapeA().setVolume(getVolume());
 			lblCounterUp();
+			setStatusSoundButtonPlay();
 			if (blinkTimer.isRunning() == false) {
 				blinkTimer.start();
 			}
@@ -195,6 +247,7 @@ public class SoundButton extends JPanel {
 	}
 
 	public void sbStop() {
+		setStatusSoundButtonAfterStop();
 		fadeOutTimer.stop();
 		sb.getTapeA().stop();
 		sb.getTapeA().dispose();
@@ -207,10 +260,14 @@ public class SoundButton extends JPanel {
 	}
 
 	public void sbFadeOut() {
+		blendenCounterStartwert = sb.getZeitBlende();
+		blendenCounter = blendenCounterStartwert;
 		fadeOutTimer.start();
 	}
 
 	public void sbFadeIn() {
+		blendenCounterStartwert = sb.getZeitBlende();
+		blendenCounter = blendenCounterStartwert;
 		fadeInTimer.start();
 	}
 
@@ -280,18 +337,18 @@ public class SoundButton extends JPanel {
 				|| properties.getButtonArt() == 99) {
 			lblShuffle.setVisible(false);
 			lblLoop.setVisible(false);
-			lblRepeat.setVisible(false);
+			lblMultiSong.setVisible(false);
 		} else if (properties.getButtonArt() == SoundButton.shuffle) {
 			lblLoop.setVisible(false);
-			lblRepeat.setVisible(false);
+			lblMultiSong.setVisible(false);
 			lblShuffle.setVisible(true);
-		} else if (properties.getButtonArt() == SoundButton.shuffleRepeat) {
+		} else if (properties.getButtonArt() == SoundButton.multiSong) {
 			lblLoop.setVisible(false);
-			lblRepeat.setVisible(true);
-			lblShuffle.setVisible(true);
+			lblMultiSong.setVisible(true);
+			lblShuffle.setVisible(false);
 		} else if (properties.getButtonArt() == SoundButton.loop) {
 			lblShuffle.setVisible(false);
-			lblRepeat.setVisible(false);
+			lblMultiSong.setVisible(false);
 			lblLoop.setVisible(true);
 		}
 	}
@@ -304,7 +361,8 @@ public class SoundButton extends JPanel {
 		if (properties.getButtonArt() == 0) {
 			properties.setTotalDuration(duration);
 			lblDuration.setText(properties.getTotalDuration());
-		} else if (properties.getButtonArt() == 1) {
+		} else if (properties.getButtonArt() == 1
+				|| properties.getButtonArt() == 2) {
 			properties.setTotalDuration(String.valueOf(musicFileArray.length));
 			lblDuration.setText(properties.getTotalDuration());
 		}
@@ -379,6 +437,17 @@ public class SoundButton extends JPanel {
 				sb.setTitelAnzeige(musicFileArray[zufallsZahl].getName());
 				sb.setAnzeigePfad(musicFileArray[zufallsZahl]);
 				return musicFileArray[zufallsZahl].toURI().toASCIIString();
+			} else if (properties.getButtonArt() == 2) {
+				if (counterMultiSong < musicFileArray.length) {
+				} else {
+					counterMultiSong = 0;
+				}
+				titelNummer = counterMultiSong;
+				counterMultiSong++;
+				System.out.println(musicFileArray.length);
+				sb.setTitelAnzeige(musicFileArray[titelNummer].getName());
+				sb.setAnzeigePfad(musicFileArray[titelNummer]);
+				return musicFileArray[titelNummer].toURI().toASCIIString();
 			}
 		}
 		return null;
@@ -425,7 +494,16 @@ public class SoundButton extends JPanel {
 
 	public void changeColor() {
 		if (istBtnColorStandard == true) {
-			setBackground(properties.getForeground());
+			System.out.println("Blau: " + properties.getForeground().getBlue()
+					+ " Rot: " + properties.getForeground().getRed() + " Grün: "
+					+ properties.getForeground().getGreen());
+			if (properties.getForeground().getBlue() < 90
+					&& properties.getForeground().getRed() < 90
+					&& properties.getForeground().getGreen() < 90) {
+				setBackground(helleGegenFarbe);
+			} else {
+				setBackground(properties.getForeground());
+			}
 			setLabelsTextColor(properties.getBackground());
 			istBtnColorStandard = false;
 		} else {
@@ -460,6 +538,30 @@ public class SoundButton extends JPanel {
 		} else {
 			return false;
 		}
+	}
+
+	public void setStatusSoundButtonStop() {
+		lblButtonPlay.setVisible(false);
+		lblButtonPause.setVisible(false);
+		lblButtonStop.setVisible(true);
+	}
+
+	public void setStatusSoundButtonAfterStop() {
+		lblButtonPlay.setVisible(false);
+		lblButtonPause.setVisible(false);
+		lblButtonStop.setVisible(false);
+	}
+
+	public void setStatusSoundButtonPlay() {
+		lblButtonPlay.setVisible(true);
+		lblButtonPause.setVisible(false);
+		lblButtonStop.setVisible(false);
+	}
+
+	public void setStatusSoundButtonPause() {
+		lblButtonPlay.setVisible(false);
+		lblButtonPause.setVisible(true);
+		lblButtonStop.setVisible(false);
 	}
 
 	private class FadeOutListener implements ActionListener {
@@ -561,7 +663,6 @@ public class SoundButton extends JPanel {
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
 			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -577,22 +678,51 @@ public class SoundButton extends JPanel {
 						dtde.acceptDrop(dtde.getDropAction());
 						// Write the path from the first file into the
 						// JTextField tfTest
-						setMusicPath(
-								new File(tr.getTransferData(flavors[i])
-										.toString().substring(1,
-												tr.getTransferData(flavors[i])
-														.toString().length()
-														- 1)));
-						setName(tr.getTransferData(flavors[i]).toString()
-								.substring(1, tr.getTransferData(flavors[i])
-										.toString().length() - 1));
-						setButtonArt(oneSong);
-						System.out
-								.println(tr.getTransferData(flavors[i])
-										.toString().substring(1,
+						File tempFile = new File(
+								tr.getTransferData(flavors[i]).toString()
+										.substring(1,
 												tr.getTransferData(flavors[i])
 														.toString().length()
 														- 1));
+
+						if (Browse.isMusicFileOrMusicFilefolder(
+								tempFile) == true) {
+							setMusicPath(
+									new File(tr.getTransferData(flavors[i])
+											.toString().substring(1,
+													tr.getTransferData(
+															flavors[i])
+													.toString().length() - 1)));
+							System.out.println(
+									tr.getTransferData(flavors[i]).toString());
+
+							setName(getMusicPath().getName());
+							if (getMusicPath().isDirectory() == true) {
+								if (getMusicPath() != null) {
+									if (properties.getMusicPath()
+											.listFiles() != null) {
+										setMusicFileArray(Browse
+												.getMusicFileArray(properties
+														.getMusicPath()));
+										setLblDuration(String.valueOf(Browse
+												.getMusicFileArray(properties
+														.getMusicPath()).length));
+									}
+								}
+								setButtonArt(multiSong);
+								setIcon();
+							} else {
+								setButtonArt(oneSong);
+							}
+
+							System.out
+									.println(tr.getTransferData(flavors[i])
+											.toString().substring(1,
+													tr.getTransferData(
+															flavors[i])
+													.toString().length() - 1));
+						}
+
 						dtde.dropComplete(true);
 						return;
 					}

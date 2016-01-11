@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import lib.Browse;
 import lib.MyFonts;
@@ -30,6 +31,7 @@ public class DialogSoundButton extends JDialog {
 	private GridBagConstraints l = new GridBagConstraints();
 	private GridBagConstraints r = new GridBagConstraints();
 	private JLabel lbName = new JLabel("Button Name:");
+	private JLabel lblButtonArt = new JLabel("Button Art: ");
 	private JTextField tfName;
 	private JTextField tfPath;
 	private String[] sbArten = { "Art auswählen", "One Song", "Shuffle",
@@ -40,6 +42,8 @@ public class DialogSoundButton extends JDialog {
 	private JPanel pnlSouth = new JPanel();
 	private JPanel pnlPathAuswahl = new JPanel();
 	private JPanel pnlButtonArt = new JPanel(new GridBagLayout());
+	private JPanel pnlButtonArtLeft = new JPanel(new FlowLayout());
+	private JPanel pnlButtonArtRight = new JPanel();
 	private JButton btnAnwenden = new JButton("Anwenden");
 	private SoundButton soundButton;
 	private JButton btnBrowse = new JButton("Durchsuchen");
@@ -60,7 +64,11 @@ public class DialogSoundButton extends JDialog {
 	private JLabel iconRepeat;
 	private JLabel iconLoop;
 
-	public DialogSoundButton(SoundButton sb) {
+	private JCheckBox chBox = new JCheckBox("shuffle");
+
+	public DialogSoundButton(SoundButton sb)
+
+	{
 		this.soundButton = sb;
 		initialComponents();
 		setVisible(true);
@@ -77,7 +85,7 @@ public class DialogSoundButton extends JDialog {
 		System.out.println(soundButton.getButtonArt());
 		iconLoop = new JLabel(soundButton.iconLoop);
 		iconShuffle = new JLabel(soundButton.iconShuffle);
-		iconRepeat = new JLabel(soundButton.iconRepeat);
+		iconRepeat = new JLabel(soundButton.iconMultiSong);
 		musicPath = soundButton.getMusicPath();
 		if (soundButton.getButtonArt() == 0) {
 			System.out.println("Soundbutton");
@@ -126,11 +134,24 @@ public class DialogSoundButton extends JDialog {
 		pnlDialog.add(pnlPathAuswahl, r);
 
 		// ========== Button Art =============================
-		// nextRow();
-		// pnlDialog.add(new JLabel("Button Art:"), l);
+		nextRow();
+		lblButtonArt.setHorizontalAlignment(SwingConstants.LEFT);
+		pnlDialog.add(lblButtonArt, l);
 		// createPanelButtonArt();
-		// pnlDialog.add(pnlButtonArt, r);
+		pnlButtonArtRight.add(chBox);
+		pnlDialog.add(pnlButtonArtRight, r);
 
+		if (soundButton.getButtonArt() == 0) {
+			lblButtonArt.setVisible(false);
+			pnlButtonArtRight.setVisible(false);
+		} else if (soundButton.getButtonArt() == 1) {
+			lblButtonArt.setVisible(true);
+			pnlButtonArtRight.setVisible(true);
+			chBox.setSelected(true);
+		} else if (soundButton.getButtonArt() == 2) {
+			lblButtonArt.setVisible(true);
+			pnlButtonArtRight.setVisible(true);
+		}
 		// ========== Volume =============================
 		nextRow();
 		pnlDialog.add(new JLabel("Lautstärke:"), l);
@@ -149,7 +170,7 @@ public class DialogSoundButton extends JDialog {
 		pnlSouth.add(btnAbbrechen);
 		pnlSouth.add(btnAnwenden);
 		pnlDialog.setPreferredSize(new Dimension(1, 1));
-		setSize(1000, 800);
+		setSize(1500, 500);
 		setLocation(100, 100);
 		setLayout(new BorderLayout());
 		add(pnlDialog, BorderLayout.CENTER);
@@ -180,7 +201,7 @@ public class DialogSoundButton extends JDialog {
 			} else if (e.getSource() == tfName) {
 				dialogAnwenden();
 			} else if (e.getSource() == btnBrowse) {
-				musicPath = null;
+				// musicPath = null;
 				musicPath = Browse.getMusicFileFolder();
 				if (musicPath != null) {
 					tfPath.setText(musicPath.getPath());
@@ -188,96 +209,11 @@ public class DialogSoundButton extends JDialog {
 							.compareTo(tfName.getText()) == 0) {
 						tfName.setText(musicPath.getName());
 					}
-				}
-				// if (musicFile == null) {
-				// tfPath.setText(musicFile.getPath());
-				// soundButton.setOneSong();
 
-			} else if (e.getSource() == cbSbArten) {
-				if (String.valueOf(cbSbArten.getSelectedItem())
-						.compareTo("One Song") == 0) {
-					iconLoop.setVisible(false);
-					iconRepeat.setVisible(false);
-					iconShuffle.setVisible(false);
-					cbEndlos.setVisible(false);
-					cbBlende.setVisible(false);
-					cbOwnPlayer.setVisible(true);
-				} else if (String.valueOf(cbSbArten.getSelectedItem())
-						.compareTo("Shuffle") == 0) {
-					iconLoop.setVisible(false);
-					iconRepeat.setVisible(false);
-					iconShuffle.setVisible(true);
-					cbEndlos.setVisible(true);
-					cbBlende.setVisible(true);
-					cbOwnPlayer.setVisible(false);
-				} else if (String.valueOf(cbSbArten.getSelectedItem())
-						.compareTo("Loop") == 0) {
-					iconLoop.setVisible(true);
-					iconRepeat.setVisible(false);
-					iconShuffle.setVisible(false);
-					cbEndlos.setVisible(false);
-					cbBlende.setVisible(false);
-					cbOwnPlayer.setVisible(false);
 				}
 			}
 
 		}
-	}
-
-	public void createPanelButtonArt() {
-		if (soundButton.getButtonArt() == 99) {
-			cbSbArten.setSelectedIndex(0);
-			iconLoop.setVisible(false);
-			iconShuffle.setVisible(false);
-			iconRepeat.setVisible(false);
-		} else if (soundButton.getButtonArt() == SoundButton.oneSong) {
-			cbSbArten.setSelectedIndex(1);
-			iconLoop.setVisible(false);
-			iconShuffle.setVisible(false);
-			iconRepeat.setVisible(false);
-		} else if (soundButton.getButtonArt() == SoundButton.shuffle) {
-			cbSbArten.setSelectedIndex(2);
-			iconLoop.setVisible(false);
-			iconShuffle.setVisible(true);
-			iconRepeat.setVisible(false);
-		}
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0;
-		c.weighty = 0;
-		c.ipadx = 0;
-		c.ipady = 0;
-		c.gridy = 0;
-		c.gridx = 0;
-		cbSbArten.addActionListener(bl);
-		pnlButtonArt.add(cbSbArten, c);
-
-		c.weightx = 0.1;
-		c.weighty = 0;
-		c.ipadx = 0;
-		c.ipady = 0;
-		c.gridy = 0;
-
-		c.weightx = 0.1;
-		c.gridx++;
-		// iconLoop.setHorizontalAlignment(SwingConstants.LEFT);
-		pnlButtonArt.add(iconLoop, c);
-		// iconShuffle.setHorizontalAlignment(SwingConstants.LEFT);
-		c.weightx = 0.1;
-		// c.gridx++;
-		pnlButtonArt.add(iconShuffle, c);
-		// iconRepeat.setHorizontalAlignment(SwingConstants.LEFT);
-		c.weightx = 0.1;
-		// c.gridx++;
-		pnlButtonArt.add(iconRepeat, c);
-
-		c.gridx++;
-		pnlButtonArt.add(cbEndlos, c);
-		pnlButtonArt.add(cbOwnPlayer, c);
-
-		c.gridx++;
-		pnlButtonArt.add(cbBlende, c);
-
 	}
 
 	public void createPanelAuswahl() {
@@ -340,15 +276,27 @@ public class DialogSoundButton extends JDialog {
 						btnButtonFarbe.getForeground(),
 						btnButtonFarbe.getBackground());
 			} else if (musicPath.listFiles() != null) {
-				soundButton.setProperties(1, tfName.getText(), musicPath,
-						(double) volumeRegler.getValue() / 100,
-						String.valueOf(
-								Browse.getMusicFileArray(musicPath).length),
-						btnButtonFarbe.getForeground(),
-						btnButtonFarbe.getBackground());
+				if (chBox.isSelected() == true) {
+					soundButton
+							.setProperties(1, tfName.getText(), musicPath,
+									(double) volumeRegler.getValue() / 100,
+									String.valueOf(Browse.getMusicFileArray(
+											musicPath).length),
+							btnButtonFarbe.getForeground(),
+							btnButtonFarbe.getBackground());
+				} else if (chBox.isSelected() == false) {
+					System.out.println("multisong");
+					soundButton
+							.setProperties(2, tfName.getText(), musicPath,
+									(double) volumeRegler.getValue() / 100,
+									String.valueOf(Browse.getMusicFileArray(
+											musicPath).length),
+							btnButtonFarbe.getForeground(),
+							btnButtonFarbe.getBackground());
+				}
 			}
 		} else {
-			soundButton.setProperties(0, tfName.getText(), null,
+			soundButton.setProperties(99, tfName.getText(), null,
 					volumeRegler.getValue(), "0:00",
 					btnButtonFarbe.getForeground(),
 					btnButtonFarbe.getBackground());

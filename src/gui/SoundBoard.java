@@ -104,6 +104,7 @@ public class SoundBoard extends JPanel {
 		if (pbVisible == false) {
 			pbAusblenden();
 		}
+		MyFonts.guiResizeFont(getComponents(), hf.getActualFontSize());
 		validate();
 		repaint();
 	}
@@ -152,6 +153,7 @@ public class SoundBoard extends JPanel {
 		if (pbVisible == false) {
 			pbAusblenden();
 		}
+		MyFonts.guiResizeFont(getComponents(), hf.getActualFontSize());
 		validate();
 		repaint();
 	}
@@ -192,17 +194,21 @@ public class SoundBoard extends JPanel {
 				if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
 					hf.getSbActive().getFadeOutTimer().stop();
 					hf.getSbActive().istPausiert = false;
+					hf.getSbActive().setStatusSoundButtonPlay();
 					hf.getSbActive().sbFadeIn();
 				}
 				hf.getSbActive().istPausiert = false;
+				hf.getSbActive().setStatusSoundButtonPlay();
 				hf.getSbActive().sbFadeIn();
 			} else {
 				if (hf.getSbActive().istFadeInTimerAktiv() == true) {
 					hf.getSbActive().getFadeInTimer().stop();
 					hf.getSbActive().istPausiert = true;
+					hf.getSbActive().setStatusSoundButtonPause();
 					hf.getSbActive().sbFadeOut();
 				}
 				hf.getSbActive().istPausiert = true;
+				hf.getSbActive().setStatusSoundButtonPause();
 				hf.getSbActive().sbFadeOut();
 			}
 		}
@@ -229,6 +235,8 @@ public class SoundBoard extends JPanel {
 													.getButtonArt() == 99
 													&& hf.getSbActive().istPausiert != true)) {
 										hf.setSbNext(null);
+										hf.getSbActive()
+												.setStatusSoundButtonStop();
 										hf.getSbActive().sbFadeOut();
 									} else {
 										if (sbArray[z][sp]
@@ -254,8 +262,7 @@ public class SoundBoard extends JPanel {
 					for (int sp = 0; sp < sbArray[z].length; sp++) {
 						if (e.getSource() == sbArray[z][sp]) {
 							DialogSoundButton dsb = new DialogSoundButton(
-									sbArray[z][sp]);
-
+									sbArray[z][sp], hf.getActualFontSize());
 						}
 					}
 				}
@@ -413,6 +420,10 @@ public class SoundBoard extends JPanel {
 
 	public SoundButton[][] getSbArray() {
 		return sbArray;
+	}
+
+	public int getZeitBlende() {
+		return hf.getZeitBlende();
 	}
 
 }

@@ -142,14 +142,48 @@ public abstract class Browse {
 		return musicFolder;
 	}
 
+	public static boolean hasFolderMusicfiles(File musicFolder) {
+		fileArray = musicFolder.listFiles();
+		for (int i = 0; i < fileArray.length; i++) {
+			if ((fileArray[i].getName().endsWith(".mp3") == true
+					|| fileArray[i].getName().endsWith(".m4a") == true
+					|| fileArray[i].getName().endsWith(".wav") == true)
+					&& fileArray[i].isHidden() == false) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isMusicFileOrMusicFilefolder(File musicFolder) {
+		if (musicFolder.isDirectory() == true) {
+			fileArray = musicFolder.listFiles();
+			for (int i = 0; i < fileArray.length; i++) {
+				if ((fileArray[i].getName().endsWith(".mp3") == true
+						|| fileArray[i].getName().endsWith(".m4a") == true
+						|| fileArray[i].getName().endsWith(".wav") == true)
+						&& fileArray[i].isHidden() == false) {
+					return true;
+				}
+			}
+		} else if (musicFolder.getName().endsWith(".mp3") == true
+				|| musicFolder.getName().endsWith(".m4a") == true
+				|| musicFolder.getName().endsWith(".wav") == true) {
+			return true;
+		} else {
+			return false;
+		}
+		return false;
+	}
+
 	public static File[] getMusicFileArray(File musicFolder) {
 		fileArray = musicFolder.listFiles();
 		int musicFileCounter = 0;
 		for (int i = 0; i < fileArray.length; i++) {
-			if (fileArray[i].getName().endsWith(".mp3") == true
+			if ((fileArray[i].getName().endsWith(".mp3") == true
 					|| fileArray[i].getName().endsWith(".m4a") == true
-					|| fileArray[i].getName().endsWith(".mp3") == true
-					|| fileArray[i].getName().endsWith(".wav") == true) {
+					|| fileArray[i].getName().endsWith(".wma") == true)
+					&& fileArray[i].isHidden() == false) {
 				musicFileCounter++;
 			}
 		}
@@ -158,10 +192,10 @@ public abstract class Browse {
 		musicFileCounter = 0;
 		// Schleife um MusicData mit daten zu füllen
 		for (int i = 0; i < fileArray.length; i++) {
-			if (fileArray[i].getName().endsWith(".mp3") == true
+			if ((fileArray[i].getName().endsWith(".mp3") == true
 					|| fileArray[i].getName().endsWith(".m4a") == true
-					|| fileArray[i].getName().endsWith(".mp3") == true
-					|| fileArray[i].getName().endsWith(".wav") == true) {
+					|| fileArray[i].getName().endsWith(".mp3") == true)
+					&& fileArray[i].isHidden() == false) {
 				musicFileArray[musicFileCounter] = fileArray[i];
 				musicFileCounter++;
 			}

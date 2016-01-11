@@ -75,6 +75,8 @@ public class MainView extends JFrame {
 	private int zeilen = 0;
 	private int spalten = 0;
 
+	private int zeitBlende = 200; // 100 entspricht 1 sec
+
 	private FensterListener fl = new FensterListener();
 	private JMenuBar mb = new JMenuBar();
 	private JMenu menuDatei = new JMenu("Datei");
@@ -104,6 +106,7 @@ public class MainView extends JFrame {
 			"Soundboard speichern unter");
 	private JMenuItem itemAutosave = new JMenuItem("Speichern in Autosave");
 	private JMenuItem itemLoadSoundboard = new JMenuItem("Soundboard laden");
+	private JMenuItem itemSettings = new JMenuItem("Einstellungen");
 
 	private GridLayout gdl = new GridLayout(1, 3);
 	private JPanel pnlAnzeigeLeft = new JPanel();
@@ -111,7 +114,7 @@ public class MainView extends JFrame {
 	private JPanel pnlAnzeigeRight = new JPanel();
 	private JPanel pnlAnzeige = new JPanel(gdl);
 	private JPanel iconBar;
-	private JLabel lblTitel = new JLabel("Aktueller Titel");
+	private JLabel lblTitel = new JLabel("Aktueller Titel \u23F8");
 	private File anzeigePfad;
 	private Font actualFontSize;
 
@@ -133,9 +136,11 @@ public class MainView extends JFrame {
 	private File fileAutoSave;
 
 	private JTabbedPane tp = new JTabbedPane();
+	private MainView hf;
 
 	public MainView() {
 		try {
+			hf = this;
 			openAutoSave();
 			addWindowListener(fl);
 			setLayout(new BorderLayout());
@@ -149,7 +154,7 @@ public class MainView extends JFrame {
 			pnlAnzeigeLeft.add(new PanelFarbpalette());
 			pnlAnzeige.add(pnlAnzeigeLeft);
 			pnlAnzeigeCenter.setLayout(new BorderLayout());
-			lblTitel.setPreferredSize(new Dimension(500, 150));
+			lblTitel.setPreferredSize(new Dimension(500, 120));
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
 			pnlAnzeige.add(pnlAnzeigeCenter);
@@ -157,6 +162,8 @@ public class MainView extends JFrame {
 			pnlAnzeige.add(pnlAnzeigeRight);
 			pnlAnzeige.addMouseListener(lmk);
 			pnlAnzeige.addMouseMotionListener(lmk);
+			pnlAnzeigeRight.setVisible(false);
+			pnlAnzeigeLeft.setVisible(false);
 			add(pnlAnzeige, BorderLayout.SOUTH);
 			loadImageIcons();
 			createIconBar();
@@ -164,7 +171,7 @@ public class MainView extends JFrame {
 			iconBar.setVisible(false);
 
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setSize(2000, 1000);
+			setSize(2000, 1400);
 			System.out.println(sbVector.size());
 			setSizeOfMainViewElements(MyFonts.large);
 			actualFontSize = MyFonts.large;
@@ -197,6 +204,7 @@ public class MainView extends JFrame {
 		itemLoadSoundboard.addActionListener(lmb);
 		itemSaveSoundboard.addActionListener(lmb);
 		itemAutosave.addActionListener(lmb);
+		itemSettings.addActionListener(lmb);
 		// menuDatei.add(itemLoadLayer);
 		// menuDatei.add(itemSaveLayer);
 		// menuDatei.add(new JSeparator());
@@ -204,6 +212,7 @@ public class MainView extends JFrame {
 		menuDatei.add(itemSaveSoundboard);
 		menuDatei.add(new JSeparator());
 		menuDatei.add(itemAutosave);
+		menuDatei.add(itemSettings);
 		mb.add(menuDatei);
 	}
 
@@ -453,7 +462,7 @@ public class MainView extends JFrame {
 
 	public void setSizeOfMainViewElements(Font myFont) {
 		JMenu tempMenu;
-		lblTitel.setFont(myFont);
+		lblTitelSetPreferredSize(myFont);
 		tp.setFont(myFont);
 		mb.setFont(myFont);
 		menuDatei.setFont(myFont);
@@ -471,6 +480,17 @@ public class MainView extends JFrame {
 		}
 		validate();
 		repaint();
+	}
+
+	private void lblTitelSetPreferredSize(Font myFont) {
+		lblTitel.setFont(myFont);
+		if (myFont == MyFonts.small) {
+			lblTitel.setPreferredSize(new Dimension(500, 40));
+		} else if (myFont == MyFonts.medium) {
+			lblTitel.setPreferredSize(new Dimension(500, 80));
+		} else if (myFont == MyFonts.large) {
+			lblTitel.setPreferredSize(new Dimension(500, 120));
+		}
 	}
 
 	public class ListenerMenuBar implements ActionListener {
@@ -513,27 +533,38 @@ public class MainView extends JFrame {
 				soundBoardActive.removeZeile();
 			} else if (e.getSource() == itemSideView) {
 				System.out.println("Sideview ertellen");
-				sv = new SideView(hf, soundBoardActive,
-						tp.getTitleAt(tp.getSelectedIndex()),
-						tp.getSelectedIndex());
+				if (sv == null) {
+					sv = new SideView(hf, soundBoardActive,
+							tp.getTitleAt(tp.getSelectedIndex()),
+							tp.getSelectedIndex());
+				}
 			} else if (e.getSource() == itemSaveSoundboard) {
 				saveSoundBoardAs();
 			} else if (e.getSource() == itemFontSmall) {
 				setSizeOfMainViewElements(MyFonts.small);
+				actualFontSize = MyFonts.small;
 			} else if (e.getSource() == itemFontMedium) {
 				setSizeOfMainViewElements(MyFonts.medium);
+				actualFontSize = MyFonts.medium;
 			} else if (e.getSource() == itemFontLarge) {
 				setSizeOfMainViewElements(MyFonts.large);
+				actualFontSize = MyFonts.large;
 				// Browse.getMusicFileFX();
 			} else if (e.getSource() == itemLoadSoundboard) {
 				loadSoundBoardFile();
 				sbVectorToTappedPane();
+			} else if (e.getSource() == itemSettings) {
+				new ViewSettings(hf, getActualFontSize());
 			} else if (e.getSource() == itemAddLayer) {
 				System.out.println("Neuen Layer hinzufügen");
 				sbVector.add(new SoundBoard(hf, 8, 6));
 				tp.add("Layer " + String.valueOf(sbVector.size()),
 						(SoundBoard) sbVector.get(sbVector.size() - 1));
-				tp.setSelectedIndex(sbVector.size() - 1);
+				if (sv == null) {
+					tp.setSelectedIndex(sbVector.size() - 1);
+				} else if (sv != null) {
+					tp.setSelectedIndex(sbVector.size() - 2);
+				}
 				soundBoardActive = (SoundBoard) sbVector
 						.get(sbVector.size() - 1);
 			} else if (e.getSource() == itemAutosave) {
@@ -768,4 +799,15 @@ public class MainView extends JFrame {
 		return actualFontSize;
 	}
 
+	public int getZeitBlende() {
+		return zeitBlende;
+	}
+
+	public void setZeitBlende(int milisekunden) {
+		zeitBlende = milisekunden / 10;
+	}
+
+	public void setSideViewNull() {
+		sv = null;
+	}
 }
