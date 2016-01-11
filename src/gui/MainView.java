@@ -567,6 +567,8 @@ public class MainView extends JFrame {
 				}
 				soundBoardActive = (SoundBoard) sbVector
 						.get(sbVector.size() - 1);
+				MyFonts.guiResizeFont(soundBoardActive.getComponents(),
+						getActualFontSize());
 			} else if (e.getSource() == itemAutosave) {
 				saveMainView(fileAutoSave);
 			} else if (e.getSource() == itemRemoveLayer) {
