@@ -48,6 +48,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.MyFonts;
+import listener.ListenerMouseMainView;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -78,6 +79,8 @@ public class MainView extends JFrame {
 	private int zeitBlende = 200; // 100 entspricht 1 sec
 
 	private FensterListener fl = new FensterListener();
+	private ListenerMouseMainView lmmv = new ListenerMouseMainView(this);
+
 	private JMenuBar mb = new JMenuBar();
 	private JMenu menuDatei = new JMenu("Datei");
 	private JMenu menuSoundboard = new JMenu("Soundboard");
@@ -109,12 +112,10 @@ public class MainView extends JFrame {
 	private JMenuItem itemSettings = new JMenuItem("Einstellungen");
 
 	private GridLayout gdl = new GridLayout(1, 3);
-	private JPanel pnlAnzeigeLeft = new JPanel();
 	private JPanel pnlAnzeigeCenter = new JPanel();
-	private JPanel pnlAnzeigeRight = new JPanel();
 	private JPanel pnlAnzeige = new JPanel(gdl);
 	private JPanel iconBar;
-	private JLabel lblTitel = new JLabel("Aktueller Titel \u23F8");
+	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
 	private Font actualFontSize;
 
@@ -151,25 +152,21 @@ public class MainView extends JFrame {
 			setJMenuBar(mb);
 			sbVectorToTappedPane();
 
-			pnlAnzeigeLeft.add(new PanelFarbpalette());
-			pnlAnzeige.add(pnlAnzeigeLeft);
 			pnlAnzeigeCenter.setLayout(new BorderLayout());
 			lblTitel.setPreferredSize(new Dimension(500, 120));
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
 			pnlAnzeige.add(pnlAnzeigeCenter);
-			pnlAnzeigeRight.add(new PanelFarbpalette());
-			pnlAnzeige.add(pnlAnzeigeRight);
 			pnlAnzeige.addMouseListener(lmk);
 			pnlAnzeige.addMouseMotionListener(lmk);
-			pnlAnzeigeRight.setVisible(false);
-			pnlAnzeigeLeft.setVisible(false);
+
 			add(pnlAnzeige, BorderLayout.SOUTH);
 			loadImageIcons();
 			createIconBar();
 			add(iconBar, BorderLayout.EAST);
 			iconBar.setVisible(false);
 
+			setTitle("JMNext");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setSize(2000, 1400);
 			System.out.println(sbVector.size());
@@ -334,7 +331,8 @@ public class MainView extends JFrame {
 									.readObject();
 						}
 					}
-					sbVector.add(new SoundBoard(this, sbpArray, pbVisible));
+					sbVector.add(
+							new SoundBoard(this, sbpArray, pbVisible, lmmv));
 					soundBoardActive = (SoundBoard) sbVector.get(i);
 				}
 
@@ -557,7 +555,7 @@ public class MainView extends JFrame {
 				new ViewSettings(hf, getActualFontSize());
 			} else if (e.getSource() == itemAddLayer) {
 				System.out.println("Neuen Layer hinzufügen");
-				sbVector.add(new SoundBoard(hf, 8, 6));
+				sbVector.add(new SoundBoard(hf, 8, 6, lmmv));
 				tp.add("Layer " + String.valueOf(sbVector.size()),
 						(SoundBoard) sbVector.get(sbVector.size() - 1));
 				if (sv == null) {
@@ -590,6 +588,7 @@ public class MainView extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (SwingUtilities.isLeftMouseButton(e)) {
+				System.out.println(e.getSource());
 				if (e.getSource() == pnlAnzeige) {
 					System.out.println(anzeigePfad);
 				}
@@ -620,6 +619,7 @@ public class MainView extends JFrame {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			// TODO Auto-generated method stub
+			System.out.println("mouseMove");
 
 		}
 

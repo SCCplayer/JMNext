@@ -227,7 +227,7 @@ public class SoundButton extends JPanel {
 	}
 
 	public void sbPlay() {
-		if (getButtonArt() != 99 && getMusicPathASCII() != null) {
+		if (getButtonArt() != 99 && properties.getMusicPath() != null) {
 			blendenCounterStartwert = sb.getZeitBlende();
 			blendenCounter = blendenCounterStartwert;
 			changeColor();
@@ -494,9 +494,6 @@ public class SoundButton extends JPanel {
 
 	public void changeColor() {
 		if (istBtnColorStandard == true) {
-			System.out.println("Blau: " + properties.getForeground().getBlue()
-					+ " Rot: " + properties.getForeground().getRed() + " Grün: "
-					+ properties.getForeground().getGreen());
 			if (properties.getForeground().getBlue() < 90
 					&& properties.getForeground().getRed() < 90
 					&& properties.getForeground().getGreen() < 90) {
@@ -571,9 +568,7 @@ public class SoundButton extends JPanel {
 				volumePerStep = volumeBlende / blendenCounter;
 				volumeBlende = volumeBlende - volumePerStep;
 				sb.getTapeA().setVolume(volumeBlende);
-				System.out.print(blendenCounter + " FadeOut");
 				blendenCounter--;
-				System.out.println(" " + sb.getTapeA().getVolume());
 				if (sb.getSbNext() != null) {
 					sbStop();
 					sb.getSbNext().sbPlay();
@@ -609,9 +604,9 @@ public class SoundButton extends JPanel {
 				volumePerStep = (getVolume() - volumeBlende) / blendenCounter;
 				volumeBlende = volumeBlende + volumePerStep;
 				sb.getTapeA().setVolume(volumeBlende);
-				System.out.print(blendenCounter + " FadeIn");
+				// System.out.print(blendenCounter + " FadeIn");
 				blendenCounter--;
-				System.out.println(" " + sb.getTapeA().getVolume());
+				// System.out.println(" " + sb.getTapeA().getVolume());
 				if (blendenCounter == 0) {
 					blendenCounter = blendenCounterStartwert;
 					fadeInTimer.stop();
@@ -693,8 +688,7 @@ public class SoundButton extends JPanel {
 													tr.getTransferData(
 															flavors[i])
 													.toString().length() - 1)));
-							System.out.println(
-									tr.getTransferData(flavors[i]).toString());
+							// System.out.println(tr.getTransferData(flavors[i]).toString());
 
 							setName(getMusicPath().getName());
 							if (getMusicPath().isDirectory() == true) {

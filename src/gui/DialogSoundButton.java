@@ -44,6 +44,7 @@ public class DialogSoundButton extends JDialog {
 	private JPanel pnlButtonArt = new JPanel(new GridBagLayout());
 	private JPanel pnlButtonArtLeft = new JPanel(new FlowLayout());
 	private JPanel pnlButtonArtRight = new JPanel();
+	private JButton btnLeeren = new JButton("Leeren");
 	private JButton btnAnwenden = new JButton("Anwenden");
 	private SoundButton soundButton;
 	private JButton btnBrowse = new JButton("Durchsuchen");
@@ -167,7 +168,9 @@ public class DialogSoundButton extends JDialog {
 		pnlSouth.setLayout(new FlowLayout());
 		btnAbbrechen.addActionListener(bl);
 		btnAnwenden.addActionListener(bl);
+		btnLeeren.addActionListener(bl);
 		pnlSouth.add(btnAbbrechen);
+		pnlSouth.add(btnLeeren);
 		pnlSouth.add(btnAnwenden);
 		pnlDialog.setPreferredSize(new Dimension(1, 1));
 		setSize(1500, 500);
@@ -199,6 +202,9 @@ public class DialogSoundButton extends JDialog {
 				btnButtonFarbe.setForeground(choosedTextFarbe);
 
 			} else if (e.getSource() == tfName) {
+				dialogAnwenden();
+			} else if (e.getSource() == btnLeeren) {
+				tfPath.setText("");
 				dialogAnwenden();
 			} else if (e.getSource() == btnBrowse) {
 				// musicPath = null;
@@ -269,6 +275,10 @@ public class DialogSoundButton extends JDialog {
 	}
 
 	private void dialogAnwenden() {
+		// System.out.println(tfPath.getText().length());
+		if (tfPath.getText().length() == 0) {
+			musicPath = null;
+		}
 		if (musicPath != null) {
 			if (musicPath.listFiles() == null) {
 				soundButton.setProperties(0, tfName.getText(), musicPath,

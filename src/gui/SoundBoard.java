@@ -16,6 +16,7 @@ import data.SbpChange;
 import data.SoundButtonProperties;
 import javafx.scene.media.MediaPlayer;
 import lib.MyFonts;
+import listener.ListenerMouseMainView;
 
 public class SoundBoard extends JPanel {
 	private MainView hf;
@@ -23,6 +24,7 @@ public class SoundBoard extends JPanel {
 	private SoundButton[][] sbArrayChange;
 	private SoundButton sbTarget;
 	private ListenerMouseKlick lmk = new ListenerMouseKlick();
+	private ListenerMouseMainView lmmv;
 
 	public static final int SMALL = 0;
 	public static final int MEDIUM = 1;
@@ -36,7 +38,8 @@ public class SoundBoard extends JPanel {
 
 	public boolean pbVisible = true;
 
-	public SoundBoard(MainView parent, int zeilen, int spalten) {
+	public SoundBoard(MainView parent, int zeilen, int spalten,
+			ListenerMouseMainView lmmv) {
 		this.hf = parent;
 		this.zeilen = zeilen;
 		this.spalten = spalten;
@@ -54,9 +57,10 @@ public class SoundBoard extends JPanel {
 	}
 
 	public SoundBoard(MainView parent, SoundButtonProperties[][] sbpArray,
-			boolean pbVisble) {
+			boolean pbVisble, ListenerMouseMainView lmmv) {
 		this.hf = parent;
 		this.pbVisible = pbVisble;
+		this.lmmv = lmmv;
 		zeilen = sbpArray.length;
 		spalten = sbpArray[0].length;
 		setLayout(new GridLayout(zeilen, spalten));
@@ -219,52 +223,41 @@ public class SoundBoard extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				for (int z = 0; z < sbArray.length; z++) {
-					for (int sp = 0; sp < sbArray[z].length; sp++) {
-						if (e.getSource() == sbArray[z][sp]) {
-							if (hf.getTapeA() != null) {
-								if (hf.getSbActive()
-										.istFadeOutTimerAktiv() == true) {
-									hf.getSbActive().sbStop();
-									sbArray[z][sp].sbPlay();
-								} else {
-									if ((hf.getSbActive() == sbArray[z][sp]
-											&& hf.getSbActive().istPausiert != true)
-											|| (sbArray[z][sp]
-													.getButtonArt() == 99
-													&& hf.getSbActive().istPausiert != true)) {
-										hf.setSbNext(null);
-										hf.getSbActive()
-												.setStatusSoundButtonStop();
-										hf.getSbActive().sbFadeOut();
-									} else {
-										if (sbArray[z][sp]
-												.getButtonArt() != 99) {
-											hf.setSbNext(sbArray[z][sp]);
-											hf.getSbNext().changeColor();
-											hf.getSbNext().sbStartBlink();
-											hf.getSbActive().sbFadeOut();
-										}
-									}
-								}
+			SoundButton sbClicked;
+			if (e.getSource() instanceof SoundButton) {
+				sbClicked = (SoundButton) e.getSource();
+
+				if (SwingUtilities.isLeftMouseButton(e)) {
+					if (hf.getTapeA() != null) {
+						if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+							hf.getSbActive().sbStop();
+							sbClicked.sbPlay();
+						} else {
+							if ((hf.getSbActive() == sbClicked
+									&& hf.getSbActive().istPausiert != true)
+									|| (sbClicked.getButtonArt() == 99 && hf
+											.getSbActive().istPausiert != true)) {
+								hf.setSbNext(null);
+								hf.getSbActive().setStatusSoundButtonStop();
+								hf.getSbActive().sbFadeOut();
 							} else {
-								if (sbArray[z][sp].getButtonArt() != 99) {
-									sbArray[z][sp].sbPlay();
+								if (sbClicked.getButtonArt() != 99) {
+									hf.setSbNext(sbClicked);
+									hf.getSbNext().changeColor();
+									hf.getSbNext().sbStartBlink();
+									hf.getSbActive().sbFadeOut();
 								}
 							}
 						}
-					}
-				}
-
-			} else if (SwingUtilities.isRightMouseButton(e)) {
-				for (int z = 0; z < sbArray.length; z++) {
-					for (int sp = 0; sp < sbArray[z].length; sp++) {
-						if (e.getSource() == sbArray[z][sp]) {
-							DialogSoundButton dsb = new DialogSoundButton(
-									sbArray[z][sp], hf.getActualFontSize());
+					} else {
+						if (sbClicked.getButtonArt() != 99) {
+							sbClicked.sbPlay();
 						}
 					}
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					DialogSoundButton dsb = new DialogSoundButton(
+							(SoundButton) e.getSource(),
+							hf.getActualFontSize());
 				}
 			}
 		}
