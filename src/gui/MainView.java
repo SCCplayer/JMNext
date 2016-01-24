@@ -9,14 +9,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -38,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -53,10 +48,9 @@ import listener.ListenerMouseMainView;
 public class MainView extends JFrame {
 	private SideView sv;
 	private ListenerKeyboard lkb = new ListenerKeyboard();
-	private ListenerMouseKlick lmk = new ListenerMouseKlick();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
 	private ListenerChange lc = new ListenerChange();
-	private Vector sbVector = new Vector();
+	private Vector<SoundBoard> sbVector = new Vector<SoundBoard>();
 
 	private JButton btnAddZeile;
 	private JButton btnRemoveZeile;
@@ -114,9 +108,19 @@ public class MainView extends JFrame {
 	private GridLayout gdl = new GridLayout(1, 3);
 	private JPanel pnlAnzeigeCenter = new JPanel();
 	private JPanel pnlAnzeige = new JPanel(gdl);
+
+	public JPanel getPnlAnzeige() {
+		return pnlAnzeige;
+	}
+
 	private JPanel iconBar;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
+
+	public File getAnzeigePfad() {
+		return anzeigePfad;
+	}
+
 	private Font actualFontSize;
 
 	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
@@ -157,8 +161,8 @@ public class MainView extends JFrame {
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
 			pnlAnzeige.add(pnlAnzeigeCenter);
-			pnlAnzeige.addMouseListener(lmk);
-			pnlAnzeige.addMouseMotionListener(lmk);
+			pnlAnzeige.addMouseListener(lmmv);
+			pnlAnzeige.addMouseMotionListener(lmmv);
 
 			add(pnlAnzeige, BorderLayout.SOUTH);
 			loadImageIcons();
@@ -579,81 +583,6 @@ public class MainView extends JFrame {
 					}
 				}
 			}
-		}
-	}
-
-	private class ListenerMouseKlick
-			implements MouseListener, MouseMotionListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				System.out.println(e.getSource());
-				if (e.getSource() == pnlAnzeige) {
-					System.out.println(anzeigePfad);
-				}
-			}
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			if (soundBoardActive.getMousePosition() != null) {
-				if (soundBoardActive.getComponentAt(soundBoardActive
-						.getMousePosition()) instanceof SoundButton) {
-					soundButton = (SoundButton) soundBoardActive.getComponentAt(
-							soundBoardActive.getMousePosition());
-					if (soundButton.getProperties().getButtonArt() == 99
-							&& anzeigePfad != null) {
-						System.out.println("Buttonart = 99");
-						soundBoardActive.setCursor(DragSource.DefaultCopyDrop);
-					} else {
-						soundBoardActive.setCursor(cursorHand);
-					}
-				}
-			} else {
-				setCursor(cursorHand);
-			}
-
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-			System.out.println("mouseMove");
-
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			setCursor(cursorHand);
-
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (soundButton != null && anzeigePfad != null) {
-				System.out.println(soundButton + anzeigePfad.getName());
-				if (soundButton.getProperties().getButtonArt() == 99) {
-					soundButton.getProperties().setMusicPath(anzeigePfad);
-					soundButton.setName(anzeigePfad.getName());
-					soundButton.getProperties().setButtonArt(0);
-					soundButton = null;
-				}
-			}
-			soundBoardActive.setCursor(cursorMove);
-			setCursor(cursorMove);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 

@@ -1,16 +1,10 @@
 package gui;
 
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.dnd.DragSource;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.File;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import data.SbpChange;
 import data.SoundButtonProperties;
@@ -23,15 +17,11 @@ public class SoundBoard extends JPanel {
 	private SoundButton[][] sbArray;
 	private SoundButton[][] sbArrayChange;
 	private SoundButton sbTarget;
-	private ListenerMouseKlick lmk = new ListenerMouseKlick();
 	private ListenerMouseMainView lmmv;
 
 	public static final int SMALL = 0;
 	public static final int MEDIUM = 1;
 	public static final int LARGE = 2;
-
-	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
-	private Cursor cursorMove = new Cursor(Cursor.MOVE_CURSOR);
 
 	private int zeilen;
 	private int spalten;
@@ -41,6 +31,7 @@ public class SoundBoard extends JPanel {
 	public SoundBoard(MainView parent, int zeilen, int spalten,
 			ListenerMouseMainView lmmv) {
 		this.hf = parent;
+		this.lmmv = lmmv;
 		this.zeilen = zeilen;
 		this.spalten = spalten;
 		setLayout(new GridLayout(zeilen, spalten));
@@ -49,8 +40,8 @@ public class SoundBoard extends JPanel {
 			for (int sp = 0; sp < spalten; sp++) {
 				sbArray[z][sp] = new SoundButton(this,
 						String.valueOf(spalten * z + sp));
-				sbArray[z][sp].addMouseListener(lmk);
-				sbArray[z][sp].addMouseMotionListener(lmk);
+				sbArray[z][sp].addMouseListener(lmmv);
+				sbArray[z][sp].addMouseMotionListener(lmmv);
 				add(sbArray[z][sp]);
 			}
 		}
@@ -69,8 +60,8 @@ public class SoundBoard extends JPanel {
 			for (int sp = 0; sp < spalten; sp++) {
 				sbArray[z][sp] = new SoundButton(this,
 						String.valueOf(spalten * z + sp));
-				sbArray[z][sp].addMouseListener(lmk);
-				sbArray[z][sp].addMouseMotionListener(lmk);
+				sbArray[z][sp].addMouseListener(lmmv);
+				sbArray[z][sp].addMouseMotionListener(lmmv);
 				add(sbArray[z][sp]);
 				sbArray[z][sp].setProperties(sbpArray[z][sp]);
 			}
@@ -95,8 +86,8 @@ public class SoundBoard extends JPanel {
 				} else {
 					sbArrayChange[z][sp] = new SoundButton(this,
 							String.valueOf(counter));
-					sbArrayChange[z][sp].addMouseListener(lmk);
-					sbArrayChange[z][sp].addMouseMotionListener(lmk);
+					sbArrayChange[z][sp].addMouseListener(lmmv);
+					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
 					counter++;
 				}
 				add(sbArrayChange[z][sp]);
@@ -144,8 +135,8 @@ public class SoundBoard extends JPanel {
 				} else {
 					sbArrayChange[z][sp] = new SoundButton(this,
 							String.valueOf(counter));
-					sbArrayChange[z][sp].addMouseListener(lmk);
-					sbArrayChange[z][sp].addMouseMotionListener(lmk);
+					sbArrayChange[z][sp].addMouseListener(lmmv);
+					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
 					counter++;
 				}
 				add(sbArrayChange[z][sp]);
@@ -215,128 +206,6 @@ public class SoundBoard extends JPanel {
 				hf.getSbActive().setStatusSoundButtonPause();
 				hf.getSbActive().sbFadeOut();
 			}
-		}
-	}
-
-	private class ListenerMouseKlick
-			implements MouseListener, MouseMotionListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			SoundButton sbClicked;
-			if (e.getSource() instanceof SoundButton) {
-				sbClicked = (SoundButton) e.getSource();
-
-				if (SwingUtilities.isLeftMouseButton(e)) {
-					if (hf.getTapeA() != null) {
-						if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
-							hf.getSbActive().sbStop();
-							sbClicked.sbPlay();
-						} else {
-							if ((hf.getSbActive() == sbClicked
-									&& hf.getSbActive().istPausiert != true)
-									|| (sbClicked.getButtonArt() == 99 && hf
-											.getSbActive().istPausiert != true)) {
-								hf.setSbNext(null);
-								hf.getSbActive().setStatusSoundButtonStop();
-								hf.getSbActive().sbFadeOut();
-							} else {
-								if (sbClicked.getButtonArt() != 99) {
-									hf.setSbNext(sbClicked);
-									hf.getSbNext().changeColor();
-									hf.getSbNext().sbStartBlink();
-									hf.getSbActive().sbFadeOut();
-								}
-							}
-						}
-					} else {
-						if (sbClicked.getButtonArt() != 99) {
-							sbClicked.sbPlay();
-						}
-					}
-				} else if (SwingUtilities.isRightMouseButton(e)) {
-					DialogSoundButton dsb = new DialogSoundButton(
-							(SoundButton) e.getSource(),
-							hf.getActualFontSize());
-				}
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			setCursor(cursorHand);
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e) && hf.wasDragged == true
-					&& hf.getSbpSource() != null
-					&& getMousePosition() != null) {
-				if (getComponentAt(getMousePosition()) instanceof SoundButton) {
-					sbTarget = (SoundButton) getComponentAt(getMousePosition());
-
-					hf.getSbpChangeStack().push(
-							new SbpChange(sbTarget, sbTarget.getProperties()));
-					System.out.println(sbTarget.getProperties().getName()
-							+ " wurde im Stack gespeichert");
-					sbTarget.setProperties(hf.getSbpSource());
-					System.out.println("Soundbuttonquelle: "
-							+ hf.getSbpSource().getName()
-							+ "Soundbuttontarget: " + hf.getSbpChangeStack()
-									.peek().getSbpLastUpdate().getName());
-					hf.wasDragged = false;
-					hf.setSbpSource(null);
-				}
-			}
-			setCursor(cursorMove);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			System.out.println(getMousePosition());
-			if (getMousePosition() != null) {
-				if (hf.getSoundBoardActive().getComponentAt(
-						getMousePosition()) instanceof SoundButton) {
-					if (hf.wasDragged == false) {
-						System.out.println("Soundbutton");
-						for (int z = 0; z < sbArray.length; z++) {
-							for (int sp = 0; sp < sbArray[z].length; sp++) {
-								if (e.getSource() == sbArray[z][sp]) {
-									hf.setSbpSource(
-											sbArray[z][sp].getProperties());
-									System.out.println(
-											"Buttoneigenschaften wurden gespeichert."
-													+ sbArray[z][sp].getName());
-									hf.wasDragged = true;
-								}
-							}
-						}
-					}
-				}
-				if (getComponentAt(getMousePosition()) != e.getSource()
-						&& hf.getSbpSource() != null) {
-					System.out.println("Hallo");
-					setCursor(DragSource.DefaultCopyDrop);
-				} else {
-					setCursor(cursorHand);
-				}
-			}
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
 		}
 	}
 
