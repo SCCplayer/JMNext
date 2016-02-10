@@ -26,6 +26,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import data.SbpChange;
 import data.SoundButtonProperties;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -35,6 +36,8 @@ import lib.Info;
 public class SoundButton extends JPanel {
 
 	private SoundBoard sb;
+
+	private String initName;
 
 	public boolean istPausiert = false;
 	private int statusSoundButton = 0;
@@ -68,6 +71,7 @@ public class SoundButton extends JPanel {
 	public static final int multiSong = 2;
 	public static final int loop = 3;
 	public static final int oneSongOwnPlayer = 4;
+	public static final int shuffleLoop = 5;
 
 	public static final int statusStop = 0;
 	public static final int statusPlay = 1;
@@ -119,8 +123,12 @@ public class SoundButton extends JPanel {
 
 	private myDropTargetListener dtl = new myDropTargetListener();
 
+	private SoundButton me;
+
 	public SoundButton(SoundBoard parentSoundboard, String name) {
+		me = this;
 		sb = parentSoundboard;
+		initName = name;
 		setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		properties.setButtonArt(99);
 		properties.setForeground(lblName.getForeground());
@@ -537,6 +545,23 @@ public class SoundButton extends JPanel {
 		}
 	}
 
+	public void reset() {
+		properties.setBackground(Color.white);
+		properties.setForeground(standardTextfarbe);
+		setLabelsTextColor(properties.getForeground());
+		setBackground(properties.getBackground());
+		properties.setMusicPath(null);
+		setName(initName);
+		properties.setButtonArt(99);
+	}
+
+	public void setColors(SoundButtonProperties sbpSource) {
+		properties.setBackground(sbpSource.getBackground());
+		properties.setForeground(sbpSource.getForeground());
+		setLabelsTextColor(properties.getForeground());
+		setBackground(properties.getBackground());
+	}
+
 	public void setStatusSoundButtonStop() {
 		lblButtonPlay.setVisible(false);
 		lblButtonPause.setVisible(false);
@@ -568,7 +593,9 @@ public class SoundButton extends JPanel {
 				volumePerStep = volumeBlende / blendenCounter;
 				volumeBlende = volumeBlende - volumePerStep;
 				sb.getTapeA().setVolume(volumeBlende);
-				blendenCounter--;
+				if (blendenCounter != 0) {
+					blendenCounter--;
+				}
 				if (sb.getSbNext() != null) {
 					sbStop();
 					sb.getSbNext().sbPlay();
@@ -622,21 +649,25 @@ public class SoundButton extends JPanel {
 			if (getTotalDuration().compareTo("0:00") == 0) {
 				setTotalDuration(Info.getTotalDuration(sb.getTapeA()));
 			}
-			setLblDuration(Info.getRestzeit(sb.getTapeA()));
-			setPbDurationValue(Info.getPercent(sb.getTapeA()));
+			if (sb.getTapeA() != null) {
+				setLblDuration(Info.getRestzeit(sb.getTapeA()));
+				setPbDurationValue(Info.getPercent(sb.getTapeA()));
 
-			if (Info.getRestzeitSekunde(sb.getTapeA()) == 0
-					&& getButtonArt() == 1) {
-				sbStop();
-				sb.setTapeA(null);
-				sbPlay();
-			}
-			if (Info.getRestzeitSekunde(sb.getTapeA()) == 0
-					&& getButtonArt() == 0) {
-				sbStop();
-				sb.setTapeA(null);
-				pbUpdateTimer.stop();
-				sb.setSbActive(null);
+				if (Info.getRestzeitSekunde(sb.getTapeA()) == 0
+						&& getButtonArt() == shuffleLoop) {
+					sbStop();
+					sb.setTapeA(null);
+					sbPlay();
+				}
+				if (Info.getRestzeitSekunde(sb.getTapeA()) == 0
+						&& (getButtonArt() == oneSong
+								|| getButtonArt() == shuffle
+								|| getButtonArt() == multiSong)) {
+					sbStop();
+					sb.setTapeA(null);
+					pbUpdateTimer.stop();
+					sb.setSbActive(null);
+				}
 			}
 		}
 	}
@@ -682,6 +713,10 @@ public class SoundButton extends JPanel {
 
 						if (Browse.isMusicFileOrMusicFilefolder(
 								tempFile) == true) {
+
+							sb.getHf().getSbpChangeStack().push(
+									new SbpChange(me, me.getProperties()));
+
 							setMusicPath(
 									new File(tr.getTransferData(flavors[i])
 											.toString().substring(1,

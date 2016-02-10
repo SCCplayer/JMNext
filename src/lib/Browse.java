@@ -2,6 +2,7 @@ package lib;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -128,9 +129,9 @@ public abstract class Browse {
 		return musicFolder;
 	}
 
-	public static File getMusicFileFolder() {
+	public static File getMusicFileFolder(Font fontSize) {
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		setFileChooserFont(fc.getComponents());
+		setFileChooserFont(fc.getComponents(), fontSize);
 		fc.addChoosableFileFilter(musicFileFilter);
 		System.out.println(fc.getComponentCount());
 		fc.setFileFilter(musicFileFilter);
@@ -213,12 +214,13 @@ public abstract class Browse {
 		}
 	}
 
-	private static void setFileChooserFont(Component[] comp) {
+	private static void setFileChooserFont(Component[] comp, Font fontSize) {
 		for (int x = 0; x < comp.length; x++) {
 			if (comp[x] instanceof Container)
-				setFileChooserFont(((Container) comp[x]).getComponents());
+				setFileChooserFont(((Container) comp[x]).getComponents(),
+						fontSize);
 			try {
-				comp[x].setFont(MyFonts.large);
+				comp[x].setFont(fontSize);
 			} catch (Exception e) {
 			} // do nothing
 		}

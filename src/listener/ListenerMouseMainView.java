@@ -95,19 +95,31 @@ public class ListenerMouseMainView
 				&& e.getSource() instanceof SoundButton) {
 			if (hf.getSoundBoardActive().getComponentAt(hf.getSoundBoardActive()
 					.getMousePosition()) instanceof SoundButton) {
-				sbTarget = (SoundButton) hf.getSoundBoardActive()
-						.getComponentAt(
-								hf.getSoundBoardActive().getMousePosition());
+				if (hf.getKeyStrgPressed() == true) {
+					System.out.println("CopyColor");
+					sbTarget = (SoundButton) hf.getSoundBoardActive()
+							.getComponentAt(hf.getSoundBoardActive()
+									.getMousePosition());
+					hf.getSbpChangeStack().push(
+							new SbpChange(sbTarget, sbTarget.getProperties()));
+					sbTarget.setColors(hf.getSbpSource());
+				} else {
+					sbTarget = (SoundButton) hf.getSoundBoardActive()
+							.getComponentAt(hf.getSoundBoardActive()
+									.getMousePosition());
 
-				hf.getSbpChangeStack().push(
-						new SbpChange(sbTarget, sbTarget.getProperties()));
-				System.out.println(sbTarget.getProperties().getName()
-						+ " wurde im Stack gespeichert");
-				sbTarget.setProperties(hf.getSbpSource());
-				System.out.println(
-						"Soundbuttonquelle: " + hf.getSbpSource().getName()
-								+ "Soundbuttontarget: " + hf.getSbpChangeStack()
-										.peek().getSbpLastUpdate().getName());
+					hf.getSbpChangeStack().push(
+							new SbpChange(sbTarget, sbTarget.getProperties()));
+
+					System.out.println(sbTarget.getProperties().getName()
+							+ " wurde im Stack gespeichert");
+					sbTarget.setProperties(hf.getSbpSource());
+
+					System.out.println("Soundbuttonquelle: "
+							+ hf.getSbpSource().getName()
+							+ "Soundbuttontarget: " + hf.getSbpChangeStack()
+									.peek().getSbpLastUpdate().getName());
+				}
 				hf.wasDragged = false;
 				hf.setSbpSource(null);
 			}
@@ -116,6 +128,8 @@ public class ListenerMouseMainView
 			if (sbMouseOver != null && hf.getAnzeigePfad() != null) {
 				System.out.println(sbMouseOver + hf.getAnzeigePfad().getName());
 				if (sbMouseOver.getProperties().getButtonArt() == 99) {
+					hf.getSbpChangeStack().push(new SbpChange(sbMouseOver,
+							sbMouseOver.getProperties()));
 					sbMouseOver.getProperties()
 							.setMusicPath(hf.getAnzeigePfad());
 					sbMouseOver.setName(hf.getAnzeigePfad().getName());

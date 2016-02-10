@@ -16,10 +16,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -43,6 +39,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.MyFonts;
+import lib.SaveLoad;
 import listener.ListenerMouseMainView;
 
 public class MainView extends JFrame {
@@ -70,7 +67,9 @@ public class MainView extends JFrame {
 	private int zeilen = 0;
 	private int spalten = 0;
 
-	private int zeitBlende = 200; // 100 entspricht 1 sec
+	private boolean keyStrgPressed = false;
+
+	private int zeitBlende = 0; // 100 entspricht 1 sec
 
 	private FensterListener fl = new FensterListener();
 	private ListenerMouseMainView lmmv = new ListenerMouseMainView(this);
@@ -121,7 +120,7 @@ public class MainView extends JFrame {
 		return anzeigePfad;
 	}
 
-	private Font actualFontSize;
+	private Font actualFontSize = MyFonts.small;
 
 	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
 	private Cursor cursorMove = new Cursor(Cursor.MOVE_CURSOR);
@@ -138,15 +137,14 @@ public class MainView extends JFrame {
 	private SoundButtonProperties sbpSource;
 	private Stack<SbpChange> SbpChangeStack = new Stack<SbpChange>();
 
-	private File fileAutoSave;
-
 	private JTabbedPane tp = new JTabbedPane();
 	private MainView hf;
 
 	public MainView() {
 		try {
 			hf = this;
-			openAutoSave();
+			SaveLoad.openConfig(hf);
+			SaveLoad.openAutoSave(hf);
 			addWindowListener(fl);
 			setLayout(new BorderLayout());
 			createMenuDatei();
@@ -175,8 +173,14 @@ public class MainView extends JFrame {
 			setSize(2000, 1400);
 			System.out.println(sbVector.size());
 			setSizeOfMainViewElements(MyFonts.large);
-			actualFontSize = MyFonts.large;
+			// actualFontSize = MyFonts.large;
+			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
 			setVisible(true);
+			System.out.println(getLocation());
+			System.out.println(getSize());
+
+			System.out.println(getZeitBlende());
+
 			System.out.println(Toolkit.getDefaultToolkit().getScreenSize());
 			System.out
 					.println(Toolkit.getDefaultToolkit().getScreenResolution());
@@ -255,103 +259,6 @@ public class MainView extends JFrame {
 		mb.add(menuAnsicht);
 	}
 
-	private void openAutoSave() {
-		if (getClass().getClassLoader().getResource("resources").toString()
-				.split(":")[0].compareTo("file") == 0) {
-			if (getClass().getClassLoader().getResource("resources").toString()
-					.split(":").length == 2) {
-				fileAutoSave = new File(getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[1]
-								.concat("/autosave.ser"));
-				System.out.println(fileAutoSave.getAbsolutePath());
-			} else if (getClass().getClassLoader().getResource("resources")
-					.toString().split(":").length == 3) {
-				fileAutoSave = new File(getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[2]
-								.concat("/autosave.ser"));
-			}
-			System.out.println(fileAutoSave.getAbsolutePath());
-		} else {
-			fileAutoSave = new File("autosave.ser");
-		}
-		if (fileAutoSave.exists() == false) {
-			try {
-				fileAutoSave.createNewFile();
-			} catch (Exception e) {
-				System.out.println("Datei erstellen fehlgeschlagen");
-				System.out.println(e.getMessage());
-			}
-		} else {
-			System.out.println("Daten werden aus AutoSave geladen");
-			loadMainView(fileAutoSave);
-		}
-	}
-
-	public void saveMainView(File speicherFile) {
-		try {
-			FileOutputStream fileStream = new FileOutputStream(speicherFile);
-			ObjectOutputStream os = new ObjectOutputStream(fileStream);
-			os.writeInt(sbVector.size());
-			for (int iv = 0; iv < sbVector.size(); iv++) {
-				SoundBoard sbSave = (SoundBoard) sbVector.get(iv);
-				os.writeInt(sbSave.getZeilen());
-				os.writeInt(sbSave.getSpalten());
-				os.writeBoolean(sbSave.pbVisible);
-				for (int z = 0; z < sbSave.getZeilen(); z++) {
-					for (int sp = 0; sp < sbSave.getSpalten(); sp++) {
-						os.writeObject(
-								sbSave.getSbArray()[z][sp].getProperties());
-						System.out.println("Zeile: " + z + " Spalte: " + sp
-								+ " gespeichert");
-					}
-				}
-				System.out.println("Layer " + iv + " wurde gespeichert");
-			}
-			os.close();
-		} catch (Exception ex) {
-			System.out.println(
-					"Objekte konnten nicht vollständig gespeichert werden");
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	public void loadMainView(File ladenFile) {
-		try {
-			SoundButtonProperties[][] sbpArray;
-			FileInputStream fileStream = new FileInputStream(ladenFile);
-			ObjectInputStream os = new ObjectInputStream(fileStream);
-			try {
-				int anzahlLayer = os.readInt();
-				boolean pbVisible = true;
-				System.out.println("Anzahl Layer: " + anzahlLayer);
-				for (int i = 0; i < anzahlLayer; i++) {
-					zeilen = os.readInt();
-					spalten = os.readInt();
-					pbVisible = os.readBoolean();
-					sbpArray = new SoundButtonProperties[zeilen][spalten];
-					for (int z = 0; z < zeilen; z++) {
-						for (int sp = 0; sp < spalten; sp++) {
-							sbpArray[z][sp] = (SoundButtonProperties) os
-									.readObject();
-						}
-					}
-					sbVector.add(
-							new SoundBoard(this, sbpArray, pbVisible, lmmv));
-					soundBoardActive = (SoundBoard) sbVector.get(i);
-				}
-
-			} catch (Exception e) {
-				System.out.println("Fehler beim Laden");
-				System.out.println(e.getMessage());
-			} finally {
-				os.close();
-			}
-		} catch (Exception ex) {
-			System.out.println("Fehler beim Öffnen der Datei.");
-			System.out.println(ex.getMessage());
-		}
-	}
-
 	private class FensterListener implements WindowListener {
 
 		@Override
@@ -364,7 +271,8 @@ public class MainView extends JFrame {
 		public void windowClosing(WindowEvent e) {
 			System.out.println("closing");
 			// soundBoardActive.saveSoundboard();
-			saveMainView(fileAutoSave);
+			SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
+			SaveLoad.saveConfig(hf, SaveLoad.getFileConfig());
 		}
 
 		@Override
@@ -419,6 +327,8 @@ public class MainView extends JFrame {
 				tp.setSelectedIndex(0);
 			} else if (e.getKeyCode() == 50) {
 				tp.setSelectedIndex(1);
+			} else if (e.getKeyCode() == 17 && keyStrgPressed == false) {
+				keyStrgPressed = true;
 			}
 			// TODO Auto-generated method stub
 
@@ -427,7 +337,8 @@ public class MainView extends JFrame {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
-
+			System.out.println("Taste Losgelassen");
+			keyStrgPressed = false;
 		}
 	}
 
@@ -439,30 +350,13 @@ public class MainView extends JFrame {
 				tp.removeChangeListener(lc);
 				tp.removeAll();
 				sbVector.removeAllElements();
-				loadMainView(f);
-			}
-		}
-	}
-
-	public void saveSoundBoardAs() {
-		System.out.println("Button speichern");
-		File f = Browse.getSaveFileSou();
-		System.out.println(f);
-		if (f != null) {
-			if (f.exists() == true) {
-				System.out.println("Datei existiert bereits");
-			} else {
-				try {
-					f.createNewFile();
-					saveMainView(f);
-				} catch (Exception ex) {
-					System.out.println("Datei erstellen fehlgeschlagen");
-				}
+				SaveLoad.loadMainView(hf, f);
 			}
 		}
 	}
 
 	public void setSizeOfMainViewElements(Font myFont) {
+		setActualFontSize(myFont);
 		JMenu tempMenu;
 		lblTitelSetPreferredSize(myFont);
 		tp.setFont(myFont);
@@ -541,7 +435,7 @@ public class MainView extends JFrame {
 							tp.getSelectedIndex());
 				}
 			} else if (e.getSource() == itemSaveSoundboard) {
-				saveSoundBoardAs();
+				SaveLoad.saveSoundBoardAs(hf);
 			} else if (e.getSource() == itemFontSmall) {
 				setSizeOfMainViewElements(MyFonts.small);
 				actualFontSize = MyFonts.small;
@@ -572,7 +466,7 @@ public class MainView extends JFrame {
 				MyFonts.guiResizeFont(soundBoardActive.getComponents(),
 						getActualFontSize());
 			} else if (e.getSource() == itemAutosave) {
-				saveMainView(fileAutoSave);
+				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
 			} else if (e.getSource() == itemRemoveLayer) {
 				System.out.println("Aktuellen Layer entfernen");
 				if (sbVector.size() > 0) {
@@ -710,14 +604,6 @@ public class MainView extends JFrame {
 		return soundBoardActive;
 	}
 
-	public File getFileAutoSave() {
-		return fileAutoSave;
-	}
-
-	public void setFileAutoSave(File fileAutoSave) {
-		this.fileAutoSave = fileAutoSave;
-	}
-
 	public JTabbedPane getTp() {
 		return tp;
 	}
@@ -730,15 +616,35 @@ public class MainView extends JFrame {
 		return actualFontSize;
 	}
 
+	public void setActualFontSize(Font actualFontSize) {
+		this.actualFontSize = actualFontSize;
+	}
+
 	public int getZeitBlende() {
 		return zeitBlende;
 	}
 
-	public void setZeitBlende(int milisekunden) {
-		zeitBlende = milisekunden / 10;
+	public void setZeitBlende(int millisekunden) {
+		zeitBlende = millisekunden / 10;
 	}
 
 	public void setSideViewNull() {
 		sv = null;
+	}
+
+	public Vector<SoundBoard> getSbVector() {
+		return sbVector;
+	}
+
+	public void setSbVector(Vector<SoundBoard> sbVector) {
+		this.sbVector = sbVector;
+	}
+
+	public ListenerMouseMainView getLmmv() {
+		return lmmv;
+	}
+
+	public boolean getKeyStrgPressed() {
+		return keyStrgPressed;
 	}
 }

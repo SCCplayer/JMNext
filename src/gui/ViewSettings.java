@@ -55,6 +55,7 @@ public class ViewSettings extends JFrame {
 		sliderFadeOutZeit.setMinorTickSpacing(100);
 		sliderFadeOutZeit.setPaintLabels(true);
 		sliderFadeOutZeit.setPaintTicks(true);
+		System.out.println(hf.getZeitBlende());
 		sliderFadeOutZeit.setValue(hf.getZeitBlende() * 10);
 		sliderFadeOutZeit.setPreferredSize(new Dimension(1600, 200));
 

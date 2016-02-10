@@ -288,4 +288,7 @@ public class SoundBoard extends JPanel {
 		return hf.getZeitBlende();
 	}
 
+	public MainView getHf() {
+		return hf;
+	}
 }

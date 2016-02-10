@@ -66,6 +66,7 @@ public class DialogSoundButton extends JDialog {
 	private JLabel iconLoop;
 
 	private JCheckBox chBox = new JCheckBox("shuffle");
+	private Font actualFontSize;
 
 	public DialogSoundButton(SoundButton sb)
 
@@ -78,6 +79,7 @@ public class DialogSoundButton extends JDialog {
 	public DialogSoundButton(SoundButton sb, Font myFont) {
 		this.soundButton = sb;
 		initialComponents();
+		actualFontSize = myFont;
 		MyFonts.guiResizeFont(getComponents(), myFont);
 		setVisible(true);
 	}
@@ -109,16 +111,18 @@ public class DialogSoundButton extends JDialog {
 		nextRow(5, 5);
 		pnlDialog.add(lbFarbe, l);
 		btnButtonFarbe.addActionListener(bl);
-		btnButtonFarbe.setBackground(soundButton.getBackground());
-		btnButtonFarbe.setForeground(soundButton.getForegroundColorStandard());
+		btnButtonFarbe
+				.setBackground(soundButton.getProperties().getBackground());
+		btnButtonFarbe
+				.setForeground(soundButton.getProperties().getForeground());
 		pnlDialog.add(btnButtonFarbe, r);
 
 		// ========== Farbenauswahl Text =============================
 		nextRow();
 		pnlDialog.add(new JLabel("Textfarbe: "), l);
 		btnTextFarbe.addActionListener(bl);
-		btnTextFarbe.setBackground(soundButton.getBackground());
-		btnTextFarbe.setForeground(soundButton.getForegroundColorStandard());
+		btnTextFarbe.setBackground(soundButton.getProperties().getBackground());
+		btnTextFarbe.setForeground(soundButton.getProperties().getForeground());
 		pnlDialog.add(btnTextFarbe, r);
 
 		// ========== Pfadauswahl =============================
@@ -204,11 +208,11 @@ public class DialogSoundButton extends JDialog {
 			} else if (e.getSource() == tfName) {
 				dialogAnwenden();
 			} else if (e.getSource() == btnLeeren) {
-				tfPath.setText("");
-				dialogAnwenden();
+				soundButton.reset();
+				dispose();
 			} else if (e.getSource() == btnBrowse) {
 				// musicPath = null;
-				musicPath = Browse.getMusicFileFolder();
+				musicPath = Browse.getMusicFileFolder(actualFontSize);
 				if (musicPath != null) {
 					tfPath.setText(musicPath.getPath());
 					if (soundButton.getName()
