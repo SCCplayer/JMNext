@@ -15,7 +15,7 @@ import javax.swing.JSlider;
 
 import lib.MyFonts;
 
-public class ViewSettings extends JFrame {
+public class DialogSettings extends JFrame {
 
 	private MainView hf;
 
@@ -34,13 +34,13 @@ public class ViewSettings extends JFrame {
 
 	private BtnListener bl = new BtnListener();
 
-	public ViewSettings(MainView hf) {
+	public DialogSettings(MainView hf) {
 		this.hf = hf;
 		init();
 		setVisible(true);
 	}
 
-	public ViewSettings(MainView hf, Font myFont) {
+	public DialogSettings(MainView hf, Font myFont) {
 		this.hf = hf;
 		init();
 		MyFonts.guiResizeFont(this.getComponents(), myFont);

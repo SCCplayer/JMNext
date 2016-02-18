@@ -1,4 +1,4 @@
-package gui;
+package testbereich;
 
 import javax.swing.JPanel;
 

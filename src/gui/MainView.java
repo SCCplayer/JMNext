@@ -2,11 +2,9 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -46,6 +44,7 @@ public class MainView extends JFrame {
 	private SideView sv;
 	private ListenerKeyboard lkb = new ListenerKeyboard();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
+
 	private ListenerChange lc = new ListenerChange();
 	private Vector<SoundBoard> sbVector = new Vector<SoundBoard>();
 
@@ -64,8 +63,6 @@ public class MainView extends JFrame {
 	private ImageIcon iconRemoveSpalteScale;
 
 	private SoundBoard soundBoardActive;
-	private int zeilen = 0;
-	private int spalten = 0;
 
 	private boolean keyStrgPressed = false;
 
@@ -80,7 +77,7 @@ public class MainView extends JFrame {
 	private JMenu menuLayer = new JMenu("Layer");
 	private JMenu menuAnsicht = new JMenu("Ansicht");
 	private JMenuItem itemPbAusblenden = new JMenuItem(
-			"Vortschrittsanzeige im Layer ein-/ausblenden");
+			"Fortschrittsanzeige im Layer ein-/ausblenden");
 	private JMenuItem itemIconBar = new JMenuItem(
 			"Symbolleiste ein-/ausblenden");
 	private JMenuItem itemFontSmall = new JMenuItem("Schriftgröße: Klein");
@@ -104,28 +101,14 @@ public class MainView extends JFrame {
 	private JMenuItem itemLoadSoundboard = new JMenuItem("Soundboard laden");
 	private JMenuItem itemSettings = new JMenuItem("Einstellungen");
 
-	private GridLayout gdl = new GridLayout(1, 3);
 	private JPanel pnlAnzeigeCenter = new JPanel();
-	private JPanel pnlAnzeige = new JPanel(gdl);
-
-	public JPanel getPnlAnzeige() {
-		return pnlAnzeige;
-	}
-
 	private JPanel iconBar;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
 
-	public File getAnzeigePfad() {
-		return anzeigePfad;
-	}
-
 	private Font actualFontSize = MyFonts.small;
 
-	private Cursor cursorHand = new Cursor(Cursor.HAND_CURSOR);
-	private Cursor cursorMove = new Cursor(Cursor.MOVE_CURSOR);
 	public boolean wasDragged = false;
-	private SoundButton soundButton;
 
 	private JFXPanel myJFXPanel = new JFXPanel();
 	private MediaPlayer tapeA;
@@ -133,6 +116,8 @@ public class MainView extends JFrame {
 
 	private SoundButton sbActive;
 	private SoundButton sbNext;
+	private PanelListeSongsPlayed pnlSongsPlayed = new PanelListeSongsPlayed(
+			this);
 
 	private SoundButtonProperties sbpSource;
 	private Stack<SbpChange> SbpChangeStack = new Stack<SbpChange>();
@@ -155,35 +140,34 @@ public class MainView extends JFrame {
 			sbVectorToTappedPane();
 
 			pnlAnzeigeCenter.setLayout(new BorderLayout());
-			lblTitel.setPreferredSize(new Dimension(500, 120));
+
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
-			pnlAnzeige.add(pnlAnzeigeCenter);
-			pnlAnzeige.addMouseListener(lmmv);
-			pnlAnzeige.addMouseMotionListener(lmmv);
+			pnlAnzeigeCenter.addMouseListener(lmmv);
+			pnlAnzeigeCenter.addMouseMotionListener(lmmv);
 
-			add(pnlAnzeige, BorderLayout.SOUTH);
+			add(pnlAnzeigeCenter, BorderLayout.SOUTH);
 			loadImageIcons();
 			createIconBar();
 			add(iconBar, BorderLayout.EAST);
 			iconBar.setVisible(false);
 
+			// add(pnlSongsPlayed, BorderLayout.EAST);
+
 			setTitle("JMNext");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setSize(2000, 1400);
-			System.out.println(sbVector.size());
-			setSizeOfMainViewElements(MyFonts.large);
-			// actualFontSize = MyFonts.large;
+			setSize(Toolkit.getDefaultToolkit().getScreenSize());
+
 			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
+
 			setVisible(true);
-			System.out.println(getLocation());
-			System.out.println(getSize());
 
 			System.out.println(getZeitBlende());
 
-			System.out.println(Toolkit.getDefaultToolkit().getScreenSize());
-			System.out
-					.println(Toolkit.getDefaultToolkit().getScreenResolution());
+			System.out.println("Auflösung: "
+					+ Toolkit.getDefaultToolkit().getScreenSize());
+			System.out.println("dpi: "
+					+ Toolkit.getDefaultToolkit().getScreenResolution());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -380,12 +364,16 @@ public class MainView extends JFrame {
 
 	private void lblTitelSetPreferredSize(Font myFont) {
 		lblTitel.setFont(myFont);
-		if (myFont == MyFonts.small) {
-			lblTitel.setPreferredSize(new Dimension(500, 40));
-		} else if (myFont == MyFonts.medium) {
-			lblTitel.setPreferredSize(new Dimension(500, 80));
-		} else if (myFont == MyFonts.large) {
-			lblTitel.setPreferredSize(new Dimension(500, 120));
+		System.out.println("Fontsize: " + myFont.getSize());
+		if (myFont.getSize() == MyFonts.small.getSize()) {
+			System.out.println("SMALL");
+			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 40));
+		} else if (myFont.getSize() == MyFonts.medium.getSize()) {
+			System.out.println("MEDIUM");
+			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 80));
+		} else if (myFont.getSize() == MyFonts.large.getSize()) {
+			System.out.println("LARGE");
+			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 120));
 		}
 	}
 
@@ -450,7 +438,7 @@ public class MainView extends JFrame {
 				loadSoundBoardFile();
 				sbVectorToTappedPane();
 			} else if (e.getSource() == itemSettings) {
-				new ViewSettings(hf, getActualFontSize());
+				new DialogSettings(hf, getActualFontSize());
 			} else if (e.getSource() == itemAddLayer) {
 				System.out.println("Neuen Layer hinzufügen");
 				sbVector.add(new SoundBoard(hf, 8, 6, lmmv));
@@ -620,6 +608,10 @@ public class MainView extends JFrame {
 		this.actualFontSize = actualFontSize;
 	}
 
+	public void addSongsPlayed(String filePath) {
+		pnlSongsPlayed.addSongsPlayed(filePath);
+	}
+
 	public int getZeitBlende() {
 		return zeitBlende;
 	}
@@ -646,5 +638,13 @@ public class MainView extends JFrame {
 
 	public boolean getKeyStrgPressed() {
 		return keyStrgPressed;
+	}
+
+	public File getAnzeigePfad() {
+		return anzeigePfad;
+	}
+
+	public JPanel getPnlAnzeige() {
+		return pnlAnzeigeCenter;
 	}
 }

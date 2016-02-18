@@ -48,9 +48,11 @@ public class ListenerMouseMainView
 							hf.getSbActive().sbFadeOut();
 						} else {
 							if (sbClicked.getButtonArt() != 99) {
-								hf.setSbNext(sbClicked);
-								hf.getSbNext().changeColor();
-								hf.getSbNext().sbStartBlink();
+								if (sbClicked.getMusicPath().exists() == true) {
+									hf.setSbNext(sbClicked);
+									hf.getSbNext().changeColor();
+									hf.getSbNext().sbStartBlink();
+								}
 								hf.getSbActive().sbFadeOut();
 							}
 						}

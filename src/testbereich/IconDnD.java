@@ -1,4 +1,4 @@
-package gui;
+package testbereich;
 
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;

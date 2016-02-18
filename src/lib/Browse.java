@@ -9,8 +9,6 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import javafx.stage.FileChooser;
-
 public abstract class Browse {
 	private static JFileChooser fc = new JFileChooser();
 	// private static JFileChooser fc = new JFileChooser(
@@ -110,6 +108,7 @@ public abstract class Browse {
 	}
 
 	public static File getOpenFileLay() {
+		musicFile = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.addChoosableFileFilter(layerFileFilter);
 		fc.setFileFilter(layerFileFilter);
@@ -121,6 +120,7 @@ public abstract class Browse {
 	}
 
 	public static File getMusicFolder() {
+		musicFolder = null;
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int auswahl = fc.showOpenDialog(null);
 		if (auswahl == JFileChooser.APPROVE_OPTION) {
@@ -130,6 +130,7 @@ public abstract class Browse {
 	}
 
 	public static File getMusicFileFolder(Font fontSize) {
+		musicFolder = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		setFileChooserFont(fc.getComponents(), fontSize);
 		fc.addChoosableFileFilter(musicFileFilter);
@@ -202,16 +203,6 @@ public abstract class Browse {
 			}
 		}
 		return musicFileArray;
-	}
-
-	public static void getMusicFileFX() {
-		FileChooser fxFileChooser = new FileChooser();
-		File selectedFile = fxFileChooser.showOpenDialog(null);
-		if (selectedFile != null) {
-			System.out.println(selectedFile.getName());
-		} else {
-			System.out.println("Dateiauswahl abgebrochen");
-		}
 	}
 
 	private static void setFileChooserFont(Component[] comp, Font fontSize) {

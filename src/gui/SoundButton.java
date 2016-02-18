@@ -16,6 +16,7 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Date;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
@@ -236,21 +237,23 @@ public class SoundButton extends JPanel {
 
 	public void sbPlay() {
 		if (getButtonArt() != 99 && properties.getMusicPath() != null) {
-			blendenCounterStartwert = sb.getZeitBlende();
-			blendenCounter = blendenCounterStartwert;
-			changeColor();
-			sb.setTapeA(new MediaPlayer(new Media(getMusicPathASCII())));
-			sb.getTapeA().play();
-			// Runnable t1 = sb.getTapeA().getOnEndOfMedia();
-			// t1.run();
-			sb.getTapeA().setVolume(getVolume());
-			lblCounterUp();
-			setStatusSoundButtonPlay();
-			if (blinkTimer.isRunning() == false) {
-				blinkTimer.start();
+			if (properties.getMusicPath().exists() == true) {
+				blendenCounterStartwert = sb.getZeitBlende();
+				blendenCounter = blendenCounterStartwert;
+				changeColor();
+				sb.setTapeA(new MediaPlayer(new Media(getMusicPathASCII())));
+				sb.getTapeA().play();
+				// Runnable t1 = sb.getTapeA().getOnEndOfMedia();
+				// t1.run();
+				sb.getTapeA().setVolume(getVolume());
+				lblCounterUp();
+				setStatusSoundButtonPlay();
+				if (blinkTimer.isRunning() == false) {
+					blinkTimer.start();
+				}
+				pbUpdateTimer.start();
+				sb.setSbActive(this);
 			}
-			pbUpdateTimer.start();
-			sb.setSbActive(this);
 		}
 	}
 
@@ -432,9 +435,13 @@ public class SoundButton extends JPanel {
 	}
 
 	public String getMusicPathASCII() {
+		Date myDate = new Date();
+		String timeStamp = myDate.toString().split(" ")[3];
 		if (properties.getMusicPath() != null) {
 			if (properties.getButtonArt() == 0) {
 				sb.setTitelAnzeige(getMusicPath().getName());
+				sb.getHf().addSongsPlayed(
+						timeStamp.toString() + " " + getMusicPath().getName());
 				sb.setAnzeigePfad(properties.getMusicPath());
 				return properties.getMusicPath().toURI().toASCIIString();
 			} else if (properties.getButtonArt() == 1) {
@@ -443,6 +450,9 @@ public class SoundButton extends JPanel {
 				System.out.println(zufallsZahl + ": "
 						+ musicFileArray[zufallsZahl].getName());
 				sb.setTitelAnzeige(musicFileArray[zufallsZahl].getName());
+
+				sb.getHf().addSongsPlayed(timeStamp.toString() + " "
+						+ musicFileArray[zufallsZahl].getName());
 				sb.setAnzeigePfad(musicFileArray[zufallsZahl]);
 				return musicFileArray[zufallsZahl].toURI().toASCIIString();
 			} else if (properties.getButtonArt() == 2) {
@@ -454,6 +464,8 @@ public class SoundButton extends JPanel {
 				counterMultiSong++;
 				System.out.println(musicFileArray.length);
 				sb.setTitelAnzeige(musicFileArray[titelNummer].getName());
+				sb.getHf().addSongsPlayed(timeStamp.toString() + " "
+						+ musicFileArray[titelNummer].getName());
 				sb.setAnzeigePfad(musicFileArray[titelNummer]);
 				return musicFileArray[titelNummer].toURI().toASCIIString();
 			}
@@ -553,6 +565,8 @@ public class SoundButton extends JPanel {
 		properties.setMusicPath(null);
 		setName(initName);
 		properties.setButtonArt(99);
+		lblCounterCicle.setText("0");
+		lblDuration.setText("0:00");
 	}
 
 	public void setColors(SoundButtonProperties sbpSource) {
