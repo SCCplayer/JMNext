@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -57,7 +58,8 @@ public class DialogSettings extends JFrame {
 		sliderFadeOutZeit.setPaintTicks(true);
 		System.out.println(hf.getZeitBlende());
 		sliderFadeOutZeit.setValue(hf.getZeitBlende() * 10);
-		sliderFadeOutZeit.setPreferredSize(new Dimension(1600, 200));
+		sliderFadeOutZeit
+				.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width * 3 / 5, 200));
 
 		pnlFadeOutZeit.setLayout(new FlowLayout());
 		pnlFadeOutZeit.add(lblFadeOutZeit);
@@ -76,7 +78,7 @@ public class DialogSettings extends JFrame {
 		pnlSouth.add(btnAnwenden);
 		add(pnlSouth, BorderLayout.SOUTH);
 
-		setSize(2100, 300);
+		setSize(Toolkit.getDefaultToolkit().getScreenSize().width * 4 / 5, 300);
 		setLocation(100, 100);
 	}
 
