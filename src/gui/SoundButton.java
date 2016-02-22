@@ -345,7 +345,7 @@ public class SoundButton extends JPanel {
 	}
 
 	public void setTotalDuration(String duration) {
-		if (properties.getButtonArt() == 0) {
+		if (properties.getButtonArt() == 0 || properties.getButtonArt() == 99) {
 			properties.setTotalDuration(duration);
 			lblDuration.setText(properties.getTotalDuration());
 		} else if (properties.getButtonArt() == 1 || properties.getButtonArt() == 2) {
@@ -373,6 +373,11 @@ public class SoundButton extends JPanel {
 
 	public void setCounterCicle(int anzahl) {
 		counterCicle = anzahl;
+		lblCounterCicle.setText(String.valueOf(counterCicle));
+	}
+
+	public void resetCounterCicle() {
+		counterCicle = 0;
 		lblCounterCicle.setText(String.valueOf(counterCicle));
 	}
 

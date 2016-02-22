@@ -28,8 +28,7 @@ public class SoundBoard extends JPanel {
 
 	public boolean pbVisible = true;
 
-	public SoundBoard(MainView parent, int zeilen, int spalten,
-			ListenerMouseMainView lmmv) {
+	public SoundBoard(MainView parent, int zeilen, int spalten, ListenerMouseMainView lmmv) {
 		this.hf = parent;
 		this.lmmv = lmmv;
 		this.zeilen = zeilen;
@@ -38,8 +37,7 @@ public class SoundBoard extends JPanel {
 		sbArray = new SoundButton[zeilen][spalten];
 		for (int z = 0; z < zeilen; z++) {
 			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp] = new SoundButton(this,
-						String.valueOf(spalten * z + sp));
+				sbArray[z][sp] = new SoundButton(this, String.valueOf(spalten * z + sp));
 				sbArray[z][sp].addMouseListener(lmmv);
 				sbArray[z][sp].addMouseMotionListener(lmmv);
 				add(sbArray[z][sp]);
@@ -47,8 +45,8 @@ public class SoundBoard extends JPanel {
 		}
 	}
 
-	public SoundBoard(MainView parent, SoundButtonProperties[][] sbpArray,
-			boolean pbVisble, ListenerMouseMainView lmmv) {
+	public SoundBoard(MainView parent, SoundButtonProperties[][] sbpArray, boolean pbVisble,
+			ListenerMouseMainView lmmv) {
 		this.hf = parent;
 		this.pbVisible = pbVisble;
 		this.lmmv = lmmv;
@@ -58,8 +56,7 @@ public class SoundBoard extends JPanel {
 		sbArray = new SoundButton[zeilen][spalten];
 		for (int z = 0; z < zeilen; z++) {
 			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp] = new SoundButton(this,
-						String.valueOf(spalten * z + sp));
+				sbArray[z][sp] = new SoundButton(this, String.valueOf(spalten * z + sp));
 				sbArray[z][sp].addMouseListener(lmmv);
 				sbArray[z][sp].addMouseMotionListener(lmmv);
 				add(sbArray[z][sp]);
@@ -84,8 +81,7 @@ public class SoundBoard extends JPanel {
 				if (sp + 1 != spalten) {
 					sbArrayChange[z][sp] = sbArray[z][sp];
 				} else {
-					sbArrayChange[z][sp] = new SoundButton(this,
-							String.valueOf(counter));
+					sbArrayChange[z][sp] = new SoundButton(this, String.valueOf(counter));
 					sbArrayChange[z][sp].addMouseListener(lmmv);
 					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
 					counter++;
@@ -133,8 +129,7 @@ public class SoundBoard extends JPanel {
 				if (z + 1 != zeilen) {
 					sbArrayChange[z][sp] = sbArray[z][sp];
 				} else {
-					sbArrayChange[z][sp] = new SoundButton(this,
-							String.valueOf(counter));
+					sbArrayChange[z][sp] = new SoundButton(this, String.valueOf(counter));
 					sbArrayChange[z][sp].addMouseListener(lmmv);
 					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
 					counter++;
@@ -174,18 +169,15 @@ public class SoundBoard extends JPanel {
 	public void undoChange() {
 		if (hf.getSbpChangeStack().empty() == false) {
 			SbpChange sbpChange = hf.getSbpChangeStack().pop();
-			System.out.println(sbpChange.getSbpLastUpdate().getName()
-					+ " wird wieder hergestellt");
-			sbpChange.getSbLastUpdate()
-					.setProperties(sbpChange.getSbpLastUpdate());
+			System.out.println(sbpChange.getSbpLastUpdate().getName() + " wird wieder hergestellt");
+			sbpChange.getSbLastUpdate().setProperties(sbpChange.getSbpLastUpdate());
 			System.out.println("Undo changes");
 		}
 	}
 
 	public void pausePlayer() {
 		if (hf.getSbActive() != null) {
-			if (hf.getSbActive().istPausiert == true
-					|| hf.getSbActive().istFadeOutTimerAktiv() == true) {
+			if (hf.getSbActive().istPausiert == true || hf.getSbActive().istFadeOutTimerAktiv() == true) {
 				if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
 					hf.getSbActive().getFadeOutTimer().stop();
 					hf.getSbActive().istPausiert = false;
@@ -217,6 +209,15 @@ public class SoundBoard extends JPanel {
 		for (int z = 0; z < zeilen; z++) {
 			for (int sp = 0; sp < spalten; sp++) {
 				sbArray[z][sp].pbAusblenden();
+			}
+		}
+		pbVisible = false;
+	}
+
+	public void resetCounterCicleAllSoundButtons() {
+		for (int z = 0; z < zeilen; z++) {
+			for (int sp = 0; sp < spalten; sp++) {
+				sbArray[z][sp].resetCounterCicle();
 			}
 		}
 		pbVisible = false;

@@ -89,6 +89,7 @@ public class MainView extends JFrame {
 	private JMenuItem itemSideView = new JMenuItem("Aktueller Layer im Sideview");
 	private JMenuItem itemAddLayer = new JMenuItem("Neuen Layer hinzufügen");
 	private JMenuItem itemRemoveLayer = new JMenuItem("Aktuellen Layer entfernen");
+	private JMenuItem itemResetCounterCicle = new JMenuItem("Reset Soundbutton Zähler");
 	private JMenuItem itemSaveLayer = new JMenuItem("Aktuellen Layer exportieren");
 	private JMenuItem itemLoadLayer = new JMenuItem("Layer importieren");
 	private JMenuItem itemSaveSoundboard = new JMenuItem("Soundboard speichern unter");
@@ -96,8 +97,10 @@ public class MainView extends JFrame {
 	private JMenuItem itemLoadSoundboard = new JMenuItem("Soundboard laden");
 	private JMenuItem itemSettings = new JMenuItem("Einstellungen");
 
+	private JPanel pnlEast = new JPanel(new BorderLayout());
 	private JPanel pnlAnzeigeCenter = new JPanel();
 	private JPanel iconBar;
+	private PanelHotButton pnlHotButton;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
 	private File anzeigePfad;
 
@@ -143,8 +146,13 @@ public class MainView extends JFrame {
 			add(pnlAnzeigeCenter, BorderLayout.SOUTH);
 			loadImageIcons();
 			createIconBar();
-			add(iconBar, BorderLayout.EAST);
-			iconBar.setVisible(false);
+			pnlHotButton = new PanelHotButton(hf, lmmv);
+			pnlEast.add(pnlHotButton, BorderLayout.CENTER);
+			add(pnlEast, BorderLayout.EAST);
+			// pnlHotButton.setVisible(false);
+			// add(iconBar, BorderLayout.EAST);
+			// iconBar.setVisible(false);
+			pnlHotButton.setVisible(true);
 
 			// add(pnlSongsPlayed, BorderLayout.EAST);
 
@@ -201,6 +209,8 @@ public class MainView extends JFrame {
 	private void createMenuSoundboard() {
 		itemAddLayer.addActionListener(lmb);
 		itemRemoveLayer.addActionListener(lmb);
+		itemResetCounterCicle.addActionListener(lmb);
+		menuSoundboard.add(itemResetCounterCicle);
 		menuSoundboard.add(new JSeparator());
 		menuSoundboard.add(itemAddLayer);
 		menuSoundboard.add(itemRemoveLayer);
@@ -370,6 +380,14 @@ public class MainView extends JFrame {
 		}
 	}
 
+	private void resetCountercicleAllSoundBoards() {
+		SoundBoard temp;
+		for (int i = 0; i < sbVector.size(); i++) {
+			temp = (SoundBoard) sbVector.get(i);
+			temp.resetCounterCicleAllSoundButtons();
+		}
+	}
+
 	public class ListenerMenuBar implements ActionListener {
 
 		MainView hf;
@@ -444,6 +462,8 @@ public class MainView extends JFrame {
 				ExportLayer.save(soundBoardActive, Browse.getFolder());
 			} else if (e.getSource() == itemLoadLayer) {
 				ExportLayer.load(hf, Browse.getOpenFileLay());
+			} else if (e.getSource() == itemResetCounterCicle) {
+				resetCountercicleAllSoundBoards();
 			} else if (e.getSource() == itemRemoveLayer) {
 				System.out.println("Aktuellen Layer entfernen");
 				if (sbVector.size() > 0) {
