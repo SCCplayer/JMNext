@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.util.Stack;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -78,7 +80,8 @@ public class MainView extends JFrame {
 	private JMenu menuLayer = new JMenu("Layer");
 	private JMenu menuAnsicht = new JMenu("Ansicht");
 	private JMenuItem itemPbAusblenden = new JMenuItem("Fortschrittsanzeige im Layer ein-/ausblenden");
-	private JMenuItem itemIconBar = new JMenuItem("Symbolleiste ein-/ausblenden");
+	private JMenuItem itemIconBar = new JMenuItem("Layer Symbolleiste ein-/ausblenden");
+	private JMenuItem itemHotButtonConfig = new JMenuItem("Hot-Button Konfig ein-/ausblenden");
 	private JMenuItem itemFontSmall = new JMenuItem("Schriftgröße: Klein");
 	private JMenuItem itemFontMedium = new JMenuItem("Schriftgröße: Mittel");
 	private JMenuItem itemFontLarge = new JMenuItem("Schriftgröße: Groß");
@@ -98,6 +101,7 @@ public class MainView extends JFrame {
 	private JMenuItem itemSettings = new JMenuItem("Einstellungen");
 
 	private JPanel pnlEast = new JPanel(new BorderLayout());
+	private JPanel pnlCenter = new JPanel(new BorderLayout());
 	private JPanel pnlAnzeigeCenter = new JPanel();
 	private JPanel iconBar;
 	private PanelHotButton pnlHotButton;
@@ -142,17 +146,13 @@ public class MainView extends JFrame {
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
 			pnlAnzeigeCenter.addMouseListener(lmmv);
 			pnlAnzeigeCenter.addMouseMotionListener(lmmv);
-
-			add(pnlAnzeigeCenter, BorderLayout.SOUTH);
+			pnlCenter.add(pnlAnzeigeCenter, BorderLayout.SOUTH);
+			add(pnlCenter, BorderLayout.CENTER);
 			loadImageIcons();
 			createIconBar();
-			pnlHotButton = new PanelHotButton(hf, lmmv);
-			pnlEast.add(pnlHotButton, BorderLayout.CENTER);
-			add(pnlEast, BorderLayout.EAST);
 			// pnlHotButton.setVisible(false);
-			// add(iconBar, BorderLayout.EAST);
-			// iconBar.setVisible(false);
-			pnlHotButton.setVisible(true);
+			pnlEast.add(iconBar, BorderLayout.WEST);
+			iconBar.setVisible(false);
 
 			// add(pnlSongsPlayed, BorderLayout.EAST);
 
@@ -161,6 +161,11 @@ public class MainView extends JFrame {
 			setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
 			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
+
+			pnlHotButton = new PanelHotButton(hf, lmmv);
+			pnlEast.add(pnlHotButton, BorderLayout.CENTER);
+			add(pnlEast, BorderLayout.EAST);
+			pnlHotButton.setVisible(false);
 
 			setVisible(true);
 
@@ -183,7 +188,7 @@ public class MainView extends JFrame {
 			soundBoardActive = (SoundBoard) sbVector.get(0);
 		}
 
-		add(tp, BorderLayout.CENTER);
+		pnlCenter.add(tp, BorderLayout.CENTER);
 		tp.addKeyListener(lkb);
 		tp.addChangeListener(lc);
 	}
@@ -233,12 +238,14 @@ public class MainView extends JFrame {
 	private void createMenuAnsicht() {
 		itemPbAusblenden.addActionListener(lmb);
 		itemIconBar.addActionListener(lmb);
+		itemHotButtonConfig.addActionListener(lmb);
 		itemSideView.addActionListener(lmb);
 		itemFontSmall.addActionListener(lmb);
 		itemFontMedium.addActionListener(lmb);
 		itemFontLarge.addActionListener(lmb);
 		menuAnsicht.add(itemPbAusblenden);
 		menuAnsicht.add(itemIconBar);
+		menuAnsicht.add(itemHotButtonConfig);
 		menuAnsicht.add(itemSideView);
 		menuAnsicht.add(itemFontSmall);
 		menuAnsicht.add(itemFontMedium);
@@ -310,10 +317,8 @@ public class MainView extends JFrame {
 				soundBoardActive.undoChange();
 			} else if (e.getKeyCode() == 32) {
 				soundBoardActive.pausePlayer();
-			} else if (e.getKeyCode() == 49) {
-				tp.setSelectedIndex(0);
-			} else if (e.getKeyCode() == 50) {
-				tp.setSelectedIndex(1);
+			} else if (e.getKeyCode() > 48 && e.getKeyCode() < 58) {
+				pnlHotButton.pressedHotKeyStart(e.getKeyCode() - 48);
 			} else if (e.getKeyCode() == 17 && keyStrgPressed == false) {
 				keyStrgPressed = true;
 			}
@@ -361,6 +366,7 @@ public class MainView extends JFrame {
 			temp = (SoundBoard) sbVector.get(i);
 			temp.setSizeOfButtonelements(myFont);
 		}
+		MyFonts.guiResizeFont(pnlHotButton.getComponents(), myFont);
 		validate();
 		repaint();
 	}
@@ -409,6 +415,12 @@ public class MainView extends JFrame {
 					iconBar.setVisible(false);
 				} else {
 					iconBar.setVisible(true);
+				}
+			} else if (e.getSource() == itemHotButtonConfig) {
+				if (pnlHotButton.isVisible() == true) {
+					pnlHotButton.setVisible(false);
+				} else {
+					pnlHotButton.setVisible(true);
 				}
 			} else if (e.getSource() == itemAddSpalte || e.getSource() == btnAddSpalte) {
 				System.out.println("Spalte hinzufügen");
@@ -538,7 +550,7 @@ public class MainView extends JFrame {
 		btnRemoveSpalte.setToolTipText("Spalte entfernen");
 		btnRemoveSpalte.addActionListener(lmb);
 		iconBar.add(btnRemoveSpalte);
-
+		iconBar.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		return iconBar;
 
 	}

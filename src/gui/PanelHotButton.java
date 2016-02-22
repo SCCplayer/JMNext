@@ -18,6 +18,8 @@ import listener.ListenerMouseMainView;
 public class PanelHotButton extends JPanel {
 
 	private JPanel pnlHeader = new JPanel(new BorderLayout());
+	private JPanel pnlHeaderWest = new JPanel(new BorderLayout());
+	private JPanel pnlHeaderCenter = new JPanel(new BorderLayout());
 	private JPanel pnlKeyNumber = new JPanel(new GridLayout(9, 1));
 	private SoundBoard sbHotKey;
 	private Dimension x32 = new Dimension(128, 0);
@@ -29,13 +31,17 @@ public class PanelHotButton extends JPanel {
 
 	{
 		listLabelKeyNumber.add(new JLabel("Taste"));
-		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1).setPreferredSize(x32);
+		pnlHeaderWest.setPreferredSize(x32);
+		pnlHeaderWest.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1).setHorizontalAlignment(SwingConstants.CENTER);
+		pnlHeaderWest.add(listLabelKeyNumber.get(listLabelKeyNumber.size() - 1), BorderLayout.CENTER);
 
-		pnlHeader.add(listLabelKeyNumber.get(listLabelKeyNumber.size() - 1), BorderLayout.WEST);
+		pnlHeader.add(pnlHeaderWest, BorderLayout.WEST);
 
 		listLabelKeyNumber.add(new JLabel("Soundbutton"));
+		pnlHeaderCenter.add(listLabelKeyNumber.get(listLabelKeyNumber.size() - 1));
 		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1).setHorizontalAlignment(SwingConstants.CENTER);
+		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1).setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
 		pnlHeader.add(listLabelKeyNumber.get(listLabelKeyNumber.size() - 1), BorderLayout.CENTER);
 
@@ -52,9 +58,14 @@ public class PanelHotButton extends JPanel {
 		add(pnlHeader, BorderLayout.NORTH);
 		add(pnlKeyNumber, BorderLayout.WEST);
 		sbHotKey = new SoundBoard(hf, 9, 1, lmmv);
+		sbHotKey.pbAusblenden();
 		add(sbHotKey);
 		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5, 0));
 
-		MyFonts.guiResizeFont(getComponents(), MyFonts.large);
+		MyFonts.guiResizeFont(getComponents(), hf.getActualFontSize());
+	}
+
+	public void pressedHotKeyStart(int hotKeyNumber) {
+		sbHotKey.getSbArray()[hotKeyNumber - 1][0].sbPlay();
 	}
 }
