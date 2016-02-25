@@ -241,16 +241,18 @@ public class SoundButton extends JPanel {
 	}
 
 	public void sbStop() {
-		setStatusSoundButtonAfterStop();
-		fadeOutTimer.stop();
-		sb.getTapeA().stop();
-		sb.getTapeA().dispose();
-		sb.setTapeA(null);
-		blinkTimer.stop();
-		pbUpdateTimer.stop();
-		setColorStandard();
-		istPausiert = false;
-		setAnzeigeZuruecksetzen();
+		if (sb.getHf().getSbActive() != null) {
+			setStatusSoundButtonAfterStop();
+			fadeOutTimer.stop();
+			sb.getTapeA().stop();
+			sb.getTapeA().dispose();
+			sb.setTapeA(null);
+			blinkTimer.stop();
+			pbUpdateTimer.stop();
+			setColorStandard();
+			istPausiert = false;
+			setAnzeigeZuruecksetzen();
+		}
 	}
 
 	public void sbFadeOut() {
@@ -481,6 +483,7 @@ public class SoundButton extends JPanel {
 	public void setColorStandard() {
 		setBackground(properties.getBackground());
 		setLabelsTextColor(properties.getForeground());
+		sb.getHf().setColorStandardPnlAnzeigeCenter();
 		istBtnColorStandard = true;
 	}
 
@@ -498,6 +501,7 @@ public class SoundButton extends JPanel {
 			}
 			setLabelsTextColor(properties.getBackground());
 			istBtnColorStandard = false;
+			sb.getHf().changeColorPnlAnzeigeCenter(properties.getBackground());
 		} else {
 			setColorStandard();
 			istBtnColorStandard = true;

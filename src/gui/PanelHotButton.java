@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import lib.MyFonts;
 import listener.ListenerMouseMainView;
 
 public class PanelHotButton extends JPanel {
@@ -27,10 +26,13 @@ public class PanelHotButton extends JPanel {
 	private ArrayList<JPanel> listPanelWest = new ArrayList<JPanel>();
 	private ArrayList<JLabel> listLabelKeyNumber = new ArrayList<JLabel>();
 
-	public PanelHotButton(MainView hf, ListenerMouseMainView lmmv)
+	private MainView hf;
 
-	{
+	public PanelHotButton(MainView hf, ListenerMouseMainView lmmv) {
+		this.hf = hf;
 		listLabelKeyNumber.add(new JLabel("Taste"));
+		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1)
+				.setBorder(javax.swing.BorderFactory.createEmptyBorder(100, 0, 100, 8));
 		pnlHeaderWest.setPreferredSize(x32);
 		pnlHeaderWest.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		listLabelKeyNumber.get(listLabelKeyNumber.size() - 1).setHorizontalAlignment(SwingConstants.CENTER);
@@ -59,13 +61,49 @@ public class PanelHotButton extends JPanel {
 		add(pnlKeyNumber, BorderLayout.WEST);
 		sbHotKey = new SoundBoard(hf, 9, 1, lmmv);
 		sbHotKey.pbAusblenden();
-		add(sbHotKey);
+		add(sbHotKey, BorderLayout.CENTER);
 		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5, 0));
-
-		MyFonts.guiResizeFont(getComponents(), hf.getActualFontSize());
 	}
 
 	public void pressedHotKeyStart(int hotKeyNumber) {
-		sbHotKey.getSbArray()[hotKeyNumber - 1][0].sbPlay();
+
+		SoundButton sbPressed;
+		sbPressed = sbHotKey.getSbArray()[hotKeyNumber - 1][0];
+
+		if (hf.getTapeA() != null) {
+			if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+				hf.getSbActive().sbStop();
+				sbPressed.sbPlay();
+			} else {
+				if ((hf.getSbActive() == sbPressed && hf.getSbActive().istPausiert != true)
+						|| (sbPressed.getButtonArt() == 99 && hf.getSbActive().istPausiert != true)) {
+					hf.setSbNext(null);
+					hf.getSbActive().setStatusSoundButtonStop();
+					hf.getSbActive().sbFadeOut();
+				} else {
+					if (sbPressed.getButtonArt() != 99) {
+						if (sbPressed.getMusicPath().exists() == true) {
+							hf.setSbNext(sbPressed);
+							hf.getSbNext().changeColor();
+							hf.getSbNext().sbStartBlink();
+						}
+						hf.getSbActive().sbFadeOut();
+					}
+				}
+			}
+		} else {
+			if (sbPressed.getButtonArt() != 99) {
+				sbPressed.sbPlay();
+			}
+		}
+	}
+
+	public SoundBoard getSbHotKey() {
+		return sbHotKey;
+	}
+
+	public void setSbHotKey(SoundBoard sbHotKey) {
+		this.sbHotKey = sbHotKey;
+		add(this.sbHotKey);
 	}
 }

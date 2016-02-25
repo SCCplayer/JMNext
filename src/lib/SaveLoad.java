@@ -30,6 +30,7 @@ public abstract class SaveLoad {
 			// 3. hf Position
 			// 4. hf Size
 			// 5. hf.Fontsize
+			// 6. Soundboard Panel Hot Button
 			FileOutputStream fileStream = new FileOutputStream(fileSpeicher);
 			ObjectOutputStream os = new ObjectOutputStream(fileStream);
 			os.writeInt(hf.getZeitBlende());
@@ -37,10 +38,12 @@ public abstract class SaveLoad {
 			os.writeObject(hf.getLocation());
 			os.writeObject(hf.getSize());
 			os.writeObject(hf.getActualFontSize());
+			for (int i = 0; i < 9; i++) {
+				os.writeObject(hf.getPnlHotButton().getSbHotKey().getSbArray()[i][0].getProperties());
+			}
 			os.close();
 		} catch (Exception ex) {
-			System.out.println(
-					"Objekte konnten nicht vollständig gespeichert werden");
+			System.out.println("Objekte konnten nicht vollständig gespeichert werden");
 			System.out.println(ex.getMessage());
 		}
 	}
@@ -51,6 +54,7 @@ public abstract class SaveLoad {
 		// 3. hf Position
 		// 4. hf Size
 		// 5. hf Fontsize
+		// 6. Soundboard Panel Hot Button
 		try {
 			FileInputStream fileStream = new FileInputStream(fileLaden);
 			ObjectInputStream os = new ObjectInputStream(fileStream);
@@ -60,6 +64,10 @@ public abstract class SaveLoad {
 				hf.setLocation((Point) os.readObject());
 				hf.setSize((Dimension) os.readObject());
 				hf.setSizeOfMainViewElements((Font) os.readObject());
+				for (int i = 0; i < 9; i++) {
+					hf.getPnlHotButton().getSbHotKey().getSbArray()[i][0]
+							.setProperties((SoundButtonProperties) os.readObject());
+				}
 			} catch (Exception e) {
 				System.out.println("Fehler beim Laden der Config");
 				System.out.println(e.getMessage());
@@ -73,21 +81,16 @@ public abstract class SaveLoad {
 	}
 
 	public static void openAutoSave(MainView hf) {
-		if (hf.getClass().getClassLoader().getResource("resources").toString()
-				.split(":")[0].compareTo("file") == 0) {
-			if (hf.getClass().getClassLoader().getResource("resources")
-					.toString().split(":").length == 2) {
+		if (hf.getClass().getClassLoader().getResource("resources").toString().split(":")[0].compareTo("file") == 0) {
+			if (hf.getClass().getClassLoader().getResource("resources").toString().split(":").length == 2) {
 				// MacOS:
-				fileAutoSave = new File(hf.getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[1]
-								.concat("/autosave.ser"));
+				fileAutoSave = new File(hf.getClass().getClassLoader().getResource("resources").toString().split(":")[1]
+						.concat("/autosave.ser"));
 
-			} else if (hf.getClass().getClassLoader().getResource("resources")
-					.toString().split(":").length == 3) {
+			} else if (hf.getClass().getClassLoader().getResource("resources").toString().split(":").length == 3) {
 				// Windows:
-				fileAutoSave = new File(hf.getClass().getClassLoader()
-						.getResource("resources").toString().split(":")[2]
-								.concat("/autosave.ser"));
+				fileAutoSave = new File(hf.getClass().getClassLoader().getResource("resources").toString().split(":")[2]
+						.concat("/autosave.ser"));
 			}
 			System.out.println(fileAutoSave.getAbsolutePath());
 		} else {
@@ -107,19 +110,14 @@ public abstract class SaveLoad {
 	}
 
 	private static String getJarPath(MainView hf) {
-		if (hf.getClass().getClassLoader().getResource("resources").toString()
-				.split(":")[0].compareTo("file") == 0) {
-			if (hf.getClass().getClassLoader().getResource("resources")
-					.toString().split(":").length == 2) {
+		if (hf.getClass().getClassLoader().getResource("resources").toString().split(":")[0].compareTo("file") == 0) {
+			if (hf.getClass().getClassLoader().getResource("resources").toString().split(":").length == 2) {
 				// MacOS:
-				return hf.getClass().getClassLoader().getResource("resources")
-						.toString().split(":")[1].concat("/");
+				return hf.getClass().getClassLoader().getResource("resources").toString().split(":")[1].concat("/");
 
-			} else if (hf.getClass().getClassLoader().getResource("resources")
-					.toString().split(":").length == 3) {
+			} else if (hf.getClass().getClassLoader().getResource("resources").toString().split(":").length == 3) {
 				// Windows:
-				return hf.getClass().getClassLoader().getResource("resources")
-						.toString().split(":")[2].concat("/");
+				return hf.getClass().getClassLoader().getResource("resources").toString().split(":")[2].concat("/");
 			}
 			System.out.println(fileAutoSave.getAbsolutePath());
 		} else {
@@ -137,8 +135,7 @@ public abstract class SaveLoad {
 				System.out.println(e.getMessage());
 			}
 		} else {
-			System.out.println(
-					"Datei existiert bereits, Daten können geladen werden.");
+			System.out.println("Datei existiert bereits, Daten können geladen werden.");
 		}
 	}
 
@@ -160,14 +157,11 @@ public abstract class SaveLoad {
 					sbpArray = new SoundButtonProperties[zeilen][spalten];
 					for (int z = 0; z < zeilen; z++) {
 						for (int sp = 0; sp < spalten; sp++) {
-							sbpArray[z][sp] = (SoundButtonProperties) os
-									.readObject();
+							sbpArray[z][sp] = (SoundButtonProperties) os.readObject();
 						}
 					}
-					hf.getSbVector().add(new SoundBoard(hf, sbpArray, pbVisible,
-							hf.getLmmv()));
-					hf.setSoundBoardActive(
-							(SoundBoard) hf.getSbVector().get(i));
+					hf.getSbVector().add(new SoundBoard(hf, sbpArray, pbVisible, hf.getLmmv()));
+					hf.setSoundBoardActive((SoundBoard) hf.getSbVector().get(i));
 				}
 
 			} catch (Exception e) {
@@ -194,18 +188,15 @@ public abstract class SaveLoad {
 				os.writeBoolean(sbSave.pbVisible);
 				for (int z = 0; z < sbSave.getZeilen(); z++) {
 					for (int sp = 0; sp < sbSave.getSpalten(); sp++) {
-						os.writeObject(
-								sbSave.getSbArray()[z][sp].getProperties());
-						System.out.println("Zeile: " + z + " Spalte: " + sp
-								+ " gespeichert");
+						os.writeObject(sbSave.getSbArray()[z][sp].getProperties());
+						System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert");
 					}
 				}
 				System.out.println("Layer " + iv + " wurde gespeichert");
 			}
 			os.close();
 		} catch (Exception ex) {
-			System.out.println(
-					"Objekte konnten nicht vollständig gespeichert werden");
+			System.out.println("Objekte konnten nicht vollständig gespeichert werden");
 			System.out.println(ex.getMessage());
 		}
 	}

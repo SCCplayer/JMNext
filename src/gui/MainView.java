@@ -103,6 +103,9 @@ public class MainView extends JFrame {
 	private JPanel pnlEast = new JPanel(new BorderLayout());
 	private JPanel pnlCenter = new JPanel(new BorderLayout());
 	private JPanel pnlAnzeigeCenter = new JPanel();
+	private Color colorPnlAnzeigeCenterBackround;
+	private Color colorPnlAnzeigeCenterForeground;
+
 	private JPanel iconBar;
 	private PanelHotButton pnlHotButton;
 	private JLabel lblTitel = new JLabel("Aktueller Titel");
@@ -111,6 +114,7 @@ public class MainView extends JFrame {
 	private Font actualFontSize = MyFonts.small;
 
 	public boolean wasDragged = false;
+	public boolean istBtnColorStandard = true;
 
 	private JFXPanel myJFXPanel = new JFXPanel();
 	private MediaPlayer tapeA;
@@ -144,8 +148,18 @@ public class MainView extends JFrame {
 
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
+			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconShuffle(),
+			// BorderLayout.WEST);
+			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconShuffle(),
+			// BorderLayout.EAST);
+			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconMultiSong(),
+			// BorderLayout.WEST);
+			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconMultiSong(),
+			// BorderLayout.EAST);
 			pnlAnzeigeCenter.addMouseListener(lmmv);
 			pnlAnzeigeCenter.addMouseMotionListener(lmmv);
+			colorPnlAnzeigeCenterBackround = pnlAnzeigeCenter.getBackground();
+			colorPnlAnzeigeCenterForeground = lblTitel.getForeground();
 			pnlCenter.add(pnlAnzeigeCenter, BorderLayout.SOUTH);
 			add(pnlCenter, BorderLayout.CENTER);
 			loadImageIcons();
@@ -160,13 +174,14 @@ public class MainView extends JFrame {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setSize(Toolkit.getDefaultToolkit().getScreenSize());
 
-			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
-
 			pnlHotButton = new PanelHotButton(hf, lmmv);
 			pnlEast.add(pnlHotButton, BorderLayout.CENTER);
 			add(pnlEast, BorderLayout.EAST);
 			pnlHotButton.setVisible(false);
 
+			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
+
+			setSizeOfMainViewElements(getActualFontSize());
 			setVisible(true);
 
 			System.out.println(getZeitBlende());
@@ -555,12 +570,48 @@ public class MainView extends JFrame {
 
 	}
 
+	public void setColorStandardPnlAnzeigeCenter() {
+		pnlAnzeigeCenter.setBackground(colorPnlAnzeigeCenterBackround);
+		lblTitel.setForeground(colorPnlAnzeigeCenterForeground);
+		istBtnColorStandard = true;
+	}
+
+	public void changeColorPnlAnzeigeCenter() {
+		if (istBtnColorStandard == true) {
+			pnlAnzeigeCenter.setBackground(colorPnlAnzeigeCenterForeground);
+			lblTitel.setForeground(colorPnlAnzeigeCenterBackround);
+			istBtnColorStandard = true;
+		} else {
+			setColorStandardPnlAnzeigeCenter();
+			istBtnColorStandard = true;
+		}
+	}
+
+	public void changeColorPnlAnzeigeCenter(Color cForeground) {
+		if (istBtnColorStandard == true) {
+			pnlAnzeigeCenter.setBackground(cForeground);
+			lblTitel.setForeground(colorPnlAnzeigeCenterForeground);
+			istBtnColorStandard = true;
+		} else {
+			setColorStandardPnlAnzeigeCenter();
+			istBtnColorStandard = true;
+		}
+	}
+
 	public MediaPlayer getTapeA() {
 		return tapeA;
 	}
 
 	public void setTapeA(MediaPlayer tapeA) {
 		this.tapeA = tapeA;
+	}
+
+	public MediaPlayer getTapeB() {
+		return tapeB;
+	}
+
+	public void setTapeB(MediaPlayer tapeB) {
+		this.tapeB = tapeB;
 	}
 
 	public void setAnzeigePfad(File musicPath) {
@@ -657,5 +708,9 @@ public class MainView extends JFrame {
 
 	public JPanel getPnlAnzeige() {
 		return pnlAnzeigeCenter;
+	}
+
+	public PanelHotButton getPnlHotButton() {
+		return pnlHotButton;
 	}
 }
