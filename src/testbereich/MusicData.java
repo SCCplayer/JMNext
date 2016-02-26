@@ -3,6 +3,8 @@ package testbereich;
 import java.io.File;
 import java.io.Serializable;
 
+// Hier ein kleiner Kommentar zum Test
+
 public class MusicData implements Serializable {
 	private static final long serialVersionUID = 1248418379876134634L;
 	private File musicFile;
