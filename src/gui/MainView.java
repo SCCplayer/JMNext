@@ -69,7 +69,7 @@ public class MainView extends JFrame {
 
 	private boolean keyStrgPressed = false;
 
-	private int zeitBlende = 0; // 100 entspricht 1 sec
+	private int zeitBlende = 10; // 100 entspricht 1 sec
 
 	private FensterListener fl = new FensterListener();
 	private ListenerMouseMainView lmmv = new ListenerMouseMainView(this);
