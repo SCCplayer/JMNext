@@ -39,6 +39,13 @@ public class ProgressbarView extends JFrame {
 	private JButton btnAbbrechen = new JButton("Abbrechen");
 
 	public ProgressbarView(String bezeichnung, String infotext, String statusItem, int start, int max, Font myFont) {
+		int screenResolution = getToolkit().getScreenResolution();
+
+		double resolutionFaktor1 = screenResolution - 100;
+		double resolutionFaktor2 = 0.3;
+		int abstandRahmen = (int) (resolutionFaktor1 * resolutionFaktor2);
+		System.out.println("Faktor1: " + resolutionFaktor1 + " Faktor2: " + resolutionFaktor2);
+		System.out.println("Abstand: " + resolutionFaktor1 * resolutionFaktor2);
 		me = this;
 		this.start = start;
 		this.max = max;
@@ -46,7 +53,7 @@ public class ProgressbarView extends JFrame {
 
 		pnlContent.setBorder(BorderFactory.createLineBorder(Color.black));
 		lblInfotext = new JLabel(infotext);
-		lblInfotext.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
+		lblInfotext.setBorder(BorderFactory.createEmptyBorder(0, 0, 20 + abstandRahmen, 0));
 		lblStatusItem = new JLabel(statusItem + " " + start + " von " + max);
 
 		lblStatusItem.setVerticalAlignment(SwingConstants.NORTH);
@@ -58,7 +65,8 @@ public class ProgressbarView extends JFrame {
 		pnlCenter.add(lblInfotext, BorderLayout.NORTH);
 		pnlCenter.add(pb, BorderLayout.CENTER);
 		pnlCenter.add(lblStatusItem, BorderLayout.SOUTH);
-		pnlCenter.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+		pnlCenter.setBorder(BorderFactory.createEmptyBorder(20 + abstandRahmen, 20 + abstandRahmen, 20 + abstandRahmen,
+				20 + abstandRahmen));
 		pnlContent.add(pnlCenter, BorderLayout.CENTER);
 
 		btnAbbrechen.addActionListener(new ActionListener() {
