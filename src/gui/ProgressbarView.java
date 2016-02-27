@@ -46,19 +46,19 @@ public class ProgressbarView extends JFrame {
 
 		pnlContent.setBorder(BorderFactory.createLineBorder(Color.black));
 		lblInfotext = new JLabel(infotext);
-		lblInfotext.setBorder(BorderFactory.createEmptyBorder(50, 50, 60, 50));
+		lblInfotext.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 		lblStatusItem = new JLabel(statusItem + " " + start + " von " + max);
-		lblStatusItem.setBorder(BorderFactory.createEmptyBorder(0, 50, 60, 50));
+
 		lblStatusItem.setVerticalAlignment(SwingConstants.NORTH);
 		lblStatusItem.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		lblVon = new JLabel(String.valueOf(0));
 		lblBis = new JLabel(String.valueOf(max));
 		pb = new JProgressBar(start, max);
-		pb.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 50));
 		pnlCenter.add(lblInfotext, BorderLayout.NORTH);
 		pnlCenter.add(pb, BorderLayout.CENTER);
 		pnlCenter.add(lblStatusItem, BorderLayout.SOUTH);
+		pnlCenter.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 		pnlContent.add(pnlCenter, BorderLayout.CENTER);
 
 		btnAbbrechen.addActionListener(new ActionListener() {
