@@ -172,7 +172,7 @@ public class MainView extends JFrame {
 
 			setTitle("JMNext");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setSize(Toolkit.getDefaultToolkit().getScreenSize());
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 			pnlHotButton = new PanelHotButton(hf, lmmv);
 			pnlEast.add(pnlHotButton, BorderLayout.CENTER);
@@ -180,6 +180,9 @@ public class MainView extends JFrame {
 			pnlHotButton.setVisible(false);
 
 			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
+
+			ProgressbarView pv = new ProgressbarView("Test", "Meine erste Progressbar", "Soundbutton", 0, 100,
+					hf.getActualFontSize());
 
 			setSizeOfMainViewElements(getActualFontSize());
 			setVisible(true);

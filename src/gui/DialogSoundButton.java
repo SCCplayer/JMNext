@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -34,8 +35,7 @@ public class DialogSoundButton extends JDialog {
 	private JLabel lblButtonArt = new JLabel("Button Art: ");
 	private JTextField tfName;
 	private JTextField tfPath;
-	private String[] sbArten = { "Art auswählen", "One Song", "Shuffle",
-			"Loop" };
+	private String[] sbArten = { "Art auswählen", "One Song", "Shuffle", "Loop" };
 	private JComboBox cbSbArten = new JComboBox(sbArten);
 	private JPanel pnlDialog = new JPanel();
 	private JButton btnAbbrechen = new JButton("Abbrechen");
@@ -56,10 +56,8 @@ public class DialogSoundButton extends JDialog {
 	private File[] musicFileArray;
 	private JSlider volumeRegler;
 	private JCheckBox cbBlende = new JCheckBox("Kreuzblende aktivieren");
-	private JCheckBox cbEndlos = new JCheckBox(
-			"Automatisch nächsten Song starten");
-	private JCheckBox cbOwnPlayer = new JCheckBox(
-			"Andere Player nicht ausblenden");
+	private JCheckBox cbEndlos = new JCheckBox("Automatisch nächsten Song starten");
+	private JCheckBox cbOwnPlayer = new JCheckBox("Andere Player nicht ausblenden");
 	private JCheckBox dedicatePlayer;
 	private JLabel iconShuffle;
 	private JLabel iconRepeat;
@@ -96,8 +94,7 @@ public class DialogSoundButton extends JDialog {
 			System.out.println("Shufflebutton");
 		}
 		pnlDialog.setLayout(gbl);
-		pnlDialog.setBorder(
-				javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		pnlDialog.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		initConstraints();
 		// ========= Eingabe Name ===============================
@@ -111,10 +108,8 @@ public class DialogSoundButton extends JDialog {
 		nextRow(5, 5);
 		pnlDialog.add(lbFarbe, l);
 		btnButtonFarbe.addActionListener(bl);
-		btnButtonFarbe
-				.setBackground(soundButton.getProperties().getBackground());
-		btnButtonFarbe
-				.setForeground(soundButton.getProperties().getForeground());
+		btnButtonFarbe.setBackground(soundButton.getProperties().getBackground());
+		btnButtonFarbe.setForeground(soundButton.getProperties().getForeground());
 		pnlDialog.add(btnButtonFarbe, r);
 
 		// ========== Farbenauswahl Text =============================
@@ -177,11 +172,14 @@ public class DialogSoundButton extends JDialog {
 		pnlSouth.add(btnLeeren);
 		pnlSouth.add(btnAnwenden);
 		pnlDialog.setPreferredSize(new Dimension(1, 1));
-		setSize(1500, 500);
+		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 10 * 5,
+				Toolkit.getDefaultToolkit().getScreenSize().height / 10 * 3));
 		setLocation(100, 100);
 		setLayout(new BorderLayout());
 		add(pnlDialog, BorderLayout.CENTER);
 		add(pnlSouth, BorderLayout.SOUTH);
+
+		setLocationRelativeTo(null);
 
 	}
 
@@ -194,14 +192,13 @@ public class DialogSoundButton extends JDialog {
 			} else if (e.getSource() == btnAnwenden) {
 				dialogAnwenden();
 			} else if (e.getSource() == btnButtonFarbe) {
-				Color choosedButtonFarbe = JColorChooser.showDialog(null,
-						"Farbauswahl", btnButtonFarbe.getBackground());
+				Color choosedButtonFarbe = JColorChooser.showDialog(null, "Farbauswahl",
+						btnButtonFarbe.getBackground());
 				btnButtonFarbe.setBackground(choosedButtonFarbe);
 				btnTextFarbe.setBackground(choosedButtonFarbe);
 
 			} else if (e.getSource() == btnTextFarbe) {
-				Color choosedTextFarbe = JColorChooser.showDialog(null,
-						"Farbauswahl", btnButtonFarbe.getBackground());
+				Color choosedTextFarbe = JColorChooser.showDialog(null, "Farbauswahl", btnButtonFarbe.getBackground());
 				btnTextFarbe.setForeground(choosedTextFarbe);
 				btnButtonFarbe.setForeground(choosedTextFarbe);
 
@@ -215,8 +212,7 @@ public class DialogSoundButton extends JDialog {
 				musicPath = Browse.getMusicFileFolder(actualFontSize);
 				if (musicPath != null) {
 					tfPath.setText(musicPath.getPath());
-					if (soundButton.getName()
-							.compareTo(tfName.getText()) == 0) {
+					if (soundButton.getName().compareTo(tfName.getText()) == 0) {
 						tfName.setText(musicPath.getName());
 					}
 
@@ -285,35 +281,23 @@ public class DialogSoundButton extends JDialog {
 		}
 		if (musicPath != null) {
 			if (musicPath.listFiles() == null) {
-				soundButton.setProperties(0, tfName.getText(), musicPath,
-						(double) volumeRegler.getValue() / 100, "0:00",
-						btnButtonFarbe.getForeground(),
-						btnButtonFarbe.getBackground());
+				soundButton.setProperties(0, tfName.getText(), musicPath, (double) volumeRegler.getValue() / 100,
+						"0:00", btnButtonFarbe.getForeground(), btnButtonFarbe.getBackground());
 			} else if (musicPath.listFiles() != null) {
 				if (chBox.isSelected() == true) {
-					soundButton
-							.setProperties(1, tfName.getText(), musicPath,
-									(double) volumeRegler.getValue() / 100,
-									String.valueOf(Browse.getMusicFileArray(
-											musicPath).length),
-							btnButtonFarbe.getForeground(),
+					soundButton.setProperties(1, tfName.getText(), musicPath, (double) volumeRegler.getValue() / 100,
+							String.valueOf(Browse.getMusicFileArray(musicPath).length), btnButtonFarbe.getForeground(),
 							btnButtonFarbe.getBackground());
 				} else if (chBox.isSelected() == false) {
 					System.out.println("multisong");
-					soundButton
-							.setProperties(2, tfName.getText(), musicPath,
-									(double) volumeRegler.getValue() / 100,
-									String.valueOf(Browse.getMusicFileArray(
-											musicPath).length),
-							btnButtonFarbe.getForeground(),
+					soundButton.setProperties(2, tfName.getText(), musicPath, (double) volumeRegler.getValue() / 100,
+							String.valueOf(Browse.getMusicFileArray(musicPath).length), btnButtonFarbe.getForeground(),
 							btnButtonFarbe.getBackground());
 				}
 			}
 		} else {
-			soundButton.setProperties(99, tfName.getText(), null,
-					volumeRegler.getValue(), "0:00",
-					btnButtonFarbe.getForeground(),
-					btnButtonFarbe.getBackground());
+			soundButton.setProperties(99, tfName.getText(), null, volumeRegler.getValue(), "0:00",
+					btnButtonFarbe.getForeground(), btnButtonFarbe.getBackground());
 		}
 		dispose();
 	}

@@ -79,7 +79,7 @@ public class DialogSettings extends JFrame {
 		add(pnlSouth, BorderLayout.SOUTH);
 
 		setSize(Toolkit.getDefaultToolkit().getScreenSize().width * 4 / 5, 300);
-		setLocation(100, 100);
+		setLocationRelativeTo(null);
 	}
 
 	public class BtnListener implements ActionListener {
