@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 import data.SoundButtonProperties;
 import gui.MainView;
+import gui.ProgressbarView;
 import gui.SoundBoard;
 
 public abstract class ExportLayer {
@@ -22,6 +23,9 @@ public abstract class ExportLayer {
 			SoundButtonProperties sbpTemp;
 			int zeilen = sbExport.getZeilen();
 			int spalten = sbExport.getSpalten();
+			String pvInfoText = "Der Export wurde gestartet. Die Informationen des Layers werden \n mit den Musikdateien im angegebenen Ordner abgelegt.";
+			ProgressbarView pv = new ProgressbarView(pvInfoText, "Soundbutton", 0, (zeilen + 1) * (spalten + 1),
+					sbExport.getHf().getActualFontSize());
 			File fileLayerExport = new File(fileDestinationFolder.getPath() + "/Export.lay");
 			File fileMusicFolder = new File(fileDestinationFolder.getPath() + "/Musicdata");
 			System.out.println(fileLayerExport.getPath());
@@ -58,6 +62,7 @@ public abstract class ExportLayer {
 											StandardCopyOption.REPLACE_EXISTING);
 								}
 								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
+								pv.nextStep();
 							}
 						}
 					}
@@ -66,6 +71,7 @@ public abstract class ExportLayer {
 				System.out.println("Objekte konnten nicht vollständig gespeichert werden");
 				System.out.println(ex.getMessage());
 			}
+			pv.closeProgressbarView();
 		}
 
 	}

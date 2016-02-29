@@ -38,17 +38,19 @@ public class ProgressbarView extends JFrame {
 	private int max = 0;
 	private JButton btnAbbrechen = new JButton("Abbrechen");
 
-	public ProgressbarView(String bezeichnung, String infotext, String statusItem, int start, int max, Font myFont) {
-		int screenResolution = getToolkit().getScreenResolution();
+	public ProgressbarView(String infotext, String statusItem, int start, int max, Font myFont) {
+		System.out.println("Progressbarview wird erzeugt");
+		this.start = start;
+		this.max = max;
+		me = this;
 
+		int screenResolution = getToolkit().getScreenResolution();
 		double resolutionFaktor1 = screenResolution - 100;
 		double resolutionFaktor2 = 0.3;
 		int abstandRahmen = (int) (resolutionFaktor1 * resolutionFaktor2);
 		System.out.println("Faktor1: " + resolutionFaktor1 + " Faktor2: " + resolutionFaktor2);
 		System.out.println("Abstand: " + resolutionFaktor1 * resolutionFaktor2);
-		me = this;
-		this.start = start;
-		this.max = max;
+
 		setLayout(new BorderLayout());
 
 		pnlContent.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -77,8 +79,6 @@ public class ProgressbarView extends JFrame {
 			}
 		});
 
-		// setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
-
 		pnlButton.add(btnAbbrechen);
 		pnlContent.add(pnlButton, BorderLayout.SOUTH);
 		setUndecorated(true);
@@ -90,5 +90,14 @@ public class ProgressbarView extends JFrame {
 		add(pnlContent, BorderLayout.CENTER);
 		MyFonts.guiResizeFont(getComponents(), myFont);
 		setVisible(true);
+	}
+
+	public void nextStep() {
+		pb.setValue(pb.getValue() + 1);
+		System.out.println("pbValue: " + pb.getValue() + 1);
+	}
+
+	public void closeProgressbarView() {
+		me.dispose();
 	}
 }
