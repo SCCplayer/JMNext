@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
 
 import lib.MyFonts;
@@ -35,12 +34,14 @@ public class ProgressbarView extends JFrame {
 	private JLabel lblVon;
 	private JLabel lblBis;
 	private int start = 0;
+	private int counter = 0;
 	private int max = 0;
 	private JButton btnAbbrechen = new JButton("Abbrechen");
 
 	public ProgressbarView(String infotext, String statusItem, int start, int max, Font myFont) {
-		System.out.println("Progressbarview wird erzeugt");
+		System.out.println("Progressbarview wird erzeugt: " + max + " Soundbutton werden exportiert");
 		this.start = start;
+		this.counter = start;
 		this.max = max;
 		me = this;
 
@@ -63,7 +64,8 @@ public class ProgressbarView extends JFrame {
 
 		lblVon = new JLabel(String.valueOf(0));
 		lblBis = new JLabel(String.valueOf(max));
-		pb = new JProgressBar(start, max);
+		pb = new JProgressBar(start, 100);
+		pb.setStringPainted(true);
 		pnlCenter.add(lblInfotext, BorderLayout.NORTH);
 		pnlCenter.add(pb, BorderLayout.CENTER);
 		pnlCenter.add(lblStatusItem, BorderLayout.SOUTH);
@@ -81,11 +83,10 @@ public class ProgressbarView extends JFrame {
 
 		pnlButton.add(btnAbbrechen);
 		pnlContent.add(pnlButton, BorderLayout.SOUTH);
-		setUndecorated(true);
-		getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+		// setUndecorated(true);
+		// getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5 * 3,
 				Toolkit.getDefaultToolkit().getScreenSize().height / 10 * 2));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		add(pnlContent, BorderLayout.CENTER);
 		MyFonts.guiResizeFont(getComponents(), myFont);
@@ -93,8 +94,12 @@ public class ProgressbarView extends JFrame {
 	}
 
 	public void nextStep() {
-		pb.setValue(pb.getValue() + 1);
-		System.out.println("pbValue: " + pb.getValue() + 1);
+		counter++;
+		pb.setValue(counter);
+		System.out.println("pbValue: " + pb.getValue());
+		lblStatusItem = new JLabel("Soundbutton" + " " + counter + " von " + max);
+		this.validate();
+		this.repaint();
 	}
 
 	public void closeProgressbarView() {

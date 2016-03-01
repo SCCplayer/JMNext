@@ -488,9 +488,10 @@ public class MainView extends JFrame {
 			} else if (e.getSource() == itemAutosave) {
 				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
 			} else if (e.getSource() == itemSaveLayer) {
-				ExportLayer.save(soundBoardActive, Browse.getFolder());
+
+				ExportLayer.save(soundBoardActive, Browse.getFolder(hf.getActualFontSize()));
 			} else if (e.getSource() == itemLoadLayer) {
-				ExportLayer.load(hf, Browse.getOpenFileLay());
+				ExportLayer.load(hf, Browse.getOpenFileLay(hf.getActualFontSize()));
 			} else if (e.getSource() == itemResetCounterCicle) {
 				resetCountercicleAllSoundBoards();
 			} else if (e.getSource() == itemRemoveLayer) {

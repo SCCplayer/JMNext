@@ -173,7 +173,7 @@ public class DialogSoundButton extends JDialog {
 		pnlSouth.add(btnAnwenden);
 		pnlDialog.setPreferredSize(new Dimension(1, 1));
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 10 * 5,
-				Toolkit.getDefaultToolkit().getScreenSize().height / 10 * 3));
+				Toolkit.getDefaultToolkit().getScreenSize().height / 20 * 7));
 		setLocation(100, 100);
 		setLayout(new BorderLayout());
 		add(pnlDialog, BorderLayout.CENTER);

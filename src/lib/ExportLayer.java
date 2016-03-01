@@ -23,13 +23,12 @@ public abstract class ExportLayer {
 			SoundButtonProperties sbpTemp;
 			int zeilen = sbExport.getZeilen();
 			int spalten = sbExport.getSpalten();
-			String pvInfoText = "Der Export wurde gestartet. Die Informationen des Layers werden \n mit den Musikdateien im angegebenen Ordner abgelegt.";
-			ProgressbarView pv = new ProgressbarView(pvInfoText, "Soundbutton", 0, (zeilen + 1) * (spalten + 1),
-					sbExport.getHf().getActualFontSize());
 			File fileLayerExport = new File(fileDestinationFolder.getPath() + "/Export.lay");
 			File fileMusicFolder = new File(fileDestinationFolder.getPath() + "/Musicdata");
 			System.out.println(fileLayerExport.getPath());
 			System.out.println(fileDestinationFolder.getPath());
+
+			ProgressbarView pv = new ProgressbarView("test", "test", 0, 100, MyFonts.large);
 
 			try {
 				fileLayerExport.createNewFile();
@@ -62,9 +61,9 @@ public abstract class ExportLayer {
 											StandardCopyOption.REPLACE_EXISTING);
 								}
 								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
-								pv.nextStep();
 							}
 						}
+						pv.nextStep();
 					}
 				}
 			} catch (Exception ex) {

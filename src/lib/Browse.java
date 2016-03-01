@@ -79,6 +79,19 @@ public abstract class Browse {
 		return musicFile;
 	}
 
+	public static File getSaveFileLay(Font fontSize) {
+		musicFile = null;
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		setFileChooserFont(fc.getComponents(), fontSize);
+		fc.addChoosableFileFilter(layerFileFilter);
+		fc.setFileFilter(layerFileFilter);
+		int auswahl = fc.showSaveDialog(null);
+		if (auswahl == JFileChooser.APPROVE_OPTION) {
+			musicFile = fc.getSelectedFile();
+		}
+		return musicFile;
+	}
+
 	public static File getOpenFile() {
 		musicFile = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -115,6 +128,19 @@ public abstract class Browse {
 		return musicFile;
 	}
 
+	public static File getOpenFileLay(Font fontSize) {
+		musicFile = null;
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		setFileChooserFont(fc.getComponents(), fontSize);
+		fc.addChoosableFileFilter(layerFileFilter);
+		fc.setFileFilter(layerFileFilter);
+		int auswahl = fc.showOpenDialog(null);
+		if (auswahl == JFileChooser.APPROVE_OPTION) {
+			musicFile = fc.getSelectedFile();
+		}
+		return musicFile;
+	}
+
 	public static File getMusicFolder() {
 		musicFolder = null;
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -128,6 +154,17 @@ public abstract class Browse {
 	public static File getFolder() {
 		musicFolder = null;
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int auswahl = fc.showOpenDialog(null);
+		if (auswahl == JFileChooser.APPROVE_OPTION) {
+			musicFolder = new File(fc.getSelectedFile().getPath());
+		}
+		return musicFolder;
+	}
+
+	public static File getFolder(Font fontSize) {
+		musicFolder = null;
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		setFileChooserFont(fc.getComponents(), fontSize);
 		int auswahl = fc.showOpenDialog(null);
 		if (auswahl == JFileChooser.APPROVE_OPTION) {
 			musicFolder = new File(fc.getSelectedFile().getPath());
