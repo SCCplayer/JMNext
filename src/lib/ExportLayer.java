@@ -10,12 +10,12 @@ import java.nio.file.StandardCopyOption;
 
 import data.SoundButtonProperties;
 import gui.MainView;
-import gui.ProgressbarView;
+import gui.ProgressExportView;
 import gui.SoundBoard;
 
 public abstract class ExportLayer {
 
-	public static void save(SoundBoard sbExport, File fileDestinationFolder, ProgressbarView pv) {
+	public static void save(ProgressExportView pev, SoundBoard sbExport, File fileDestinationFolder) {
 		if (fileDestinationFolder != null) {
 			File fileTemp;
 			File FileFolderTemp;
@@ -61,16 +61,13 @@ public abstract class ExportLayer {
 								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
 							}
 						}
-						System.out.println(pv.nextStep());
-						pv.validate();
-						pv.repaint();
+						pev.updatePP();
 					}
 				}
 			} catch (Exception ex) {
 				System.out.println("Objekte konnten nicht vollständig gespeichert werden");
 				System.out.println(ex.getMessage());
 			}
-			pv.closeProgressbarView();
 		}
 
 	}

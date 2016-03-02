@@ -19,9 +19,10 @@ import javax.swing.SwingConstants;
 
 import lib.MyFonts;
 
-public class ProgressbarView extends JFrame {
+public class PanelProgressbar extends JPanel {
 
-	private JFrame me;
+	JFrame parent;
+	JPanel me;
 
 	private JPanel pnlContent = new JPanel(new BorderLayout());
 	private JPanel pnlCenter = new JPanel(new BorderLayout());
@@ -38,7 +39,8 @@ public class ProgressbarView extends JFrame {
 	private int max = 0;
 	private JButton btnAbbrechen = new JButton("Abbrechen");
 
-	public ProgressbarView(String infotext, String statusItem, int start, int max, Font myFont) {
+	public PanelProgressbar(JFrame parent, String infotext, String statusItem, int start, int max, Font myFont) {
+		this.parent = parent;
 		System.out.println("Progressbarview wird erzeugt: " + max + " Soundbutton werden exportiert");
 		this.start = start;
 		this.counter = start;
@@ -77,7 +79,7 @@ public class ProgressbarView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				me.dispose();
+				parent.dispose();
 			}
 		});
 
@@ -87,10 +89,8 @@ public class ProgressbarView extends JFrame {
 		// getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5 * 3,
 				Toolkit.getDefaultToolkit().getScreenSize().height / 10 * 2));
-		setLocationRelativeTo(null);
 		add(pnlContent, BorderLayout.CENTER);
 		MyFonts.guiResizeFont(getComponents(), myFont);
-		setVisible(true);
 	}
 
 	public boolean nextStep() {
@@ -101,7 +101,12 @@ public class ProgressbarView extends JFrame {
 		return true;
 	}
 
-	public void closeProgressbarView() {
-		me.dispose();
+	public boolean nextStep(int satz) {
+		counter += satz;
+		pb.setValue(counter);
+		System.out.println("pbValue: " + pb.getValue());
+		lblStatusItem = new JLabel("Soundbutton" + " " + counter + " von " + max);
+		return true;
 	}
+
 }
