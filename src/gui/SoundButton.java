@@ -51,11 +51,14 @@ public class SoundButton extends JPanel {
 	public ImageIcon iconPlay = new ImageIcon(getClass().getClassLoader().getResource("resources/play.png"));
 	public ImageIcon iconPause = new ImageIcon(getClass().getClassLoader().getResource("resources/pause.png"));
 	public ImageIcon iconStop = new ImageIcon(getClass().getClassLoader().getResource("resources/stop.png"));
+	public ImageIcon iconWarning = new ImageIcon(getClass().getClassLoader().getResource("resources/Warnung.png"));
 
 	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
 	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
 	public ImageIcon iconPauseScale = new ImageIcon(
 			iconPause.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+	public ImageIcon iconWarningScale = new ImageIcon(
+			iconWarning.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
 
 	private File[] musicFileArray;
 
@@ -91,7 +94,7 @@ public class SoundButton extends JPanel {
 	private JLabel lblButtonStop = new JLabel(iconStopScale);
 	private JLabel lblButtonPlay = new JLabel(iconPlayScale);
 	private JLabel lblButtonPause = new JLabel(iconPauseScale);
-	private JLabel lblUnicodePause = new JLabel("\u23F8");
+	private JLabel lblWarning = new JLabel(iconWarningScale);
 
 	private BlinkListener bl = new BlinkListener();
 	private Timer blinkTimer = new Timer(500, bl);
@@ -129,6 +132,7 @@ public class SoundButton extends JPanel {
 		lblName.setText(name);
 		lblName.setPreferredSize(new Dimension(20, 14));
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWarning.setHorizontalAlignment(SwingConstants.CENTER);
 		lblShuffle.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblLoop.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblMultiSong.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -145,6 +149,19 @@ public class SoundButton extends JPanel {
 		setDropTarget(dt);
 	}
 
+	/*	----------------------------------------------
+	 * |gridx = 0		|						|		|
+	 * |gridy = 0		|						|		|
+	 * |lblCounterCicle	|
+	 * -----------------------------------------------
+	 * |		|						|				|
+	 * |		|						|				|
+	 * -----------------------------------------------
+	 * |		|						|				|
+	 * |		|						|				|
+	 * -----------------------------------------------
+	 */
+
 	public void createBtnPanel() {
 		setLayout(new GridBagLayout());
 		// lblCounterCicle (Oben links)
@@ -156,6 +173,15 @@ public class SoundButton extends JPanel {
 		c.weighty = 0;
 		lblCounterCicle.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 3, 0, 0));
 		add(lblCounterCicle, c);
+
+		c.ipady = 0;
+		c.ipadx = 1;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0;
+		c.weighty = 0;
+		lblShuffle.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 8));
+		add(lblWarning, c);
 
 		c.ipady = 0;
 		c.ipadx = 2;

@@ -15,7 +15,7 @@ import gui.SoundBoard;
 
 public abstract class ExportLayer {
 
-	public static void save(SoundBoard sbExport, File fileDestinationFolder) {
+	public static void save(SoundBoard sbExport, File fileDestinationFolder, ProgressbarView pv) {
 		if (fileDestinationFolder != null) {
 			File fileTemp;
 			File FileFolderTemp;
@@ -27,8 +27,6 @@ public abstract class ExportLayer {
 			File fileMusicFolder = new File(fileDestinationFolder.getPath() + "/Musicdata");
 			System.out.println(fileLayerExport.getPath());
 			System.out.println(fileDestinationFolder.getPath());
-
-			ProgressbarView pv = new ProgressbarView("test", "test", 0, 100, MyFonts.large);
 
 			try {
 				fileLayerExport.createNewFile();
@@ -63,7 +61,9 @@ public abstract class ExportLayer {
 								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
 							}
 						}
-						pv.nextStep();
+						System.out.println(pv.nextStep());
+						pv.validate();
+						pv.repaint();
 					}
 				}
 			} catch (Exception ex) {

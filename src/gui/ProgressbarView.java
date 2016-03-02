@@ -93,13 +93,12 @@ public class ProgressbarView extends JFrame {
 		setVisible(true);
 	}
 
-	public void nextStep() {
+	public boolean nextStep() {
 		counter++;
 		pb.setValue(counter);
 		System.out.println("pbValue: " + pb.getValue());
 		lblStatusItem = new JLabel("Soundbutton" + " " + counter + " von " + max);
-		this.validate();
-		this.repaint();
+		return true;
 	}
 
 	public void closeProgressbarView() {

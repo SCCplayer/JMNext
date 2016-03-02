@@ -488,8 +488,8 @@ public class MainView extends JFrame {
 			} else if (e.getSource() == itemAutosave) {
 				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
 			} else if (e.getSource() == itemSaveLayer) {
-
-				ExportLayer.save(soundBoardActive, Browse.getFolder(hf.getActualFontSize()));
+				ProgressbarView pv = new ProgressbarView("test", "test", 0, 100, MyFonts.large);
+				ExportLayer.save(soundBoardActive, Browse.getFolder(hf.getActualFontSize()), pv);
 			} else if (e.getSource() == itemLoadLayer) {
 				ExportLayer.load(hf, Browse.getOpenFileLay(hf.getActualFontSize()));
 			} else if (e.getSource() == itemResetCounterCicle) {
@@ -525,7 +525,6 @@ public class MainView extends JFrame {
 				}
 			}
 		}
-
 	}
 
 	public void loadImageIcons() {
