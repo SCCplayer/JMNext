@@ -1,25 +1,33 @@
 package lib;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import data.SoundButtonProperties;
-import gui.MainView;
 import gui.ProgressExportView;
 import gui.SoundBoard;
 
-public abstract class ExportLayer {
+public class ExportLayer implements Runnable {
+	private ProgressExportView pev;
+	private SoundBoard sbExport;
+	private File fileDestinationFolder;
+	private File fileTemp;
+	private File FileFolderTemp;
+	private File[] fileListe;
 
-	public static void save(ProgressExportView pev, SoundBoard sbExport, File fileDestinationFolder) {
+	public ExportLayer(ProgressExportView pev, SoundBoard sbExport, File fileDestinationFolder) {
+		this.pev = pev;
+		this.sbExport = sbExport;
+		this.fileDestinationFolder = fileDestinationFolder;
+	}
+
+	@Override
+	public void run() {
 		if (fileDestinationFolder != null) {
-			File fileTemp;
-			File FileFolderTemp;
-			File[] fileListe;
+			pev.setVisible(true);
 			SoundButtonProperties sbpTemp;
 			int zeilen = sbExport.getZeilen();
 			int spalten = sbExport.getSpalten();
@@ -62,6 +70,8 @@ public abstract class ExportLayer {
 							}
 						}
 						pev.updatePP();
+						System.out.println(Thread.currentThread().getName());
+						Thread.sleep(200);
 					}
 				}
 			} catch (Exception ex) {
@@ -72,48 +82,51 @@ public abstract class ExportLayer {
 
 	}
 
-	public static void load(MainView hf, File fileLayerImport) {
-		System.out.println(fileLayerImport);
-		if (fileLayerImport != null) {
-			try {
-				int zeilen;
-				int spalten;
-				boolean pbVisible;
-				SoundButtonProperties sbpTemp;
-				SoundButtonProperties[][] sbpArray;
-				FileInputStream fileStream = new FileInputStream(fileLayerImport);
-				ObjectInputStream os = new ObjectInputStream(fileStream);
-				try {
-					zeilen = os.readInt();
-					spalten = os.readInt();
-					pbVisible = os.readBoolean();
-					sbpArray = new SoundButtonProperties[zeilen][spalten];
-					for (int z = 0; z < zeilen; z++) {
-						for (int sp = 0; sp < spalten; sp++) {
-							sbpTemp = (SoundButtonProperties) os.readObject();
-							sbpTemp.setMusicPath(
-									new File(fileLayerImport.getParent() + "/Musicdata/" + sbpTemp.getName()));
-							sbpArray[z][sp] = sbpTemp;
-						}
-					}
-					hf.getSbVector().add(new SoundBoard(hf, sbpArray, pbVisible, hf.getLmmv()));
-
-					hf.getTp().add("Layer " + String.valueOf(hf.getSbVector().size()),
-							(SoundBoard) hf.getSbVector().get(hf.getSbVector().size() - 1));
-
-					hf.getTp().setSelectedIndex(hf.getSbVector().size() - 1);
-					hf.setSoundBoardActive((SoundBoard) hf.getSbVector().get(hf.getSbVector().size() - 1));
-					hf.setSizeOfMainViewElements(hf.getActualFontSize());
-				} catch (Exception e) {
-					System.out.println("Fehler beim Laden");
-					System.out.println(e.getMessage());
-				} finally {
-					os.close();
-				}
-			} catch (Exception ex) {
-				System.out.println("Fehler beim Öffnen der Datei.");
-				System.out.println(ex.getMessage());
-			}
-		}
-	}
+	// public void load(MainView hf, File fileLayerImport) {
+	// System.out.println(fileLayerImport);
+	// if (fileLayerImport != null) {
+	// try {
+	// int zeilen;
+	// int spalten;
+	// boolean pbVisible;
+	// SoundButtonProperties sbpTemp;
+	// SoundButtonProperties[][] sbpArray;
+	// FileInputStream fileStream = new FileInputStream(fileLayerImport);
+	// ObjectInputStream os = new ObjectInputStream(fileStream);
+	// try {
+	// zeilen = os.readInt();
+	// spalten = os.readInt();
+	// pbVisible = os.readBoolean();
+	// sbpArray = new SoundButtonProperties[zeilen][spalten];
+	// for (int z = 0; z < zeilen; z++) {
+	// for (int sp = 0; sp < spalten; sp++) {
+	// sbpTemp = (SoundButtonProperties) os.readObject();
+	// sbpTemp.setMusicPath(
+	// new File(fileLayerImport.getParent() + "/Musicdata/" +
+	// sbpTemp.getName()));
+	// sbpArray[z][sp] = sbpTemp;
+	// }
+	// }
+	// hf.getSbVector().add(new SoundBoard(hf, sbpArray, pbVisible,
+	// hf.getLmmv()));
+	//
+	// hf.getTp().add("Layer " + String.valueOf(hf.getSbVector().size()),
+	// (SoundBoard) hf.getSbVector().get(hf.getSbVector().size() - 1));
+	//
+	// hf.getTp().setSelectedIndex(hf.getSbVector().size() - 1);
+	// hf.setSoundBoardActive((SoundBoard)
+	// hf.getSbVector().get(hf.getSbVector().size() - 1));
+	// hf.setSizeOfMainViewElements(hf.getActualFontSize());
+	// } catch (Exception e) {
+	// System.out.println("Fehler beim Laden");
+	// System.out.println(e.getMessage());
+	// } finally {
+	// os.close();
+	// }
+	// } catch (Exception ex) {
+	// System.out.println("Fehler beim Öffnen der Datei.");
+	// System.out.println(ex.getMessage());
+	// }
+	// }
+	// }
 }

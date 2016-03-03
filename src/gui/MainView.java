@@ -38,13 +38,13 @@ import data.SoundButtonProperties;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
-import lib.ExportLayer;
 import lib.MyFonts;
 import lib.SaveLoad;
 import listener.ListenerMouseMainView;
 
 public class MainView extends JFrame {
 	private SideView sv;
+	private ProgressExportView pev;
 	private ListenerKeyboard lkb = new ListenerKeyboard();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
 
@@ -488,9 +488,9 @@ public class MainView extends JFrame {
 			} else if (e.getSource() == itemAutosave) {
 				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
 			} else if (e.getSource() == itemSaveLayer) {
-				ProgressExportView pev = new ProgressExportView(hf);
+				pev = new ProgressExportView(hf);
 			} else if (e.getSource() == itemLoadLayer) {
-				ExportLayer.load(hf, Browse.getOpenFileLay(hf.getActualFontSize()));
+
 			} else if (e.getSource() == itemResetCounterCicle) {
 				resetCountercicleAllSoundBoards();
 			} else if (e.getSource() == itemRemoveLayer) {
