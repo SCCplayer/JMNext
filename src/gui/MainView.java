@@ -38,10 +38,10 @@ import data.SoundButtonProperties;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
+import lib.ExportLayer;
 import lib.MyFonts;
 import lib.SaveLoad;
 import listener.ListenerMouseMainView;
-import testbereich.ExternerProzess;
 
 public class MainView extends JFrame {
 	private SideView sv;
@@ -131,8 +131,7 @@ public class MainView extends JFrame {
 	private JTabbedPane tp = new JTabbedPane();
 	private MainView hf;
 
-	private ExternerProzess ep = new ExternerProzess();
-	private Thread test;
+	private ProgressExportView pev;
 
 	public MainView() {
 		try {
@@ -491,9 +490,13 @@ public class MainView extends JFrame {
 				MyFonts.guiResizeFont(soundBoardActive.getComponents(), getActualFontSize());
 			} else if (e.getSource() == itemAutosave) {
 				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
+
 			} else if (e.getSource() == itemSaveLayer) {
-				test = new Thread(ep);
-				test.run();
+
+				pev = new ProgressExportView(hf);
+				Thread tExport = new Thread(new ExportLayer(pev, soundBoardActive, Browse.getFolder(actualFontSize)));
+				tExport.start();
+
 			} else if (e.getSource() == itemLoadLayer) {
 
 			} else if (e.getSource() == itemResetCounterCicle) {

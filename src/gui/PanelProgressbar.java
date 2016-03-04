@@ -66,7 +66,7 @@ public class PanelProgressbar extends JPanel {
 
 		lblVon = new JLabel(String.valueOf(0));
 		lblBis = new JLabel(String.valueOf(max));
-		pb = new JProgressBar(start, 100);
+		pb = new JProgressBar(start, max);
 		pb.setStringPainted(true);
 		pnlCenter.add(lblInfotext, BorderLayout.NORTH);
 		pnlCenter.add(pb, BorderLayout.CENTER);
@@ -97,7 +97,9 @@ public class PanelProgressbar extends JPanel {
 		counter++;
 		pb.setValue(counter);
 		System.out.println("pbValue: " + pb.getValue());
-		lblStatusItem = new JLabel("Soundbutton" + " " + counter + " von " + max);
+		lblStatusItem.setText("Soundbutton" + " " + counter + " von " + max);
+		validate();
+		repaint();
 		return true;
 	}
 

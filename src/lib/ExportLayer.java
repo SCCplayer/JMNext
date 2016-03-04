@@ -18,7 +18,8 @@ public class ExportLayer implements Runnable {
 	private File FileFolderTemp;
 	private File[] fileListe;
 
-	public ExportLayer(SoundBoard sbExport, File fileDestinationFolder) {
+	public ExportLayer(ProgressExportView pev, SoundBoard sbExport, File fileDestinationFolder) {
+		this.pev = pev;
 		this.sbExport = sbExport;
 		this.fileDestinationFolder = fileDestinationFolder;
 	}
@@ -26,7 +27,7 @@ public class ExportLayer implements Runnable {
 	@Override
 	public void run() {
 		if (fileDestinationFolder != null) {
-
+			pev.setVisible(true);
 			SoundButtonProperties sbpTemp;
 			int zeilen = sbExport.getZeilen();
 			int spalten = sbExport.getSpalten();
@@ -69,6 +70,7 @@ public class ExportLayer implements Runnable {
 							}
 						}
 						System.out.println(Thread.currentThread().getName());
+						pev.updatePP();
 					}
 				}
 			} catch (Exception ex) {
