@@ -41,10 +41,11 @@ import lib.Browse;
 import lib.MyFonts;
 import lib.SaveLoad;
 import listener.ListenerMouseMainView;
+import testbereich.ExternerProzess;
 
 public class MainView extends JFrame {
 	private SideView sv;
-	private ProgressExportView pev;
+
 	private ListenerKeyboard lkb = new ListenerKeyboard();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
 
@@ -129,6 +130,9 @@ public class MainView extends JFrame {
 
 	private JTabbedPane tp = new JTabbedPane();
 	private MainView hf;
+
+	private ExternerProzess ep = new ExternerProzess();
+	private Thread test;
 
 	public MainView() {
 		try {
@@ -488,7 +492,8 @@ public class MainView extends JFrame {
 			} else if (e.getSource() == itemAutosave) {
 				SaveLoad.saveMainView(hf, SaveLoad.getFileAutoSave());
 			} else if (e.getSource() == itemSaveLayer) {
-				pev = new ProgressExportView(hf);
+				test = new Thread(ep);
+				test.run();
 			} else if (e.getSource() == itemLoadLayer) {
 
 			} else if (e.getSource() == itemResetCounterCicle) {
