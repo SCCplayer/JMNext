@@ -224,9 +224,9 @@ public class SoundButton extends JPanel {
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblButtonStop.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
-		lblButtonPlay.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
-		lblButtonPause.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 4, 8));
+		lblButtonStop.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
+		lblButtonPlay.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
+		lblButtonPause.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		add(lblButtonStop, c);
 		lblButtonPlay.setVisible(false);
 		lblButtonPause.setVisible(false);
