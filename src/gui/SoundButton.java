@@ -19,6 +19,9 @@ import java.io.File;
 import java.util.Date;
 import java.util.Random;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -27,12 +30,10 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import data.SbpChange;
-import data.SoundButtonProperties;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.Info;
+import data.SbpChange;
+import data.SoundButtonProperties;
 
 public class SoundButton extends JPanel {
 
@@ -53,12 +54,16 @@ public class SoundButton extends JPanel {
 	public ImageIcon iconStop = new ImageIcon(getClass().getClassLoader().getResource("resources/stop.png"));
 	public ImageIcon iconWarning = new ImageIcon(getClass().getClassLoader().getResource("resources/Warnung.png"));
 
-	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
-	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
-	public ImageIcon iconPauseScale = new ImageIcon(
-			iconPause.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
-	public ImageIcon iconWarningScale = new ImageIcon(
-			iconWarning.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+	private int iconSize = 20;
+
+	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(iconSize, iconSize,
+			Image.SCALE_DEFAULT));
+	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(iconSize, iconSize,
+			Image.SCALE_DEFAULT));
+	public ImageIcon iconPauseScale = new ImageIcon(iconPause.getImage().getScaledInstance(iconSize, iconSize,
+			Image.SCALE_DEFAULT));
+	public ImageIcon iconWarningScale = new ImageIcon(iconWarning.getImage().getScaledInstance(iconSize, iconSize,
+			Image.SCALE_DEFAULT));
 
 	private File[] musicFileArray;
 
@@ -140,9 +145,7 @@ public class SoundButton extends JPanel {
 		lblButtonPlay.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblButtonPause.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDuration.setFont(fontLblCounterLblDuration);
-		// lblDuration.setPreferredSize(new Dimension(100, 24));
 		lblCounterCicle.setFont(fontLblCounterLblDuration);
-		// lblCounterCicle.setPreferredSize(new Dimension(100, 24));
 
 		createBtnPanel();
 		lblShuffle.setVisible(false);
@@ -216,7 +219,7 @@ public class SoundButton extends JPanel {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(11, 3, 0, 0));
+		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 3, 0, 0));
 		add(lblDuration, c);
 
 		// Anzeige Play/Pause/Stop (unten Rechts)
@@ -562,8 +565,8 @@ public class SoundButton extends JPanel {
 			setColorStandard();
 			istBtnColorStandard = true;
 		}
-		System.out.println(lblCounterCicle.getSize());
-		System.out.println(lblDuration.getSize());
+		System.out.println("oben: " + lblCounterCicle.getSize());
+		System.out.println("unten: " + lblDuration.getSize());
 	}
 
 	private class BlinkListener implements ActionListener {
@@ -751,15 +754,15 @@ public class SoundButton extends JPanel {
 						dtde.acceptDrop(dtde.getDropAction());
 						// Write the path from the first file into the
 						// JTextField tfTest
-						File tempFile = new File(tr.getTransferData(flavors[i]).toString().substring(1,
-								tr.getTransferData(flavors[i]).toString().length() - 1));
+						File tempFile = new File(tr.getTransferData(flavors[i]).toString()
+								.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1));
 
 						if (Browse.isMusicFileOrMusicFilefolder(tempFile) == true) {
 
 							sb.getHf().getSbpChangeStack().push(new SbpChange(me, me.getProperties()));
 
-							setMusicPath(new File(tr.getTransferData(flavors[i]).toString().substring(1,
-									tr.getTransferData(flavors[i]).toString().length() - 1)));
+							setMusicPath(new File(tr.getTransferData(flavors[i]).toString()
+									.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1)));
 							// System.out.println(tr.getTransferData(flavors[i]).toString());
 
 							setName(getMusicPath().getName());
@@ -767,8 +770,8 @@ public class SoundButton extends JPanel {
 								if (getMusicPath() != null) {
 									if (properties.getMusicPath().listFiles() != null) {
 										setMusicFileArray(Browse.getMusicFileArray(properties.getMusicPath()));
-										setLblDuration(String
-												.valueOf(Browse.getMusicFileArray(properties.getMusicPath()).length));
+										setLblDuration(String.valueOf(Browse.getMusicFileArray(properties
+												.getMusicPath()).length));
 									}
 								}
 								setButtonArt(multiSong);
@@ -777,8 +780,8 @@ public class SoundButton extends JPanel {
 								setButtonArt(oneSong);
 							}
 
-							System.out.println(tr.getTransferData(flavors[i]).toString().substring(1,
-									tr.getTransferData(flavors[i]).toString().length() - 1));
+							System.out.println(tr.getTransferData(flavors[i]).toString()
+									.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1));
 						}
 
 						dtde.dropComplete(true);
