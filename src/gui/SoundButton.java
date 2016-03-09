@@ -53,12 +53,12 @@ public class SoundButton extends JPanel {
 	public ImageIcon iconStop = new ImageIcon(getClass().getClassLoader().getResource("resources/stop.png"));
 	public ImageIcon iconWarning = new ImageIcon(getClass().getClassLoader().getResource("resources/Warnung.png"));
 
-	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
-	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
 	public ImageIcon iconPauseScale = new ImageIcon(
-			iconPause.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+			iconPause.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
 	public ImageIcon iconWarningScale = new ImageIcon(
-			iconWarning.getImage().getScaledInstance(24, 24, Image.SCALE_DEFAULT));
+			iconWarning.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
 
 	private File[] musicFileArray;
 
@@ -132,7 +132,7 @@ public class SoundButton extends JPanel {
 		lblName.setText(name);
 		lblName.setPreferredSize(new Dimension(20, 14));
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWarning.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWarning.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblShuffle.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblLoop.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblMultiSong.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -145,21 +145,29 @@ public class SoundButton extends JPanel {
 		lblShuffle.setVisible(false);
 		lblMultiSong.setVisible(false);
 		lblLoop.setVisible(false);
+		lblWarning.setVisible(false);
 		DropTarget dt = new DropTarget(this, dtl);
 		setDropTarget(dt);
 	}
 
-	/*	----------------------------------------------
-	 * |gridx = 0		|						|		|
-	 * |gridy = 0		|						|		|
-	 * |lblCounterCicle	|
-	 * -----------------------------------------------
-	 * |		|						|				|
-	 * |		|						|				|
-	 * -----------------------------------------------
-	 * |		|						|				|
-	 * |		|						|				|
-	 * -----------------------------------------------
+	/*
+	 * Soundbutton - GridBagLayout: Aufteilung
+	 * Grid: 3x3
+	 * 
+	 * ----------------------------------------------------
+	 * |gridx = 0		|gridx = 1			|gridx = 2		|
+	 * |gridy = 0		|gridy = 0			|gridy = 0		|
+	 * |lblCounterCicle	|lblIconsButtonArt	|gridheight = 3	|
+	 * -------------------------------------|pbDuration		|
+	 * |gridx = 0							|				|
+	 * |gridy = 1							|				|
+	 * |gridwidth = 2						|				|	
+	 * |lblName 							|				|
+	 * -------------------------------------|				|
+	 * |gridx = 0		|gridx = 1			|				|
+	 * |gridy = 2		|gridy = 2			|				|
+	 * |lblDuration		|lblPause/Stop/Play	|				|
+	 * -----------------------------------------------------
 	 */
 
 	public void createBtnPanel() {
@@ -180,7 +188,7 @@ public class SoundButton extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0;
 		c.weighty = 0;
-		lblShuffle.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 8));
+		lblWarning.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		add(lblWarning, c);
 
 		c.ipady = 0;
@@ -353,18 +361,37 @@ public class SoundButton extends JPanel {
 			lblShuffle.setVisible(false);
 			lblLoop.setVisible(false);
 			lblMultiSong.setVisible(false);
+			lblWarning.setVisible(false);
+			setIconWarning();
 		} else if (properties.getButtonArt() == SoundButton.shuffle) {
 			lblLoop.setVisible(false);
 			lblMultiSong.setVisible(false);
 			lblShuffle.setVisible(true);
+			lblWarning.setVisible(false);
+			setIconWarning();
 		} else if (properties.getButtonArt() == SoundButton.multiSong) {
 			lblLoop.setVisible(false);
 			lblMultiSong.setVisible(true);
 			lblShuffle.setVisible(false);
+			lblWarning.setVisible(false);
+			setIconWarning();
 		} else if (properties.getButtonArt() == SoundButton.loop) {
 			lblShuffle.setVisible(false);
 			lblMultiSong.setVisible(false);
+			lblWarning.setVisible(false);
 			lblLoop.setVisible(true);
+			setIconWarning();
+		}
+	}
+
+	public void setIconWarning() {
+		if (properties.getMusicPath() != null) {
+			if (properties.getMusicPath().exists() == false) {
+				lblShuffle.setVisible(false);
+				lblMultiSong.setVisible(false);
+				lblWarning.setVisible(true);
+				lblLoop.setVisible(false);
+			}
 		}
 	}
 

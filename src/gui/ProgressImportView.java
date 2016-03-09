@@ -5,19 +5,15 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-public class ProgressExportView extends JFrame {
+public class ProgressImportView extends JFrame {
 	PanelProgressbar pp;
 	MainView hf;
 
-	public ProgressExportView(MainView hf) {
+	public ProgressImportView(MainView hf) {
 		this.hf = hf;
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setName("Export Layer Fortschrittsanzeige");
 		setSize(new Dimension(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5 * 3,
 				Toolkit.getDefaultToolkit().getScreenSize().height / 20 * 5)));
-
-		pp = new PanelProgressbar(this, "Soundbutton-Eigenschaften und Musikdateien werden Exportiert.", "Soundbutton",
-				0, hf.getSoundBoardActive().getZeilen() * hf.getSoundBoardActive().getSpalten(),
+		pp = new PanelProgressbar(this, "Der ausgewählte Layer wird importiert.", "Soundbutton", 0, 100,
 				hf.getActualFontSize());
 		add(pp);
 		setLocationRelativeTo(null);
@@ -27,12 +23,12 @@ public class ProgressExportView extends JFrame {
 		pp.nextStep();
 	}
 
-	public void setExportDone() {
-		pp.setExportDone();
+	public void setMaxPP(int max) {
+		pp.setMax(max);
 	}
 
-	public void setExportAbgebrochen() {
-		pp.setExportAbgebrochen();
+	public void setImportDone() {
+		pp.setImportDone();
 	}
 
 	public boolean isProzessCanceled() {

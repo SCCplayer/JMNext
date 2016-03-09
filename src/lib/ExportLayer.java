@@ -17,6 +17,10 @@ public class ExportLayer implements Runnable {
 	private File fileTemp;
 	private File FileFolderTemp;
 	private File[] fileListe;
+	private File fileLayerExport;
+	private File fileMusicFolder;
+	private FileOutputStream fileStream;
+	private ObjectOutputStream os;
 
 	public ExportLayer(ProgressExportView pev, SoundBoard sbExport, File fileDestinationFolder) {
 		this.pev = pev;
@@ -31,8 +35,8 @@ public class ExportLayer implements Runnable {
 			SoundButtonProperties sbpTemp;
 			int zeilen = sbExport.getZeilen();
 			int spalten = sbExport.getSpalten();
-			File fileLayerExport = new File(fileDestinationFolder.getPath() + "/Export.lay");
-			File fileMusicFolder = new File(fileDestinationFolder.getPath() + "/Musicdata");
+			fileLayerExport = new File(fileDestinationFolder.getPath() + "/Export.lay");
+			fileMusicFolder = new File(fileDestinationFolder.getPath() + "/Musicdata");
 			System.out.println(fileLayerExport.getPath());
 			System.out.println(fileDestinationFolder.getPath());
 
@@ -40,92 +44,80 @@ public class ExportLayer implements Runnable {
 				fileLayerExport.createNewFile();
 				fileMusicFolder.mkdir();
 
-				FileOutputStream fileStream = new FileOutputStream(fileLayerExport);
-				ObjectOutputStream os = new ObjectOutputStream(fileStream);
+				fileStream = new FileOutputStream(fileLayerExport);
+				os = new ObjectOutputStream(fileStream);
+
 				os.writeInt(sbExport.getZeilen());
 				os.writeInt(sbExport.getSpalten());
 				os.writeBoolean(sbExport.pbVisible);
 				for (int z = 0; z < zeilen; z++) {
 					for (int sp = 0; sp < spalten; sp++) {
-						os.writeObject(sbExport.getSbArray()[z][sp].getProperties());
-						sbpTemp = sbExport.getSbArray()[z][sp].getProperties();
-						if (sbpTemp.getButtonArt() != 99 && sbpTemp.getMusicPath() != null) {
-							fileTemp = new File(fileMusicFolder.getPath() + "/" + sbpTemp.getMusicPath().getName());
-							if (sbpTemp.getMusicPath().isFile() == true) {
-								Files.copy(sbpTemp.getMusicPath().toPath(), fileTemp.toPath(),
-										StandardCopyOption.REPLACE_EXISTING);
-								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Datei)");
-							} else if (sbpTemp.getMusicPath().isDirectory() == true) {
-								fileListe = sbpTemp.getMusicPath().listFiles();
-								Files.copy(sbpTemp.getMusicPath().toPath(), fileTemp.toPath(),
-										StandardCopyOption.REPLACE_EXISTING);
-								for (int i = 0; i < fileListe.length; i++) {
-									FileFolderTemp = new File(fileTemp.getPath() + "/" + fileListe[i].getName());
-									System.out.println(fileListe[i].getPath());
-									System.out.println(FileFolderTemp.getPath());
-									Files.copy(fileListe[i].toPath(), FileFolderTemp.toPath(),
+						if (Thread.currentThread().isInterrupted() == false) {
+							abbrechenExportProzess();
+							os.writeObject(sbExport.getSbArray()[z][sp].getProperties());
+							sbpTemp = sbExport.getSbArray()[z][sp].getProperties();
+							if (sbpTemp.getButtonArt() != 99 && sbpTemp.getMusicPath() != null) {
+								fileTemp = new File(fileMusicFolder.getPath() + "/" + sbpTemp.getMusicPath().getName());
+								if (sbpTemp.getMusicPath().isFile() == true) {
+									Files.copy(sbpTemp.getMusicPath().toPath(), fileTemp.toPath(),
 											StandardCopyOption.REPLACE_EXISTING);
+									System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Datei)");
+									abbrechenExportProzess();
+								} else if (sbpTemp.getMusicPath().isDirectory() == true) {
+									fileListe = sbpTemp.getMusicPath().listFiles();
+									Files.copy(sbpTemp.getMusicPath().toPath(), fileTemp.toPath(),
+											StandardCopyOption.REPLACE_EXISTING);
+									for (int i = 0; i < fileListe.length; i++) {
+										FileFolderTemp = new File(fileTemp.getPath() + "/" + fileListe[i].getName());
+										System.out.println(fileListe[i].getPath());
+										System.out.println(FileFolderTemp.getPath());
+										Files.copy(fileListe[i].toPath(), FileFolderTemp.toPath(),
+												StandardCopyOption.REPLACE_EXISTING);
+										abbrechenExportProzess();
+									}
+									System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
 								}
-								System.out.println("Zeile: " + z + " Spalte: " + sp + " gespeichert (Folder)");
 							}
+							System.out.println(Thread.currentThread().getName());
+							pev.updatePP();
+						} else {
+							return;
 						}
-						System.out.println(Thread.currentThread().getName());
-						pev.updatePP();
 					}
 				}
+				os.close();
+				fileStream.close();
+				System.out.println("=======Export Layer Ende==========");
 			} catch (Exception ex) {
 				System.out.println("Objekte konnten nicht vollständig gespeichert werden");
 				System.out.println(ex.getMessage());
+			}
+			if (Thread.currentThread().isInterrupted() == false) {
+				pev.setExportDone();
 			}
 		}
 
 	}
 
-	// public void load(MainView hf, File fileLayerImport) {
-	// System.out.println(fileLayerImport);
-	// if (fileLayerImport != null) {
-	// try {
-	// int zeilen;
-	// int spalten;
-	// boolean pbVisible;
-	// SoundButtonProperties sbpTemp;
-	// SoundButtonProperties[][] sbpArray;
-	// FileInputStream fileStream = new FileInputStream(fileLayerImport);
-	// ObjectInputStream os = new ObjectInputStream(fileStream);
-	// try {
-	// zeilen = os.readInt();
-	// spalten = os.readInt();
-	// pbVisible = os.readBoolean();
-	// sbpArray = new SoundButtonProperties[zeilen][spalten];
-	// for (int z = 0; z < zeilen; z++) {
-	// for (int sp = 0; sp < spalten; sp++) {
-	// sbpTemp = (SoundButtonProperties) os.readObject();
-	// sbpTemp.setMusicPath(
-	// new File(fileLayerImport.getParent() + "/Musicdata/" +
-	// sbpTemp.getName()));
-	// sbpArray[z][sp] = sbpTemp;
-	// }
-	// }
-	// hf.getSbVector().add(new SoundBoard(hf, sbpArray, pbVisible,
-	// hf.getLmmv()));
-	//
-	// hf.getTp().add("Layer " + String.valueOf(hf.getSbVector().size()),
-	// (SoundBoard) hf.getSbVector().get(hf.getSbVector().size() - 1));
-	//
-	// hf.getTp().setSelectedIndex(hf.getSbVector().size() - 1);
-	// hf.setSoundBoardActive((SoundBoard)
-	// hf.getSbVector().get(hf.getSbVector().size() - 1));
-	// hf.setSizeOfMainViewElements(hf.getActualFontSize());
-	// } catch (Exception e) {
-	// System.out.println("Fehler beim Laden");
-	// System.out.println(e.getMessage());
-	// } finally {
-	// os.close();
-	// }
-	// } catch (Exception ex) {
-	// System.out.println("Fehler beim Öffnen der Datei.");
-	// System.out.println(ex.getMessage());
-	// }
-	// }
-	// }
+	private void abbrechenExportProzess() {
+		if (pev.isProzessCanceled() == true) {
+			try {
+				os.close();
+				fileStream.close();
+				pev.setExportAbgebrochen();
+				Thread.currentThread().interrupt();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	private void deleteDir(File path) {
+		for (File file : path.listFiles()) {
+			if (file.isDirectory())
+				deleteDir(file);
+			file.delete();
+		}
+		path.delete();
+	}
 }

@@ -38,10 +38,10 @@ public class PanelProgressbar extends JPanel {
 	private int counter = 0;
 	private int max = 0;
 	private JButton btnAbbrechen = new JButton("Abbrechen");
+	private boolean prozessAbgebrochen = false;
 
 	public PanelProgressbar(JFrame parent, String infotext, String statusItem, int start, int max, Font myFont) {
 		this.parent = parent;
-		System.out.println("Progressbarview wird erzeugt: " + max + " Soundbutton werden exportiert");
 		this.start = start;
 		this.counter = start;
 		this.max = max;
@@ -57,7 +57,7 @@ public class PanelProgressbar extends JPanel {
 		setLayout(new BorderLayout());
 
 		pnlContent.setBorder(BorderFactory.createLineBorder(Color.black));
-		lblInfotext = new JLabel(infotext);
+		lblInfotext = new JLabel("<HTML><BODY>" + infotext + "</BODY></HTML>");
 		lblInfotext.setBorder(BorderFactory.createEmptyBorder(0, 0, 20 + abstandRahmen, 0));
 		lblStatusItem = new JLabel(statusItem + " " + start + " von " + max);
 
@@ -79,16 +79,18 @@ public class PanelProgressbar extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				parent.dispose();
+				if (btnAbbrechen.getText().compareTo("OK") == 0) {
+					parent.dispose();
+				} else if (btnAbbrechen.getText().compareTo("Abbrechen") == 0) {
+					prozessAbgebrochen = true;
+				}
 			}
 		});
 
 		pnlButton.add(btnAbbrechen);
 		pnlContent.add(pnlButton, BorderLayout.SOUTH);
-		// setUndecorated(true);
-		// getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width / 5 * 3,
-				Toolkit.getDefaultToolkit().getScreenSize().height / 10 * 2));
+				Toolkit.getDefaultToolkit().getScreenSize().height / 20 * 4));
 		add(pnlContent, BorderLayout.CENTER);
 		MyFonts.guiResizeFont(getComponents(), myFont);
 	}
@@ -111,4 +113,40 @@ public class PanelProgressbar extends JPanel {
 		return true;
 	}
 
+	public void setMax(int max) {
+		this.max = max;
+		pb.setMaximum(max);
+		lblStatusItem.setText("Soundbutton" + " " + 0 + " von " + max);
+		validate();
+		repaint();
+	}
+
+	public void setExportDone() {
+		lblInfotext.setText(
+				"<HTML><BODY>Alle Soundbutton-Eigenschaften und Musikdateien wurden exportiert.</BODY></HTML>");
+		btnAbbrechen.setText("OK");
+		validate();
+		repaint();
+	}
+
+	public void setExportAbgebrochen() {
+		pb.setVisible(false);
+		lblStatusItem.setVisible(false);
+		lblInfotext.setText("<HTML><BODY>Export wurde abgebrochen.</BODY></HTML>");
+		btnAbbrechen.setText("OK");
+		validate();
+		repaint();
+	}
+
+	public void setImportDone() {
+		lblInfotext.setText(
+				"<HTML><BODY>Alle Soundbutton-Eigenschaften wurden importiert und die Dateipfade wurden aktualisiert.</BODY></HTML>");
+		btnAbbrechen.setText("OK");
+		validate();
+		repaint();
+	}
+
+	public boolean isProzessCanceled() {
+		return prozessAbgebrochen;
+	}
 }

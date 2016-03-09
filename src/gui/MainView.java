@@ -39,6 +39,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.ExportLayer;
+import lib.ImportLayer;
 import lib.MyFonts;
 import lib.SaveLoad;
 import listener.ListenerMouseMainView;
@@ -132,6 +133,7 @@ public class MainView extends JFrame {
 	private MainView hf;
 
 	private ProgressExportView pev;
+	private ProgressImportView piv;
 
 	public MainView() {
 		try {
@@ -498,7 +500,9 @@ public class MainView extends JFrame {
 				tExport.start();
 
 			} else if (e.getSource() == itemLoadLayer) {
-
+				piv = new ProgressImportView(hf);
+				Thread tImport = new Thread(new ImportLayer(piv, hf, Browse.getOpenFileLay(actualFontSize)));
+				tImport.start();
 			} else if (e.getSource() == itemResetCounterCicle) {
 				resetCountercicleAllSoundBoards();
 			} else if (e.getSource() == itemRemoveLayer) {
