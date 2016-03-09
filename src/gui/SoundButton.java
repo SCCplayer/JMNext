@@ -182,7 +182,7 @@ public class SoundButton extends JPanel {
 		c.ipady = 3;
 		c.weightx = 0;
 		c.weighty = 0;
-		lblCounterCicle.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 3, 2, 0));
+		lblCounterCicle.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 7, 2, 0));
 		add(lblCounterCicle, c);
 
 		c.ipady = 0;
@@ -216,7 +216,7 @@ public class SoundButton extends JPanel {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(7, 3, 0, 0));
+		lblDuration.setBorder(javax.swing.BorderFactory.createEmptyBorder(11, 3, 0, 0));
 		add(lblDuration, c);
 
 		// Anzeige Play/Pause/Stop (unten Rechts)
