@@ -129,18 +129,17 @@ public class PanelProgressbar extends JPanel {
 		repaint();
 	}
 
-	public void setExportAbgebrochen() {
+	public void setExportAbgebrochen(String message) {
 		pb.setVisible(false);
 		lblStatusItem.setVisible(false);
-		lblInfotext.setText("<HTML><BODY>Export wurde abgebrochen.</BODY></HTML>");
+		lblInfotext.setText(message);
 		btnAbbrechen.setText("OK");
 		validate();
 		repaint();
 	}
 
-	public void setImportDone() {
-		lblInfotext.setText(
-				"<HTML><BODY>Alle Soundbutton-Eigenschaften wurden importiert und die Dateipfade wurden aktualisiert.</BODY></HTML>");
+	public void setImportDone(String message) {
+		lblInfotext.setText(message);
 		btnAbbrechen.setText("OK");
 		validate();
 		repaint();

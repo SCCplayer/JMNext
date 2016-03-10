@@ -104,7 +104,9 @@ public class ExportLayer implements Runnable {
 			try {
 				os.close();
 				fileStream.close();
-				pev.setExportAbgebrochen();
+				String exportDoneMessage = "<HTML><BODY>Der Exportvorgang wurde abgebrochen. Die bereits exportierten Daten liegen im Verzeichnis: "
+						+ fileDestinationFolder + " und müssen manuell gelöscht werden.</BODY></HTML>";
+				pev.setExportAbgebrochen(exportDoneMessage);
 				Thread.currentThread().interrupt();
 			} catch (Exception e) {
 				System.out.println(e.getMessage());

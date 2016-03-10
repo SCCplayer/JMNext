@@ -38,6 +38,7 @@ import data.SoundButtonProperties;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import lib.Browse;
+import lib.CheckLayerConsistenz;
 import lib.ExportLayer;
 import lib.ImportLayer;
 import lib.MyFonts;
@@ -312,7 +313,8 @@ public class MainView extends JFrame {
 		@Override
 		public void windowActivated(WindowEvent e) {
 			// TODO Auto-generated method stub
-
+			System.out.println("Fenster aktiviert");
+			new Thread(new CheckLayerConsistenz(hf)).start();
 		}
 
 		@Override

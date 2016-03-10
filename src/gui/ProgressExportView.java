@@ -31,8 +31,8 @@ public class ProgressExportView extends JFrame {
 		pp.setExportDone();
 	}
 
-	public void setExportAbgebrochen() {
-		pp.setExportAbgebrochen();
+	public void setExportAbgebrochen(String message) {
+		pp.setExportAbgebrochen(message);
 	}
 
 	public boolean isProzessCanceled() {

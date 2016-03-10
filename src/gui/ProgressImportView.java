@@ -27,8 +27,8 @@ public class ProgressImportView extends JFrame {
 		pp.setMax(max);
 	}
 
-	public void setImportDone() {
-		pp.setImportDone();
+	public void setImportDone(String message) {
+		pp.setImportDone(message);
 	}
 
 	public boolean isProzessCanceled() {

@@ -13,6 +13,8 @@ public class ImportLayer implements Runnable {
 	private ProgressImportView piv;
 	private MainView hf;
 	private File fileLayerImport;
+	private int zeilen = 0;
+	private int spalten = 0;
 
 	public ImportLayer(ProgressImportView piv, MainView hf, File fileLayerImport) {
 		this.piv = piv;
@@ -25,8 +27,6 @@ public class ImportLayer implements Runnable {
 		System.out.println(fileLayerImport);
 		if (fileLayerImport != null) {
 			try {
-				int zeilen;
-				int spalten;
 				boolean pbVisible;
 				SoundButtonProperties sbpTemp;
 				SoundButtonProperties[][] sbpArray;
@@ -66,7 +66,11 @@ public class ImportLayer implements Runnable {
 				System.out.println("Fehler beim Öffnen der Datei.");
 				System.out.println(ex.getMessage());
 			}
-			piv.setImportDone();
+			String importDoneMessage = "<HTML><BODY>Der Layer " + hf.getSbVector().size()
+					+ " wurde erfolgreich importiert. Ingesamt wurden " + spalten * zeilen
+					+ " Soundbutton importiert. Achtung: Die Musikpfade wurden auf " + fileLayerImport.getParentFile()
+					+ "\\Musicdata angepasst.</BODY></HTML>";
+			piv.setImportDone(importDoneMessage);
 		}
 
 	}
