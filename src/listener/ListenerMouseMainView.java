@@ -36,32 +36,48 @@ public class ListenerMouseMainView implements MouseListener, MouseMotionListener
 			sbClicked = (SoundButton) e.getSource();
 
 			if (SwingUtilities.isLeftMouseButton(e)) {
-				if (hf.getTapeA() != null) {
-					if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
-						hf.getSbActive().sbStop();
-						sbClicked.sbPlay();
-					} else {
-						if ((hf.getSbActive() == sbClicked && hf.getSbActive().istPausiert != true)
-								|| (sbClicked.getButtonArt() == 99 && hf.getSbActive().istPausiert != true)) {
-							hf.setSbNext(null);
-							hf.getSbActive().setStatusSoundButtonStop();
-							hf.getSbActive().sbFadeOut();
+				if (sbClicked.getButtonArt() != SoundButton.oneSongOwnPlayer) {
+					if (hf.getTapeA() != null) {
+						if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+							hf.getSbActive().sbStop();
+							sbClicked.sbPlay();
 						} else {
-							if (sbClicked.getButtonArt() != 99) {
-								if (sbClicked.getMusicPath().exists() == true) {
-									hf.setSbNext(sbClicked);
-									hf.getSbNext().changeColor();
-									hf.getSbNext().sbStartBlink();
-								}
+							if ((hf.getSbActive() == sbClicked && hf.getSbActive().istPausiert != true)
+									|| (sbClicked.getButtonArt() == 99 && hf.getSbActive().istPausiert != true)) {
+								hf.setSbNext(null);
+								hf.getSbActive().setStatusSoundButtonStop();
 								hf.getSbActive().sbFadeOut();
+							} else {
+								if (sbClicked.getButtonArt() != 99) {
+									if (sbClicked.getMusicPath().exists() == true) {
+										hf.setSbNext(sbClicked);
+										hf.getSbNext().changeColor();
+										hf.getSbNext().sbStartBlink();
+									}
+									hf.getSbActive().sbFadeOut();
+								}
 							}
 						}
+					} else {
+						if (sbClicked.getButtonArt() != 99) {
+							sbClicked.sbPlay();
+						}
 					}
-				} else {
-					if (sbClicked.getButtonArt() != 99) {
-						sbClicked.sbPlay();
+				} else if (sbClicked.getButtonArt() == SoundButton.oneSongOwnPlayer) {
+					if (hf.getOwnPlayer() != null) {
+						if (hf.getSbActiveOwnPlayer() != sbClicked) {
+							hf.getSbActiveOwnPlayer().sbStop();
+							sbClicked.sbPlay();
+						} else {
+							hf.getSbActiveOwnPlayer().sbStop();
+						}
+					} else {
+						if (sbClicked.getButtonArt() != 99) {
+							sbClicked.sbPlay();
+						}
 					}
 				}
+
 			} else if (SwingUtilities.isRightMouseButton(e)) {
 				DialogSoundButton dsb = new DialogSoundButton((SoundButton) e.getSource(), hf.getActualFontSize());
 			}

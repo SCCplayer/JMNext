@@ -122,8 +122,10 @@ public class MainView extends JFrame {
 	private JFXPanel myJFXPanel = new JFXPanel();
 	private MediaPlayer tapeA;
 	private MediaPlayer tapeB;
+	private MediaPlayer ownPlayer;
 
 	private SoundButton sbActive;
+	private SoundButton sbActiveOwnPlayer;
 	private SoundButton sbNext;
 	private PanelListeSongsPlayed pnlSongsPlayed = new PanelListeSongsPlayed(this);
 
@@ -141,6 +143,7 @@ public class MainView extends JFrame {
 			hf = this;
 			SaveLoad.openConfig(hf);
 			SaveLoad.openAutoSave(hf);
+			MyFonts.importFontSymbols();
 			addWindowListener(fl);
 			setLayout(new BorderLayout());
 			createMenuDatei();
@@ -629,6 +632,14 @@ public class MainView extends JFrame {
 		this.tapeB = tapeB;
 	}
 
+	public MediaPlayer getOwnPlayer() {
+		return ownPlayer;
+	}
+
+	public void setOwnPlayer(MediaPlayer ownPlayer) {
+		this.ownPlayer = ownPlayer;
+	}
+
 	public void setAnzeigePfad(File musicPath) {
 		anzeigePfad = musicPath;
 	}
@@ -643,6 +654,14 @@ public class MainView extends JFrame {
 
 	public void setSbActive(SoundButton sb) {
 		sbActive = sb;
+	}
+
+	public SoundButton getSbActiveOwnPlayer() {
+		return sbActiveOwnPlayer;
+	}
+
+	public void setSbActiveOwnPlayer(SoundButton sbActiveOwnPlayer) {
+		this.sbActiveOwnPlayer = sbActiveOwnPlayer;
 	}
 
 	public SoundButton getSbNext() {

@@ -51,7 +51,7 @@ public class DialogSettings extends JFrame {
 	private void init() {
 		setLayout(new BorderLayout());
 
-		sliderFadeOutZeit = new JSlider(0, 3000);
+		sliderFadeOutZeit = new JSlider(100, 3000);
 		sliderFadeOutZeit.setMajorTickSpacing(200);
 		sliderFadeOutZeit.setMinorTickSpacing(100);
 		sliderFadeOutZeit.setPaintLabels(true);

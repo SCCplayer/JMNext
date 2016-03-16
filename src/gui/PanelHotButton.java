@@ -69,31 +69,45 @@ public class PanelHotButton extends JPanel {
 
 		SoundButton sbPressed;
 		sbPressed = sbHotKey.getSbArray()[hotKeyNumber - 1][0];
-
-		if (hf.getTapeA() != null) {
-			if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
-				hf.getSbActive().sbStop();
-				sbPressed.sbPlay();
-			} else {
-				if ((hf.getSbActive() == sbPressed && hf.getSbActive().istPausiert != true)
-						|| (sbPressed.getButtonArt() == 99 && hf.getSbActive().istPausiert != true)) {
-					hf.setSbNext(null);
-					hf.getSbActive().setStatusSoundButtonStop();
-					hf.getSbActive().sbFadeOut();
+		if (sbPressed.getButtonArt() != SoundButton.oneSongOwnPlayer) {
+			if (hf.getTapeA() != null) {
+				if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+					hf.getSbActive().sbStop();
+					sbPressed.sbPlay();
 				} else {
-					if (sbPressed.getButtonArt() != 99) {
-						if (sbPressed.getMusicPath().exists() == true) {
-							hf.setSbNext(sbPressed);
-							hf.getSbNext().changeColor();
-							hf.getSbNext().sbStartBlink();
-						}
+					if ((hf.getSbActive() == sbPressed && hf.getSbActive().istPausiert != true)
+							|| (sbPressed.getButtonArt() == 99 && hf.getSbActive().istPausiert != true)) {
+						hf.setSbNext(null);
+						hf.getSbActive().setStatusSoundButtonStop();
 						hf.getSbActive().sbFadeOut();
+					} else {
+						if (sbPressed.getButtonArt() != 99) {
+							if (sbPressed.getMusicPath().exists() == true) {
+								hf.setSbNext(sbPressed);
+								hf.getSbNext().changeColor();
+								hf.getSbNext().sbStartBlink();
+							}
+							hf.getSbActive().sbFadeOut();
+						}
 					}
 				}
+			} else {
+				if (sbPressed.getButtonArt() != 99) {
+					sbPressed.sbPlay();
+				}
 			}
-		} else {
-			if (sbPressed.getButtonArt() != 99) {
-				sbPressed.sbPlay();
+		} else if (sbPressed.getButtonArt() == SoundButton.oneSongOwnPlayer) {
+			if (hf.getOwnPlayer() != null) {
+				if (hf.getSbActiveOwnPlayer() != sbPressed) {
+					hf.getSbActiveOwnPlayer().sbStop();
+					sbPressed.sbPlay();
+				} else {
+					hf.getSbActiveOwnPlayer().sbStop();
+				}
+			} else {
+				if (sbPressed.getButtonArt() != 99) {
+					sbPressed.sbPlay();
+				}
 			}
 		}
 	}

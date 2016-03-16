@@ -129,6 +129,7 @@ public abstract class Browse {
 	}
 
 	public static File getOpenFileLay(Font fontSize) {
+		System.out.println("Browse.getOpenFileLay()");
 		musicFile = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		setFileChooserFont(fc.getComponents(), fontSize);

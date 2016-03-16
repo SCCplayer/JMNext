@@ -220,7 +220,6 @@ public class SoundBoard extends JPanel {
 				sbArray[z][sp].resetCounterCicle();
 			}
 		}
-		pbVisible = false;
 	}
 
 	public void pbEinblenden() {
@@ -233,7 +232,15 @@ public class SoundBoard extends JPanel {
 	}
 
 	public void setSizeOfButtonelements(Font myFont) {
-		MyFonts.guiResizeFont(getComponents(), myFont);
+		setFontSizeOfButtons(myFont);
+	}
+
+	public void setFontSizeOfButtons(Font myFont) {
+		for (int z = 0; z < zeilen; z++) {
+			for (int sp = 0; sp < spalten; sp++) {
+				sbArray[z][sp].setFontSizeOfAllLabel(myFont);
+			}
+		}
 	}
 
 	public MediaPlayer getTapeA() {
@@ -242,6 +249,14 @@ public class SoundBoard extends JPanel {
 
 	public void setTapeA(MediaPlayer tapeA) {
 		hf.setTapeA(tapeA);
+	}
+
+	public void setOwnPlayer(MediaPlayer ownPlayer) {
+		hf.setOwnPlayer(ownPlayer);
+	}
+
+	public MediaPlayer getOwnPlayer() {
+		return hf.getOwnPlayer();
 	}
 
 	public void setTitelAnzeige(String titel) {
@@ -254,7 +269,14 @@ public class SoundBoard extends JPanel {
 
 	public void setSbActive(SoundButton sb) {
 		hf.setSbActive(sb);
-		;
+	}
+
+	public SoundButton getSbActiveOwnPlayer() {
+		return hf.getSbActiveOwnPlayer();
+	}
+
+	public void setSbActiveOwnPlayer(SoundButton sb) {
+		hf.setSbActiveOwnPlayer(sb);
 	}
 
 	public SoundButton getSbNext() {
