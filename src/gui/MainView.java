@@ -7,11 +7,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -48,7 +49,7 @@ import listener.ListenerMouseMainView;
 public class MainView extends JFrame {
 	private SideView sv;
 
-	private ListenerKeyboard lkb = new ListenerKeyboard();
+	private KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
 
 	private ListenerChange lc = new ListenerChange();
@@ -143,7 +144,7 @@ public class MainView extends JFrame {
 			hf = this;
 			SaveLoad.openConfig(hf);
 			SaveLoad.openAutoSave(hf);
-			MyFonts.importFontSymbols();
+
 			addWindowListener(fl);
 			setLayout(new BorderLayout());
 			createMenuDatei();
@@ -200,8 +201,34 @@ public class MainView extends JFrame {
 			System.out.println("Auflösung: " + Toolkit.getDefaultToolkit().getScreenSize());
 			System.out.println("dpi: " + Toolkit.getDefaultToolkit().getScreenResolution());
 
+			kfm.addKeyEventDispatcher(new MyDispatcher());
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+		}
+	}
+
+	private class MyDispatcher implements KeyEventDispatcher {
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getID() == KeyEvent.KEY_PRESSED) {
+				System.out.println(e.getKeyCode());
+				if (e.getKeyCode() == 90) {
+					hf.undoChange();
+				} else if (e.getKeyCode() == 32) {
+					hf.pausePlayer();
+				} else if (e.getKeyCode() > 48 && e.getKeyCode() < 58) {
+					pnlHotButton.pressedHotKeyStart(e.getKeyCode() - 48);
+				} else if (e.getKeyCode() == 17 && keyStrgPressed == false) {
+					keyStrgPressed = true;
+				}
+			} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+				System.out.println("Taste Losgelassen");
+				keyStrgPressed = false;
+			} else if (e.getID() == KeyEvent.KEY_TYPED) {
+				System.out.println(e.getKeyCode());
+			}
+			return false;
 		}
 	}
 
@@ -215,7 +242,6 @@ public class MainView extends JFrame {
 		}
 
 		pnlCenter.add(tp, BorderLayout.CENTER);
-		tp.addKeyListener(lkb);
 		tp.addChangeListener(lc);
 	}
 
@@ -328,36 +354,38 @@ public class MainView extends JFrame {
 
 	}
 
-	private class ListenerKeyboard implements KeyListener {
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			System.out.println("Keyevent");
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			System.out.println(e.getKeyCode());
-			if (e.getKeyCode() == 90) {
-				soundBoardActive.undoChange();
-			} else if (e.getKeyCode() == 32) {
-				soundBoardActive.pausePlayer();
-			} else if (e.getKeyCode() > 48 && e.getKeyCode() < 58) {
-				pnlHotButton.pressedHotKeyStart(e.getKeyCode() - 48);
-			} else if (e.getKeyCode() == 17 && keyStrgPressed == false) {
-				keyStrgPressed = true;
+	public void pausePlayer() {
+		if (hf.getSbActive() != null) {
+			if (hf.getSbActive().istPausiert == true || hf.getSbActive().istFadeOutTimerAktiv() == true) {
+				if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
+					hf.getSbActive().getFadeOutTimer().stop();
+					hf.getSbActive().istPausiert = false;
+					hf.getSbActive().setStatusSoundButtonPlay();
+					hf.getSbActive().sbFadeIn();
+				}
+				hf.getSbActive().istPausiert = false;
+				hf.getSbActive().setStatusSoundButtonPlay();
+				hf.getSbActive().sbFadeIn();
+			} else {
+				if (hf.getSbActive().istFadeInTimerAktiv() == true) {
+					hf.getSbActive().getFadeInTimer().stop();
+					hf.getSbActive().istPausiert = true;
+					hf.getSbActive().setStatusSoundButtonPause();
+					hf.getSbActive().sbFadeOut();
+				}
+				hf.getSbActive().istPausiert = true;
+				hf.getSbActive().setStatusSoundButtonPause();
+				hf.getSbActive().sbFadeOut();
 			}
-			// TODO Auto-generated method stub
-
 		}
+	}
 
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-			System.out.println("Taste Losgelassen");
-			keyStrgPressed = false;
+	public void undoChange() {
+		if (hf.getSbpChangeStack().empty() == false) {
+			SbpChange sbpChange = hf.getSbpChangeStack().pop();
+			System.out.println(sbpChange.getSbpLastUpdate().getName() + " wird wieder hergestellt");
+			sbpChange.getSbLastUpdate().setProperties(sbpChange.getSbpLastUpdate());
+			System.out.println("Undo changes");
 		}
 	}
 
@@ -365,7 +393,6 @@ public class MainView extends JFrame {
 		File f = Browse.getOpenFileSou();
 		if (f != null) {
 			if (f.exists()) {
-				tp.removeKeyListener(lkb);
 				tp.removeChangeListener(lc);
 				tp.removeAll();
 				sbVector.removeAllElements();
@@ -388,11 +415,11 @@ public class MainView extends JFrame {
 				item.setFont(myFont);
 			}
 		}
-		SoundBoard temp;
-		for (int i = 0; i < sbVector.size(); i++) {
-			temp = (SoundBoard) sbVector.get(i);
-			temp.setSizeOfButtonelements(myFont);
+		for (SoundBoard sbTemp : sbVector) {
+			MyFonts.guiResizeFont(getComponents(), myFont);
 		}
+		SoundBoard temp;
+
 		MyFonts.guiResizeFont(pnlHotButton.getComponents(), myFont);
 		validate();
 		repaint();
@@ -559,6 +586,7 @@ public class MainView extends JFrame {
 		btnAddZeile.setPreferredSize(new Dimension(x32, x32));
 		btnAddZeile.setToolTipText("Zeile hinzufügen");
 		btnAddZeile.addActionListener(lmb);
+		btnAddZeile.setFocusable(false);
 		iconBar.add(btnAddZeile);
 
 		iconRemoveZeileScale = new ImageIcon(
@@ -567,6 +595,7 @@ public class MainView extends JFrame {
 		btnRemoveZeile.setPreferredSize(new Dimension(x32, x32));
 		btnRemoveZeile.setToolTipText("Zeile entfernen");
 		btnRemoveZeile.addActionListener(lmb);
+		btnRemoveZeile.setFocusable(false);
 		iconBar.add(btnRemoveZeile);
 
 		iconAddSpalteScale = new ImageIcon(iconAddSpalte.getImage().getScaledInstance(x32, x32, Image.SCALE_DEFAULT));
@@ -574,6 +603,7 @@ public class MainView extends JFrame {
 		btnAddSpalte.setPreferredSize(new Dimension(x32, x32));
 		btnAddSpalte.setToolTipText("Spalte hinzufügen");
 		btnAddSpalte.addActionListener(lmb);
+		btnAddSpalte.setFocusable(false);
 		iconBar.add(btnAddSpalte);
 
 		iconRemoveSpalteScale = new ImageIcon(
@@ -582,6 +612,7 @@ public class MainView extends JFrame {
 		btnRemoveSpalte.setPreferredSize(new Dimension(x32, x32));
 		btnRemoveSpalte.setToolTipText("Spalte entfernen");
 		btnRemoveSpalte.addActionListener(lmb);
+		btnRemoveSpalte.setFocusable(false);
 		iconBar.add(btnRemoveSpalte);
 		iconBar.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		return iconBar;

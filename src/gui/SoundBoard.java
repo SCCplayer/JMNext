@@ -1,12 +1,10 @@
 package gui;
 
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.JPanel;
 
-import data.SbpChange;
 import data.SoundButtonProperties;
 import javafx.scene.media.MediaPlayer;
 import lib.MyFonts;
@@ -166,41 +164,6 @@ public class SoundBoard extends JPanel {
 		repaint();
 	}
 
-	public void undoChange() {
-		if (hf.getSbpChangeStack().empty() == false) {
-			SbpChange sbpChange = hf.getSbpChangeStack().pop();
-			System.out.println(sbpChange.getSbpLastUpdate().getName() + " wird wieder hergestellt");
-			sbpChange.getSbLastUpdate().setProperties(sbpChange.getSbpLastUpdate());
-			System.out.println("Undo changes");
-		}
-	}
-
-	public void pausePlayer() {
-		if (hf.getSbActive() != null) {
-			if (hf.getSbActive().istPausiert == true || hf.getSbActive().istFadeOutTimerAktiv() == true) {
-				if (hf.getSbActive().istFadeOutTimerAktiv() == true) {
-					hf.getSbActive().getFadeOutTimer().stop();
-					hf.getSbActive().istPausiert = false;
-					hf.getSbActive().setStatusSoundButtonPlay();
-					hf.getSbActive().sbFadeIn();
-				}
-				hf.getSbActive().istPausiert = false;
-				hf.getSbActive().setStatusSoundButtonPlay();
-				hf.getSbActive().sbFadeIn();
-			} else {
-				if (hf.getSbActive().istFadeInTimerAktiv() == true) {
-					hf.getSbActive().getFadeInTimer().stop();
-					hf.getSbActive().istPausiert = true;
-					hf.getSbActive().setStatusSoundButtonPause();
-					hf.getSbActive().sbFadeOut();
-				}
-				hf.getSbActive().istPausiert = true;
-				hf.getSbActive().setStatusSoundButtonPause();
-				hf.getSbActive().sbFadeOut();
-			}
-		}
-	}
-
 	public void setAnzeigePfad(File musicPath) {
 		hf.setAnzeigePfad(musicPath);
 	}
@@ -229,18 +192,6 @@ public class SoundBoard extends JPanel {
 			}
 		}
 		pbVisible = true;
-	}
-
-	public void setSizeOfButtonelements(Font myFont) {
-		setFontSizeOfButtons(myFont);
-	}
-
-	public void setFontSizeOfButtons(Font myFont) {
-		for (int z = 0; z < zeilen; z++) {
-			for (int sp = 0; sp < spalten; sp++) {
-				sbArray[z][sp].setFontSizeOfAllLabel(myFont);
-			}
-		}
 	}
 
 	public MediaPlayer getTapeA() {

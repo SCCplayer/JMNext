@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
@@ -19,22 +18,20 @@ import java.io.File;
 import java.util.Date;
 import java.util.Random;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import data.SbpChange;
+import data.SoundButtonProperties;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import lib.Browse;
 import lib.Info;
 import lib.MyFonts;
-import data.SbpChange;
-import data.SoundButtonProperties;
 
 public class SoundButton extends JPanel {
 
@@ -47,28 +44,7 @@ public class SoundButton extends JPanel {
 
 	private GridBagConstraints c = new GridBagConstraints();
 
-	public ImageIcon iconShuffle = new ImageIcon(getClass().getClassLoader().getResource("resources/shuffle.png"));
-	public ImageIcon iconLoop = new ImageIcon(getClass().getClassLoader().getResource("resources/loop.png"));
-	public ImageIcon iconMultiSong = new ImageIcon(getClass().getClassLoader().getResource("resources/repeat.png"));
-	public ImageIcon iconPlay = new ImageIcon(getClass().getClassLoader().getResource("resources/play.png"));
-	public ImageIcon iconPause = new ImageIcon(getClass().getClassLoader().getResource("resources/pause.png"));
-	public ImageIcon iconStop = new ImageIcon(getClass().getClassLoader().getResource("resources/stop.png"));
-	public ImageIcon iconWarning = new ImageIcon(getClass().getClassLoader().getResource("resources/Warnung.png"));
-	public ImageIcon iconOwnPlayer = new ImageIcon(getClass().getClassLoader()
-			.getResource("resources/lautsprecher.png"));
-
 	private int iconSize = 20;
-
-	public ImageIcon iconStopScale = new ImageIcon(iconStop.getImage().getScaledInstance(iconSize, iconSize,
-			Image.SCALE_DEFAULT));
-	public ImageIcon iconPlayScale = new ImageIcon(iconPlay.getImage().getScaledInstance(iconSize, iconSize,
-			Image.SCALE_DEFAULT));
-	public ImageIcon iconPauseScale = new ImageIcon(iconPause.getImage().getScaledInstance(iconSize, iconSize,
-			Image.SCALE_DEFAULT));
-	public ImageIcon iconWarningScale = new ImageIcon(iconWarning.getImage().getScaledInstance(32, 32,
-			Image.SCALE_DEFAULT));
-	public ImageIcon iconOwnPlayerScale = new ImageIcon(iconOwnPlayer.getImage().getScaledInstance(22, 24,
-			Image.SCALE_DEFAULT));
 
 	private File[] musicFileArray;
 
@@ -96,17 +72,18 @@ public class SoundButton extends JPanel {
 	private int titelNummer = 0;
 
 	private JLabel lblName = new JLabel();
-	private JLabel lblShuffle = new JLabel("<HTML><BODY>&#x1F500</BODY></HTML>");
-	private JLabel lblLoop = new JLabel("<HTML><BODY>&#x1F502</BODY></HTML>");
-	private JLabel lblMultiSong = new JLabel("<HTML><BODY>&#x1F501</BODY></HTML>");
+	private JLabel lblShuffle = new JLabel("<HTML><BODY>&#xF074</BODY></HTML>");
+	private JLabel lblLoop = new JLabel("<HTML><BODY>&#xF021</BODY></HTML>");
+	private JLabel lblMultiSong = new JLabel("<HTML><BODY>&#xF021</BODY></HTML>");
 	private JLabel lblCounterCicle = new JLabel("0");
 	private JLabel lblDuration = new JLabel("0:00");
-	private JLabel lblButtonStop = new JLabel("<HTML><BODY>&#9609</BODY></HTML>");
-	private JLabel lblButtonPlay = new JLabel("<HTML><BODY>&#9658</BODY></HTML>");
 
-	private JLabel lblButtonPause = new JLabel("<HTML><BODY>&#9612&#9612</BODY></HTML>");
-	private JLabel lblWarning = new JLabel("<HTML><BODY>&#x26A0</BODY></HTML>");
-	private JLabel lblOwnPlayer = new JLabel("<HTML><BODY>&#x1F4E3</BODY></HTML>");
+	private JLabel lblButtonStop = new JLabel("<HTML><BODY>&#xF04D</BODY></HTML>");
+	private JLabel lblButtonPlay = new JLabel("<HTML><BODY>&#xF04B</BODY></HTML>");
+	private JLabel lblButtonPause = new JLabel("<HTML><BODY>&#xF04C</BODY></HTML>");
+
+	private JLabel lblWarning = new JLabel("<HTML><BODY>&#xF071</BODY></HTML>");
+	private JLabel lblOwnPlayer = new JLabel("<HTML><BODY>&#xF0A1</BODY></HTML>");
 
 	private BlinkListener bl = new BlinkListener();
 	private Timer blinkTimer = new Timer(500, bl);
@@ -154,8 +131,19 @@ public class SoundButton extends JPanel {
 		lblButtonStop.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblButtonPlay.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblButtonPause.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDuration.setFont(fontLblCounterLblDuration);
-		lblCounterCicle.setFont(fontLblCounterLblDuration);
+
+		MyFonts.setFontText(lblCounterCicle);
+		MyFonts.setFontText(lblName);
+		MyFonts.setFontText(lblDuration);
+
+		MyFonts.setFontSymbol(lblButtonPause);
+		MyFonts.setFontSymbol(lblButtonPlay);
+		MyFonts.setFontSymbol(lblButtonStop);
+		MyFonts.setFontSymbol(lblOwnPlayer);
+		MyFonts.setFontSymbol(lblMultiSong);
+		MyFonts.setFontSymbol(lblLoop);
+		MyFonts.setFontSymbol(lblWarning);
+		MyFonts.setFontSymbol(lblShuffle);
 
 		createBtnPanel();
 		lblShuffle.setVisible(false);
@@ -168,7 +156,7 @@ public class SoundButton extends JPanel {
 	}
 
 	/*
-	 * Soundbutton - GridBagLayout: Aufteilung
+	 * Aufbau Soundbutton - GridBagLayout: Aufteilung
 	 * Grid: 3x3
 	 * 
 	 * ----------------------------------------------------
@@ -247,7 +235,7 @@ public class SoundButton extends JPanel {
 		c.gridwidth = 1;
 		lblButtonStop.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		lblButtonPlay.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
-		lblButtonPause.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 0));
+		lblButtonPause.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		add(lblButtonStop, c);
 		lblButtonPlay.setVisible(false);
 		lblButtonPause.setVisible(false);
@@ -260,7 +248,7 @@ public class SoundButton extends JPanel {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 0.1;
-		c.weighty = 0.1;
+		c.weighty = 1.0;
 		c.gridwidth = 2;
 		add(lblName, c);
 
@@ -851,15 +839,15 @@ public class SoundButton extends JPanel {
 						dtde.acceptDrop(dtde.getDropAction());
 						// Write the path from the first file into the
 						// JTextField tfTest
-						File tempFile = new File(tr.getTransferData(flavors[i]).toString()
-								.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1));
+						File tempFile = new File(tr.getTransferData(flavors[i]).toString().substring(1,
+								tr.getTransferData(flavors[i]).toString().length() - 1));
 
 						if (Browse.isMusicFileOrMusicFilefolder(tempFile) == true) {
 
 							sb.getHf().getSbpChangeStack().push(new SbpChange(me, me.getProperties()));
 
-							setMusicPath(new File(tr.getTransferData(flavors[i]).toString()
-									.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1)));
+							setMusicPath(new File(tr.getTransferData(flavors[i]).toString().substring(1,
+									tr.getTransferData(flavors[i]).toString().length() - 1)));
 							// System.out.println(tr.getTransferData(flavors[i]).toString());
 
 							setName(getMusicPath().getName());
@@ -867,8 +855,8 @@ public class SoundButton extends JPanel {
 								if (getMusicPath() != null) {
 									if (properties.getMusicPath().listFiles() != null) {
 										setMusicFileArray(Browse.getMusicFileArray(properties.getMusicPath()));
-										setLblDuration(String.valueOf(Browse.getMusicFileArray(properties
-												.getMusicPath()).length));
+										setLblDuration(String
+												.valueOf(Browse.getMusicFileArray(properties.getMusicPath()).length));
 									}
 								}
 								setButtonArt(multiSong);
@@ -877,8 +865,8 @@ public class SoundButton extends JPanel {
 								setButtonArt(oneSong);
 							}
 
-							System.out.println(tr.getTransferData(flavors[i]).toString()
-									.substring(1, tr.getTransferData(flavors[i]).toString().length() - 1));
+							System.out.println(tr.getTransferData(flavors[i]).toString().substring(1,
+									tr.getTransferData(flavors[i]).toString().length() - 1));
 						}
 
 						dtde.dropComplete(true);
@@ -900,22 +888,6 @@ public class SoundButton extends JPanel {
 			// TODO Auto-generated method stub
 
 		}
-
-	}
-
-	public void setFontSizeOfAllLabel(Font myFont) {
-		MyFonts.setSizeFontSymbols(myFont);
-		lblShuffle.setFont(MyFonts.fontSymbols);
-		lblWarning.setFont(MyFonts.fontSymbols);
-		lblLoop.setFont(MyFonts.fontSymbols);
-		lblMultiSong.setFont(MyFonts.fontSymbols);
-		lblOwnPlayer.setFont(MyFonts.fontSymbols);
-		lblCounterCicle.setFont(myFont);
-		lblName.setFont(myFont);
-		lblDuration.setFont(myFont);
-		lblButtonPlay.setFont(myFont);
-		lblButtonPause.setFont(myFont);
-		lblButtonStop.setFont(myFont);
 
 	}
 }

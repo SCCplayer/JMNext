@@ -85,9 +85,11 @@ public class DialogSoundButton extends JDialog {
 
 	private void initialComponents() {
 		System.out.println(soundButton.getButtonArt());
-		iconLoop = new JLabel(soundButton.iconLoop);
-		iconShuffle = new JLabel(soundButton.iconShuffle);
-		iconRepeat = new JLabel(soundButton.iconMultiSong);
+		iconShuffle = new JLabel("<HTML><BODY>&#xF074</BODY></HTML>");
+		iconRepeat = new JLabel("<HTML><BODY>&#xF021</BODY></HTML>");
+		MyFonts.setFontSymbol(iconRepeat);
+		MyFonts.setFontSymbol(iconShuffle);
+
 		musicPath = soundButton.getMusicPath();
 		if (soundButton.getButtonArt() == 0) {
 			System.out.println("Soundbutton");
