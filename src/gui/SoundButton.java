@@ -273,7 +273,14 @@ public class SoundButton extends JPanel {
 					changeColor();
 					sb.setTapeA(new MediaPlayer(new Media(getMusicPathASCII())));
 					sb.getTapeA().play();
-					sb.getTapeA().setVolume(getVolume());
+					if (sb.getOwnPlayer() == null) {
+						sb.getTapeA().setVolume(getVolume());
+					} else {
+						sb.getSbActiveOwnPlayer().setVolumeTapeA(getVolume());
+						sb.getTapeA().setVolume(0.1);
+						System.out.println("Volume Standardplayer: " + getVolume());
+					}
+
 					lblCounterUp();
 					setStatusSoundButtonPlay();
 					if (blinkTimer.isRunning() == false) {
@@ -612,12 +619,7 @@ public class SoundButton extends JPanel {
 
 	public void changeColor() {
 		if (istBtnColorStandard == true) {
-			if (properties.getForeground().getBlue() < 90 && properties.getForeground().getRed() < 90
-					&& properties.getForeground().getGreen() < 90) {
-				setBackground(helleGegenFarbe);
-			} else {
-				setBackground(properties.getForeground());
-			}
+			setBackground(properties.getForeground());
 			setLabelsTextColor(properties.getBackground());
 			istBtnColorStandard = false;
 			if (properties.getButtonArt() != oneSongOwnPlayer) {
@@ -627,8 +629,6 @@ public class SoundButton extends JPanel {
 			setColorStandard();
 			istBtnColorStandard = true;
 		}
-		System.out.println("oben: " + lblCounterCicle.getSize());
-		System.out.println("unten: " + lblDuration.getSize());
 	}
 
 	private class BlinkListener implements ActionListener {
@@ -889,5 +889,9 @@ public class SoundButton extends JPanel {
 
 		}
 
+	}
+
+	public void setVolumeTapeA(double volumeTapeA) {
+		this.volumeTapeA = volumeTapeA;
 	}
 }

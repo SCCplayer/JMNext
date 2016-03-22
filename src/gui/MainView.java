@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +49,8 @@ import listener.ListenerMouseMainView;
 
 public class MainView extends JFrame {
 	private SideView sv;
+	private Dimension svSize = new Dimension(1000, 800);
+	private Point svLocation = new Point(50, 50);
 
 	private KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 	private ListenerMenuBar lmb = new ListenerMenuBar(this);
@@ -109,6 +112,7 @@ public class MainView extends JFrame {
 	private JPanel pnlAnzeigeCenter = new JPanel();
 	private Color colorPnlAnzeigeCenterBackround;
 	private Color colorPnlAnzeigeCenterForeground;
+	private Color colorPnlAnzeigeFarbwechsel = new Color(190, 255, 190);
 
 	private JPanel iconBar;
 	private PanelHotButton pnlHotButton;
@@ -158,14 +162,7 @@ public class MainView extends JFrame {
 
 			lblTitel.setHorizontalAlignment(SwingConstants.CENTER);
 			pnlAnzeigeCenter.add(lblTitel, BorderLayout.CENTER);
-			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconShuffle(),
-			// BorderLayout.WEST);
-			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconShuffle(),
-			// BorderLayout.EAST);
-			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconMultiSong(),
-			// BorderLayout.WEST);
-			// pnlAnzeigeCenter.add(IconsJMNext.getLblIconMultiSong(),
-			// BorderLayout.EAST);
+
 			pnlAnzeigeCenter.addMouseListener(lmmv);
 			pnlAnzeigeCenter.addMouseMotionListener(lmmv);
 			colorPnlAnzeigeCenterBackround = pnlAnzeigeCenter.getBackground();
@@ -390,13 +387,14 @@ public class MainView extends JFrame {
 	}
 
 	public void loadSoundBoardFile() {
-		File f = Browse.getOpenFileSou();
+		File f = Browse.getOpenFileSou(actualFontSize);
 		if (f != null) {
 			if (f.exists()) {
 				tp.removeChangeListener(lc);
 				tp.removeAll();
 				sbVector.removeAllElements();
 				SaveLoad.loadMainView(hf, f);
+				setSizeOfMainViewElements(actualFontSize);
 			}
 		}
 	}
@@ -416,9 +414,8 @@ public class MainView extends JFrame {
 			}
 		}
 		for (SoundBoard sbTemp : sbVector) {
-			MyFonts.guiResizeFont(getComponents(), myFont);
+			MyFonts.guiResizeFont(sbTemp.getComponents(), myFont);
 		}
-		SoundBoard temp;
 
 		MyFonts.guiResizeFont(pnlHotButton.getComponents(), myFont);
 		validate();
@@ -638,7 +635,7 @@ public class MainView extends JFrame {
 
 	public void changeColorPnlAnzeigeCenter(Color cForeground) {
 		if (istBtnColorStandard == true) {
-			pnlAnzeigeCenter.setBackground(cForeground);
+			pnlAnzeigeCenter.setBackground(colorPnlAnzeigeFarbwechsel);
 			lblTitel.setForeground(colorPnlAnzeigeCenterForeground);
 			istBtnColorStandard = true;
 		} else {
@@ -777,5 +774,21 @@ public class MainView extends JFrame {
 
 	public PanelHotButton getPnlHotButton() {
 		return pnlHotButton;
+	}
+
+	public Dimension getSvSize() {
+		return svSize;
+	}
+
+	public void setSvSize(Dimension svSize) {
+		this.svSize = svSize;
+	}
+
+	public Point getSvLocation() {
+		return svLocation;
+	}
+
+	public void setSvLocation(Point svLocation) {
+		this.svLocation = svLocation;
 	}
 }

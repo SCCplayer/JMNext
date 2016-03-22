@@ -46,9 +46,10 @@ public abstract class Browse {
 		return musicFile;
 	}
 
-	public static File getSaveFileSou() {
+	public static File getSaveFileSou(Font fontSize) {
 		musicFile = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		setFileChooserFont(fc.getComponents(), fontSize);
 		fc.addChoosableFileFilter(soundBordFileFilter);
 		fc.setFileFilter(soundBordFileFilter);
 		int auswahl = fc.showSaveDialog(null);
@@ -104,9 +105,10 @@ public abstract class Browse {
 		return musicFile;
 	}
 
-	public static File getOpenFileSou() {
+	public static File getOpenFileSou(Font fontSize) {
 		musicFile = null;
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		setFileChooserFont(fc.getComponents(), fontSize);
 		fc.addChoosableFileFilter(soundBordFileFilter);
 		fc.setFileFilter(soundBordFileFilter);
 		int auswahl = fc.showOpenDialog(null);

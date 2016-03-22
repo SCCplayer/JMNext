@@ -7,6 +7,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 
 public class SideView extends JFrame {
+	private SideView sv;
 	private SoundBoard sb;
 	private MainView hf;
 	private int position = 0;
@@ -14,8 +15,8 @@ public class SideView extends JFrame {
 
 	private FensterListener fl = new FensterListener();
 
-	public SideView(MainView hauptfenster, SoundBoard soundBoard, String name,
-			int position) {
+	public SideView(MainView hauptfenster, SoundBoard soundBoard, String name, int position) {
+		sv = this;
 		hf = hauptfenster;
 		sb = soundBoard;
 		this.position = position;
@@ -23,8 +24,8 @@ public class SideView extends JFrame {
 		addWindowListener(fl);
 		setLayout(new BorderLayout());
 		add(sb, BorderLayout.CENTER);
-		setLocation(50, 50);
-		setSize(1000, 500);
+		setLocation(hf.getSvLocation());
+		setSize(hf.getSvSize());
 		setVisible(true);
 	}
 
@@ -38,8 +39,11 @@ public class SideView extends JFrame {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
+
 			System.out.println("closing");
 			System.out.println(position);
+			hf.setSvLocation(sv.getLocation());
+			hf.setSvSize(sv.getSize());
 			hf.getTp().add(sb, position);
 			hf.getTp().setTitleAt(position, name);
 			hf.setSideViewNull();

@@ -27,10 +27,12 @@ public abstract class SaveLoad {
 		try {
 			// 1. Blende
 			// 2. Activer Layer
-			// 3. hf Position
+			// 3. hf Location
 			// 4. hf Size
 			// 5. hf.Fontsize
 			// 6. Soundboard Panel Hot Button
+			// 7. SideView Location
+			// 8. SideView Size
 			FileOutputStream fileStream = new FileOutputStream(fileSpeicher);
 			ObjectOutputStream os = new ObjectOutputStream(fileStream);
 			os.writeInt(hf.getZeitBlende());
@@ -41,6 +43,8 @@ public abstract class SaveLoad {
 			for (int i = 0; i < 9; i++) {
 				os.writeObject(hf.getPnlHotButton().getSbHotKey().getSbArray()[i][0].getProperties());
 			}
+			os.writeObject(hf.getSvLocation());
+			os.writeObject(hf.getSvSize());
 			os.close();
 		} catch (Exception ex) {
 			System.out.println("Objekte konnten nicht vollständig gespeichert werden");
@@ -55,6 +59,8 @@ public abstract class SaveLoad {
 		// 4. hf Size
 		// 5. hf Fontsize
 		// 6. Soundboard Panel Hot Button
+		// 7. SideView Location
+		// 8. SideView Size
 		try {
 			FileInputStream fileStream = new FileInputStream(fileLaden);
 			ObjectInputStream os = new ObjectInputStream(fileStream);
@@ -68,6 +74,8 @@ public abstract class SaveLoad {
 					hf.getPnlHotButton().getSbHotKey().getSbArray()[i][0]
 							.setProperties((SoundButtonProperties) os.readObject());
 				}
+				hf.setSvLocation((Point) os.readObject());
+				hf.setSvSize((Dimension) os.readObject());
 			} catch (Exception e) {
 				System.out.println("Fehler beim Laden der Config");
 				System.out.println(e.getMessage());
@@ -203,7 +211,7 @@ public abstract class SaveLoad {
 
 	public static void saveSoundBoardAs(MainView hf) {
 		System.out.println("Button speichern");
-		File f = Browse.getSaveFileSou();
+		File f = Browse.getSaveFileSou(hf.getActualFontSize());
 		System.out.println(f);
 		if (f != null) {
 			if (f.exists() == true) {
