@@ -77,6 +77,7 @@ public class MainView extends JFrame {
 	private boolean keyStrgPressed = false;
 
 	private int zeitBlende = 10; // 100 entspricht 1 sec
+	private double screenResolutionFaktor = 0.0;
 
 	private FensterListener fl = new FensterListener();
 	private ListenerMouseMainView lmmv = new ListenerMouseMainView(this);
@@ -146,6 +147,9 @@ public class MainView extends JFrame {
 	public MainView() {
 		try {
 			hf = this;
+			System.out.println("Screenresolutionfaktor: "
+					+ ((double) Toolkit.getDefaultToolkit().getScreenResolution() - 100) / 100.0);
+			screenResolutionFaktor = ((double) Toolkit.getDefaultToolkit().getScreenResolution() - 100) / 100.0;
 			SaveLoad.openConfig(hf);
 			SaveLoad.openAutoSave(hf);
 
@@ -214,6 +218,10 @@ public class MainView extends JFrame {
 					hf.undoChange();
 				} else if (e.getKeyCode() == 32) {
 					hf.pausePlayer();
+				} else if (e.getKeyCode() == 45 && keyStrgPressed == true) {
+					setSizeOfMainViewElements(actualFontSize.deriveFont(Font.PLAIN, actualFontSize.getSize() - 3));
+				} else if (e.getKeyCode() == 521 && keyStrgPressed == true) {
+					setSizeOfMainViewElements(actualFontSize.deriveFont(Font.PLAIN, actualFontSize.getSize() + 3));
 				} else if (e.getKeyCode() > 48 && e.getKeyCode() < 58) {
 					pnlHotButton.pressedHotKeyStart(e.getKeyCode() - 48);
 				} else if (e.getKeyCode() == 17 && keyStrgPressed == false) {
@@ -221,12 +229,15 @@ public class MainView extends JFrame {
 				}
 			} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 				System.out.println("Taste Losgelassen");
-				keyStrgPressed = false;
+				if (e.getKeyCode() == 17 && keyStrgPressed == true) {
+					keyStrgPressed = false;
+				}
 			} else if (e.getID() == KeyEvent.KEY_TYPED) {
 				System.out.println(e.getKeyCode());
 			}
 			return false;
 		}
+
 	}
 
 	private void sbVectorToTappedPane() {
@@ -402,7 +413,13 @@ public class MainView extends JFrame {
 	public void setSizeOfMainViewElements(Font myFont) {
 		setActualFontSize(myFont);
 		JMenu tempMenu;
-		lblTitelSetPreferredSize(myFont);
+		lblTitel.setFont(myFont);
+		pnlAnzeigeCenter.setPreferredSize(new Dimension(0,
+				(int) (actualFontSize.getSize() * 2 + (int) (actualFontSize.getSize() * screenResolutionFaktor * 3))));
+		int iTemp = (int) (actualFontSize.getSize() * 2
+				+ (int) (actualFontSize.getSize() * screenResolutionFaktor * 2));
+		System.out.println("Pixelanzahl Titelanzeige: " + iTemp);
+		System.out.println("Schriftgröße: " + actualFontSize.getSize());
 		tp.setFont(myFont);
 		mb.setFont(myFont);
 		menuDatei.setFont(myFont);
@@ -420,21 +437,6 @@ public class MainView extends JFrame {
 		MyFonts.guiResizeFont(pnlHotButton.getComponents(), myFont);
 		validate();
 		repaint();
-	}
-
-	private void lblTitelSetPreferredSize(Font myFont) {
-		lblTitel.setFont(myFont);
-		System.out.println("Fontsize: " + myFont.getSize());
-		if (myFont.getSize() == MyFonts.small.getSize()) {
-			System.out.println("SMALL");
-			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 40));
-		} else if (myFont.getSize() == MyFonts.medium.getSize()) {
-			System.out.println("MEDIUM");
-			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 80));
-		} else if (myFont.getSize() == MyFonts.large.getSize()) {
-			System.out.println("LARGE");
-			pnlAnzeigeCenter.setPreferredSize(new Dimension(0, 120));
-		}
 	}
 
 	private void resetCountercicleAllSoundBoards() {
