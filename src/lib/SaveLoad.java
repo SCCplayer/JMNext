@@ -107,6 +107,7 @@ public abstract class SaveLoad {
 		if (fileAutoSave.exists() == false) {
 			try {
 				fileAutoSave.createNewFile();
+				hf.addNewLayer();
 			} catch (Exception e) {
 				System.out.println("Datei erstellen fehlgeschlagen");
 				System.out.println(e.getMessage());

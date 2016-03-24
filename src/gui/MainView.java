@@ -29,6 +29,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -114,6 +115,7 @@ public class MainView extends JFrame {
 	private Color colorPnlAnzeigeCenterBackround;
 	private Color colorPnlAnzeigeCenterForeground;
 	private Color colorPnlAnzeigeFarbwechsel = new Color(190, 255, 190);
+	private Color colorPb = new Color(51, 51, 51);
 
 	private JPanel iconBar;
 	private PanelHotButton pnlHotButton;
@@ -137,6 +139,9 @@ public class MainView extends JFrame {
 
 	private SoundButtonProperties sbpSource;
 	private Stack<SbpChange> SbpChangeStack = new Stack<SbpChange>();
+
+	private JProgressBar pbEast = new JProgressBar(JProgressBar.VERTICAL, 0, 1000);
+	private JProgressBar pbWest = new JProgressBar(JProgressBar.VERTICAL, 0, 1000);
 
 	private JTabbedPane tp = new JTabbedPane();
 	private MainView hf;
@@ -172,6 +177,18 @@ public class MainView extends JFrame {
 			colorPnlAnzeigeCenterBackround = pnlAnzeigeCenter.getBackground();
 			colorPnlAnzeigeCenterForeground = lblTitel.getForeground();
 			pnlCenter.add(pnlAnzeigeCenter, BorderLayout.SOUTH);
+
+			pbEast.setPreferredSize(new Dimension((int) (14 + 14 * screenResolutionFaktor), 0));
+			pbEast.setForeground(colorPb);
+			pbEast.setValue(1000);
+
+			pbWest.setPreferredSize(new Dimension((int) (14 + 14 * screenResolutionFaktor), 0));
+			pbWest.setForeground(colorPb);
+			pbWest.setValue(1000);
+
+			pnlCenter.add(pbEast, BorderLayout.EAST);
+			pnlCenter.add(pbWest, BorderLayout.WEST);
+
 			add(pnlCenter, BorderLayout.CENTER);
 			loadImageIcons();
 			createIconBar();
@@ -203,6 +220,7 @@ public class MainView extends JFrame {
 			System.out.println("dpi: " + Toolkit.getDefaultToolkit().getScreenResolution());
 
 			kfm.addKeyEventDispatcher(new MyDispatcher());
+			System.out.println(pbEast.getSize());
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -512,8 +530,7 @@ public class MainView extends JFrame {
 				new DialogSettings(hf, getActualFontSize());
 			} else if (e.getSource() == itemAddLayer) {
 				System.out.println("Neuen Layer hinzufügen");
-				sbVector.add(new SoundBoard(hf, 8, 6, lmmv));
-				tp.add("Layer " + String.valueOf(sbVector.size()), (SoundBoard) sbVector.get(sbVector.size() - 1));
+				addNewLayer();
 				if (sv == null) {
 					tp.setSelectedIndex(sbVector.size() - 1);
 				} else if (sv != null) {
@@ -547,6 +564,11 @@ public class MainView extends JFrame {
 				}
 			}
 		}
+	}
+
+	public void addNewLayer() {
+		sbVector.add(new SoundBoard(hf, 8, 6, lmmv));
+		tp.add("Layer " + String.valueOf(sbVector.size()), (SoundBoard) sbVector.get(sbVector.size() - 1));
 	}
 
 	public class ListenerChange implements ChangeListener {
@@ -644,6 +666,15 @@ public class MainView extends JFrame {
 			setColorStandardPnlAnzeigeCenter();
 			istBtnColorStandard = true;
 		}
+	}
+
+	public void setPbMainView(int value) {
+		pbEast.setValue(value);
+		pbWest.setValue(value);
+		pbEast.validate();
+		pbEast.repaint();
+		pbWest.validate();
+		pbWest.repaint();
 	}
 
 	public MediaPlayer getTapeA() {

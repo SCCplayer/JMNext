@@ -24,7 +24,7 @@ public class SoundBoard extends JPanel {
 	private int zeilen;
 	private int spalten;
 
-	public boolean pbVisible = true;
+	public boolean pbVisible = false;
 
 	public SoundBoard(MainView parent, int zeilen, int spalten, ListenerMouseMainView lmmv) {
 		this.hf = parent;
@@ -39,6 +39,7 @@ public class SoundBoard extends JPanel {
 				sbArray[z][sp].addMouseListener(lmmv);
 				sbArray[z][sp].addMouseMotionListener(lmmv);
 				add(sbArray[z][sp]);
+				sbArray[z][sp].pbAusblenden();
 			}
 		}
 	}
@@ -192,6 +193,10 @@ public class SoundBoard extends JPanel {
 			}
 		}
 		pbVisible = true;
+	}
+
+	public void setPbMainView(int value) {
+		hf.setPbMainView(value);
 	}
 
 	public MediaPlayer getTapeA() {

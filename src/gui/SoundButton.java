@@ -102,7 +102,7 @@ public class SoundButton extends JPanel {
 	private Timer fadeInTimer = new Timer(10, fadeInListener);
 
 	private ProgressbarListener pbl = new ProgressbarListener();
-	private Timer pbUpdateTimer = new Timer(100, pbl);
+	private Timer pbUpdateTimer = new Timer(10, pbl);
 
 	private JProgressBar pbDuration = new JProgressBar(JProgressBar.VERTICAL, 0, 1000);
 
@@ -514,6 +514,7 @@ public class SoundButton extends JPanel {
 
 	public void setAnzeigeZuruecksetzen() {
 		pbDuration.setValue(1000);
+		sb.setPbMainView(1000);
 		lblDuration.setText(properties.getTotalDuration());
 	}
 
@@ -581,6 +582,9 @@ public class SoundButton extends JPanel {
 
 	public void setPbDurationValue(int value) {
 		pbDuration.setValue(value);
+		if (properties.getButtonArt() != oneSongOwnPlayer) {
+			sb.setPbMainView(value);
+		}
 	}
 
 	public void setMusicPath(File musicPath) {
