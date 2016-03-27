@@ -88,7 +88,8 @@ public class MainView extends JFrame {
 	private JMenu menuSoundboard = new JMenu("Soundboard");
 	private JMenu menuLayer = new JMenu("Layer");
 	private JMenu menuAnsicht = new JMenu("Ansicht");
-	private JMenuItem itemPbAusblenden = new JMenuItem("Fortschrittsanzeige im Layer ein-/ausblenden");
+	private JMenuItem itemPbAusblenden = new JMenuItem("Fortschrittsanzeige auf Soundbutton ein-/ausblenden");
+	private JMenuItem itemPbHfAusblenden = new JMenuItem("Fortschrittsanzeige im Hauptfenster ein-/ausblenden");
 	private JMenuItem itemIconBar = new JMenuItem("Layer Symbolleiste ein-/ausblenden");
 	private JMenuItem itemHotButtonConfig = new JMenuItem("Hot-Button Konfig ein-/ausblenden");
 	private JMenuItem itemFontSmall = new JMenuItem("Schriftgröße: Klein");
@@ -188,6 +189,8 @@ public class MainView extends JFrame {
 
 			pnlCenter.add(pbEast, BorderLayout.EAST);
 			pnlCenter.add(pbWest, BorderLayout.WEST);
+			pbEast.setVisible(false);
+			pbWest.setVisible(false);
 
 			add(pnlCenter, BorderLayout.CENTER);
 			loadImageIcons();
@@ -211,7 +214,11 @@ public class MainView extends JFrame {
 
 			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
 
+			ImageIcon iconJMNext = new ImageIcon(getClass().getClassLoader().getResource("resources/LogoJMNext.png"));
+			setIconImage(iconJMNext.getImage());
+
 			setSizeOfMainViewElements(getActualFontSize());
+
 			setVisible(true);
 
 			System.out.println(getZeitBlende());
@@ -315,6 +322,7 @@ public class MainView extends JFrame {
 
 	private void createMenuAnsicht() {
 		itemPbAusblenden.addActionListener(lmb);
+		itemPbHfAusblenden.addActionListener(lmb);
 		itemIconBar.addActionListener(lmb);
 		itemHotButtonConfig.addActionListener(lmb);
 		itemSideView.addActionListener(lmb);
@@ -322,6 +330,7 @@ public class MainView extends JFrame {
 		itemFontMedium.addActionListener(lmb);
 		itemFontLarge.addActionListener(lmb);
 		menuAnsicht.add(itemPbAusblenden);
+		menuAnsicht.add(itemPbHfAusblenden);
 		menuAnsicht.add(itemIconBar);
 		menuAnsicht.add(itemHotButtonConfig);
 		menuAnsicht.add(itemSideView);
@@ -481,6 +490,10 @@ public class MainView extends JFrame {
 				} else {
 					soundBoardActive.pbEinblenden();
 				}
+
+			} else if (e.getSource() == itemPbHfAusblenden) {
+				pbEast.setVisible(!pbEast.isVisible());
+				pbWest.setVisible(!pbWest.isVisible());
 			} else if (e.getSource() == itemIconBar) {
 				if (iconBar.isVisible() == true) {
 					iconBar.setVisible(false);

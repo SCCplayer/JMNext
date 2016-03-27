@@ -25,6 +25,7 @@ public class SoundBoard extends JPanel {
 	private int spalten;
 
 	public boolean pbVisible = false;
+	public boolean isHotButton = false;
 
 	public SoundBoard(MainView parent, int zeilen, int spalten, ListenerMouseMainView lmmv) {
 		this.hf = parent;
@@ -83,6 +84,9 @@ public class SoundBoard extends JPanel {
 					sbArrayChange[z][sp] = new SoundButton(this, String.valueOf(counter));
 					sbArrayChange[z][sp].addMouseListener(lmmv);
 					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
+					if (isHotButton == true) {
+						sbArrayChange[z][sp].setHotButton();
+					}
 					counter++;
 				}
 				add(sbArrayChange[z][sp]);
@@ -131,6 +135,9 @@ public class SoundBoard extends JPanel {
 					sbArrayChange[z][sp] = new SoundButton(this, String.valueOf(counter));
 					sbArrayChange[z][sp].addMouseListener(lmmv);
 					sbArrayChange[z][sp].addMouseMotionListener(lmmv);
+					if (isHotButton == true) {
+						sbArrayChange[z][sp].setHotButton();
+					}
 					counter++;
 				}
 				add(sbArrayChange[z][sp]);
@@ -193,6 +200,15 @@ public class SoundBoard extends JPanel {
 			}
 		}
 		pbVisible = true;
+	}
+
+	public void setHotButton() {
+		for (int z = 0; z < zeilen; z++) {
+			for (int sp = 0; sp < spalten; sp++) {
+				sbArray[z][sp].setHotButton();
+			}
+		}
+		isHotButton = true;
 	}
 
 	public void setPbMainView(int value) {

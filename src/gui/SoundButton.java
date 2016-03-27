@@ -41,6 +41,7 @@ public class SoundButton extends JPanel {
 
 	public boolean istPausiert = false;
 	private int statusSoundButton = 0;
+	private boolean isHotButton = false;
 
 	private GridBagConstraints c = new GridBagConstraints();
 
@@ -85,6 +86,8 @@ public class SoundButton extends JPanel {
 	private JLabel lblWarning = new JLabel("<HTML><BODY>&#xF071</BODY></HTML>");
 	private JLabel lblOwnPlayer = new JLabel("<HTML><BODY>&#xF0A1</BODY></HTML>");
 
+	private JLabel lblTaste = new JLabel("?");
+
 	private BlinkListener bl = new BlinkListener();
 	private Timer blinkTimer = new Timer(500, bl);
 
@@ -102,7 +105,7 @@ public class SoundButton extends JPanel {
 	private Timer fadeInTimer = new Timer(10, fadeInListener);
 
 	private ProgressbarListener pbl = new ProgressbarListener();
-	private Timer pbUpdateTimer = new Timer(10, pbl);
+	private Timer pbUpdateTimer = new Timer(100, pbl);
 
 	private JProgressBar pbDuration = new JProgressBar(JProgressBar.VERTICAL, 0, 1000);
 
@@ -131,6 +134,9 @@ public class SoundButton extends JPanel {
 		lblButtonStop.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblButtonPlay.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblButtonPause.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTaste.setHorizontalAlignment(SwingConstants.RIGHT);
+
+		lblTaste.setVisible(false);
 
 		MyFonts.setFontText(lblCounterCicle);
 		MyFonts.setFontText(lblName);
@@ -204,7 +210,6 @@ public class SoundButton extends JPanel {
 		c.weighty = 0;
 		lblShuffle.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 8));
 		add(lblShuffle, c);
-		add(lblLoop, c);
 
 		c.ipadx = 0;
 		c.gridx = 1;
@@ -236,12 +241,14 @@ public class SoundButton extends JPanel {
 		lblButtonStop.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		lblButtonPlay.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
 		lblButtonPause.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 3, 0, 8));
-		add(lblButtonStop, c);
+		lblTaste.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 8));
 		lblButtonPlay.setVisible(false);
 		lblButtonPause.setVisible(false);
 		lblButtonStop.setVisible(false);
 		add(lblButtonPlay, c);
 		add(lblButtonPause, c);
+		add(lblButtonStop, c);
+		add(lblTaste, c);
 
 		// lblName (Mitte)
 		c.fill = GridBagConstraints.BOTH;
@@ -652,6 +659,7 @@ public class SoundButton extends JPanel {
 		lblOwnPlayer.setForeground(foreground);
 		lblMultiSong.setForeground(foreground);
 		lblShuffle.setForeground(foreground);
+		lblWarning.setForeground(foreground);
 	}
 
 	public boolean istFadeOutTimerAktiv() {
@@ -897,5 +905,10 @@ public class SoundButton extends JPanel {
 
 	public void setVolumeTapeA(double volumeTapeA) {
 		this.volumeTapeA = volumeTapeA;
+	}
+
+	public void setHotButton() {
+		lblTaste.setVisible(true);
+		isHotButton = true;
 	}
 }
