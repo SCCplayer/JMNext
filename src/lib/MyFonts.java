@@ -34,7 +34,7 @@ public abstract class MyFonts {
 		final InputStream is = classLoader.getResourceAsStream("resources/fontawesome-webfont.ttf");
 		try {
 			fontSymbol = Font.createFont(Font.TRUETYPE_FONT, is);
-			fontSymbol = fontSymbol.deriveFont(Font.PLAIN, 30);
+			fontSymbol = fontSymbol.deriveFont(Font.PLAIN, 14);
 			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(fontSymbol);
 		} finally {
 			is.close();

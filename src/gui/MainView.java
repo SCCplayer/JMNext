@@ -214,8 +214,9 @@ public class MainView extends JFrame {
 
 			SaveLoad.loadConfig(hf, SaveLoad.getFileConfig());
 
-			ImageIcon iconJMNext = new ImageIcon(getClass().getClassLoader().getResource("resources/LogoJMNext.png"));
-			setIconImage(iconJMNext.getImage());
+			// ImageIcon iconJMNext = new
+			// ImageIcon(getClass().getClassLoader().getResource("resources/LogoJMNext.png"));
+			// setIconImage(iconJMNext.getImage());
 
 			setSizeOfMainViewElements(getActualFontSize());
 
